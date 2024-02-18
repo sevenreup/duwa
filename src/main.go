@@ -2,13 +2,18 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 
-	"github.com/sevenreup/chewa/src/scanner"
+	"github.com/sevenreup/chewa/src/lexer"
 )
 
 func main() {
-	lex := scanner.NewScanner("./examples/main.ny")
-	defer lex.Close()
+	file, err := os.ReadFile("./examples/main.ny")
+	if err != nil {
+		log.Fatal(err)
+	}
+	lex := lexer.NewLexer(file)
 
 	tokens := lex.AccumTokens()
 

@@ -1,10 +1,9 @@
-package scanner
+package lexer
 
 import (
 	"bufio"
+	"bytes"
 	"io"
-	"log"
-	"os"
 	"strings"
 	"unicode"
 )
@@ -52,10 +51,9 @@ type Position struct {
 	Column int
 }
 
-type Scanner struct {
+type Lexer struct {
 	r    *bufio.Reader
 	pos  Position
-	file *os.File
 }
 
 type TokenInfo struct {
@@ -64,24 +62,14 @@ type TokenInfo struct {
 	Literal  string
 }
 
-func NewScanner(path string) *Scanner {
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return &Scanner{
-		r:    bufio.NewReader(file),
+func NewLexer(path []byte) *Lexer {
+	return &Lexer{
+		r:    bufio.NewReader(bytes.NewReader(path)),
 		pos:  Position{Line: 1, Column: 0},
-		file: file,
 	}
 }
 
-func (l *Scanner) Close() {
-	l.file.Close()
-}
-
-func (l *Scanner) ReadTokens() (Position, TokenType, string) {
+func (l *Lexer) ReadTokens() (Position, TokenType, string) {
 	for {
 		r, _, err := l.r.ReadRune()
 		if err != nil {
@@ -182,7 +170,7 @@ func (l *Scanner) ReadTokens() (Position, TokenType, string) {
 	}
 }
 
-func (l *Scanner) Next() rune {
+func (l *Lexer) Next() rune {
 	r, _, err := l.r.ReadRune()
 	if err != nil {
 		return rune(0)
@@ -191,13 +179,13 @@ func (l *Scanner) Next() rune {
 	return r
 }
 
-func (l *Scanner) Peek() rune {
+func (l *Lexer) Peek() rune {
 	r, _, _ := l.r.ReadRune()
 	l.r.UnreadRune()
 	return r
 }
 
-func (l *Scanner) ReadComment() (Position, TokenType, string) {
+func (l *Lexer) ReadComment() (Position, TokenType, string) {
 	rawString := ""
 	var newPos Position
 	for {
@@ -220,7 +208,7 @@ func (l *Scanner) ReadComment() (Position, TokenType, string) {
 	return newPos, COMMENT, rawString
 }
 
-func (l *Scanner) ReadString() (Position, TokenType, string) {
+func (l *Lexer) ReadString() (Position, TokenType, string) {
 	rawString := ""
 	for {
 		r, _, err := l.r.ReadRune()
@@ -240,7 +228,7 @@ func (l *Scanner) ReadString() (Position, TokenType, string) {
 	return l.pos, STRING, rawString
 }
 
-func (l *Scanner) ReadNumber(current rune) (Position, TokenType, string) {
+func (l *Lexer) ReadNumber(current rune) (Position, TokenType, string) {
 	number := string(current)
 	for {
 		r, _, err := l.r.ReadRune()
@@ -261,7 +249,7 @@ func (l *Scanner) ReadNumber(current rune) (Position, TokenType, string) {
 	return l.pos, INT, number
 }
 
-func (l *Scanner) ReadIdentifier(current rune) (Position, TokenType, string) {
+func (l *Lexer) ReadIdentifier(current rune) (Position, TokenType, string) {
 	identifier := string(current)
 	for {
 		r, _, err := l.r.ReadRune()
@@ -286,12 +274,12 @@ func validIdentifierSymbol(symbol rune) bool {
 	return unicode.IsLetter(symbol) || unicode.IsDigit(symbol) || symbol == '_'
 }
 
-func (l *Scanner) resetPosition() {
+func (l *Lexer) resetPosition() {
 	l.pos.Line++
 	l.pos.Column = 0
 }
 
-func (l *Scanner) AccumTokens() []TokenInfo {
+func (l *Lexer) AccumTokens() []TokenInfo {
 	var tokens []TokenInfo
 	for {
 		pos, tok, lit := l.ReadTokens()
