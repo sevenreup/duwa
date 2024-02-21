@@ -6,75 +6,34 @@ import (
 	"io"
 	"strings"
 	"unicode"
+
+	"github.com/sevenreup/chewa/src/token"
 )
-
-type TokenType int
-
-const (
-	// Single character tokens
-	TOKEN_EOF     TokenType = iota
-	TOKEN_MINUS             // -
-	TOKEN_STAR              // *
-	TOKEN_DIVIDE            // /
-	TOKEN_PLUS              // +
-	SEMI                    // ;
-	GREATER_THAN            // >
-	LESS_THAN               // <
-	ASSIGN                  // =
-	COLON                   // :
-	COMMA                   // ,
-	OPENING_BRACE           // {
-	CLOSING_BRACE           // }
-	OPENING_PAREN           // (
-	CLOSING_PAREN           // )
-	FULL_STOP               // .
-
-	// One or two character token
-	GREATER_THAN_OR_EQUAL_TO // >=
-	LESS_THAN_OR_EQUAL_TO    // <=
-	NOT_EQUAL_TO             // !=
-
-	TOKEN_ILLEGAL
-	INT
-	STRING
-
-	COMMENT           // // (comment)
-	MULTILINE_COMMENT // /* (comment)
-
-	IDENT
-
-	QUERY_VARIALBE // $ (query variable)
-)
-
-type Position struct {
-	Line   int
-	Column int
-}
 
 type Lexer struct {
-	r    *bufio.Reader
-	pos  Position
+	r   *bufio.Reader
+	pos token.Position
 }
 
 type TokenInfo struct {
-	Position Position
-	Token    TokenType
+	Position token.Position
+	Token    token.TokenType
 	Literal  string
 }
 
 func NewLexer(path []byte) *Lexer {
 	return &Lexer{
-		r:    bufio.NewReader(bytes.NewReader(path)),
-		pos:  Position{Line: 1, Column: 0},
+		r:   bufio.NewReader(bytes.NewReader(path)),
+		pos: token.Position{Line: 1, Column: 0},
 	}
 }
 
-func (l *Lexer) ReadTokens() (Position, TokenType, string) {
+func (l *Lexer) NextToken() token.Token {
 	for {
 		r, _, err := l.r.ReadRune()
 		if err != nil {
 			if err == io.EOF {
-				return l.pos, TOKEN_EOF, ""
+				return newToken(l.pos, token.EOF, "")
 			}
 			panic(err)
 		}
@@ -84,15 +43,15 @@ func (l *Lexer) ReadTokens() (Position, TokenType, string) {
 		case '\n':
 			l.resetPosition()
 		case ';':
-			return l.pos, SEMI, ";"
+			return newToken(l.pos, token.SEMICOLON, ";")
 		case '"', '\'':
 			return l.ReadString()
 		case '+':
-			return l.pos, TOKEN_PLUS, "+"
+			return newToken(l.pos, token.PLUS, "+")
 		case '-':
-			return l.pos, TOKEN_MINUS, "-"
+			return newToken(l.pos, token.MINUS, "-")
 		case ':':
-			return l.pos, COLON, ":"
+			return newToken(l.pos, token.COLON, ":")
 		case '/':
 			nextRune := l.Peek()
 			if nextRune == '/' {
@@ -105,7 +64,7 @@ func (l *Lexer) ReadTokens() (Position, TokenType, string) {
 					r, _, err := l.r.ReadRune()
 					if err != nil {
 						if err == io.EOF {
-							return l.pos, TOKEN_EOF, ""
+							return newToken(l.pos, token.EOF, "")
 						}
 						panic(err)
 					}
@@ -120,42 +79,42 @@ func (l *Lexer) ReadTokens() (Position, TokenType, string) {
 					builder.WriteString(string(r))
 				}
 				builder.WriteString("*/")
-				return l.pos, MULTILINE_COMMENT, builder.String()
+				return newToken(l.pos, token.MULTILINE_COMMENT, builder.String())
 			}
-			return l.pos, TOKEN_DIVIDE, "/"
+			return newToken(l.pos, token.DIVIDE, "/")
 		case '{':
-			return l.pos, OPENING_BRACE, "{"
+			return newToken(l.pos, token.OPENING_BRACE, "{")
 		case '}':
-			return l.pos, CLOSING_BRACE, "}"
+			return newToken(l.pos, token.CLOSING_BRACE, "}")
 		case '(':
-			return l.pos, OPENING_PAREN, "("
+			return newToken(l.pos, token.OPENING_PAREN, "(")
 		case ')':
-			return l.pos, CLOSING_PAREN, ")"
+			return newToken(l.pos, token.CLOSING_PAREN, ")")
 		case '.':
-			return l.pos, FULL_STOP, "."
+			return newToken(l.pos, token.FULL_STOP, ".")
 		case ',':
-			return l.pos, COMMA, ","
+			return newToken(l.pos, token.COMMA, ",")
 		case '=':
-			return l.pos, ASSIGN, "="
+			return newToken(l.pos, token.ASSIGN, "=")
 		case '>':
 			nextRune := l.Peek()
 			if nextRune == '=' {
 				l.Next()
-				return l.pos, GREATER_THAN_OR_EQUAL_TO, ">="
+				return newToken(l.pos, token.GREATER_THAN_OR_EQUAL_TO, ">=")
 			}
-			return l.pos, GREATER_THAN, ">"
+			return newToken(l.pos, token.GREATER_THAN, ">")
 		case '<':
 			nextRune := l.Peek()
 			if nextRune == '=' {
 				l.Next()
-				return l.pos, LESS_THAN_OR_EQUAL_TO, "<="
+				return newToken(l.pos, token.LESS_THAN_OR_EQUAL_TO, "<=")
 			}
-			return l.pos, LESS_THAN, "<"
+			return newToken(l.pos, token.LESS_THAN, "<")
 		case '!':
 			nextRune := l.Peek()
 			if nextRune == '=' {
 				l.Next()
-				return l.pos, NOT_EQUAL_TO, "!="
+				return newToken(l.pos, token.NOT_EQUAL_TO, "!=")
 			}
 		default:
 			if unicode.IsSpace(r) {
@@ -165,7 +124,7 @@ func (l *Lexer) ReadTokens() (Position, TokenType, string) {
 			} else if unicode.IsDigit(r) {
 				return l.ReadNumber(r)
 			}
-			return l.pos, STRING, string(r)
+			return newToken(l.pos, token.STRING, string(r))
 		}
 	}
 }
@@ -185,14 +144,14 @@ func (l *Lexer) Peek() rune {
 	return r
 }
 
-func (l *Lexer) ReadComment() (Position, TokenType, string) {
+func (l *Lexer) ReadComment() token.Token {
 	rawString := ""
-	var newPos Position
+	var newPos token.Position
 	for {
 		r, _, err := l.r.ReadRune()
 		if err != nil {
 			if err == io.EOF {
-				return l.pos, TOKEN_EOF, ""
+				return newToken(l.pos, token.EOF, "")
 			}
 			panic(err)
 		}
@@ -205,16 +164,16 @@ func (l *Lexer) ReadComment() (Position, TokenType, string) {
 			rawString += string(r)
 		}
 	}
-	return newPos, COMMENT, rawString
+	return newToken(newPos, token.COMMENT, rawString)
 }
 
-func (l *Lexer) ReadString() (Position, TokenType, string) {
+func (l *Lexer) ReadString() token.Token {
 	rawString := ""
 	for {
 		r, _, err := l.r.ReadRune()
 		if err != nil {
 			if err == io.EOF {
-				return l.pos, TOKEN_EOF, ""
+				return newToken(l.pos, token.EOF, "")
 			}
 			panic(err)
 		}
@@ -225,16 +184,16 @@ func (l *Lexer) ReadString() (Position, TokenType, string) {
 			rawString += string(r)
 		}
 	}
-	return l.pos, STRING, rawString
+	return newToken(l.pos, token.STRING, rawString)
 }
 
-func (l *Lexer) ReadNumber(current rune) (Position, TokenType, string) {
+func (l *Lexer) ReadNumber(current rune) token.Token {
 	number := string(current)
 	for {
 		r, _, err := l.r.ReadRune()
 		if err != nil {
 			if err == io.EOF {
-				return l.pos, TOKEN_EOF, ""
+				return newToken(l.pos, token.EOF, "")
 			}
 			panic(err)
 		}
@@ -246,16 +205,16 @@ func (l *Lexer) ReadNumber(current rune) (Position, TokenType, string) {
 			break
 		}
 	}
-	return l.pos, INT, number
+	return newToken(l.pos, token.INT, number)
 }
 
-func (l *Lexer) ReadIdentifier(current rune) (Position, TokenType, string) {
+func (l *Lexer) ReadIdentifier(current rune) token.Token {
 	identifier := string(current)
 	for {
 		r, _, err := l.r.ReadRune()
 		if err != nil {
 			if err == io.EOF {
-				return l.pos, TOKEN_EOF, ""
+				return newToken(l.pos, token.EOF, "")
 			}
 			panic(err)
 		}
@@ -267,7 +226,7 @@ func (l *Lexer) ReadIdentifier(current rune) (Position, TokenType, string) {
 			break
 		}
 	}
-	return l.pos, IDENT, identifier
+	return newToken(l.pos, token.IDENT, identifier)
 }
 
 func validIdentifierSymbol(symbol rune) bool {
@@ -279,17 +238,21 @@ func (l *Lexer) resetPosition() {
 	l.pos.Column = 0
 }
 
+func newToken(pos token.Position, tokenType token.TokenType, ch string) token.Token {
+	return token.Token{Type: tokenType, Literal: ch, Pos: pos}
+}
+
 func (l *Lexer) AccumTokens() []TokenInfo {
 	var tokens []TokenInfo
 	for {
-		pos, tok, lit := l.ReadTokens()
-		if tok == TOKEN_EOF {
+		tok := l.NextToken()
+		if tok.Type == token.EOF {
 			break
 		}
 		info := TokenInfo{
-			Position: pos,
-			Token:    tok,
-			Literal:  lit,
+			Position: tok.Pos,
+			Token:    tok.Type,
+			Literal:  tok.Literal,
 		}
 		tokens = append(tokens, info)
 	}
