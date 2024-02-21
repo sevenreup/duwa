@@ -21,7 +21,7 @@ type TokenInfo struct {
 	Literal  string
 }
 
-func NewLexer(path []byte) *Lexer {
+func New(path []byte) *Lexer {
 	return &Lexer{
 		r:   bufio.NewReader(bytes.NewReader(path)),
 		pos: token.Position{Line: 1, Column: 0},
@@ -95,6 +95,11 @@ func (l *Lexer) NextToken() token.Token {
 		case ',':
 			return newToken(l.pos, token.COMMA, ",")
 		case '=':
+			nextRune := l.Peek()
+			if nextRune == '=' {
+				l.Next()
+				return newToken(l.pos, token.EQUAL_TO, "==")
+			}
 			return newToken(l.pos, token.ASSIGN, "=")
 		case '>':
 			nextRune := l.Peek()
@@ -205,7 +210,7 @@ func (l *Lexer) ReadNumber(current rune) token.Token {
 			break
 		}
 	}
-	return newToken(l.pos, token.INT, number)
+	return newToken(l.pos, token.INTEGER, number)
 }
 
 func (l *Lexer) ReadIdentifier(current rune) token.Token {
@@ -226,7 +231,7 @@ func (l *Lexer) ReadIdentifier(current rune) token.Token {
 			break
 		}
 	}
-	return newToken(l.pos, token.IDENT, identifier)
+	return newToken(l.pos, token.LookupIdent(identifier), identifier)
 }
 
 func validIdentifierSymbol(symbol rune) bool {

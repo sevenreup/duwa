@@ -9,14 +9,7 @@ ndondomeko lolowera() {
 	namba yoyamba = 6;
 	namba yachiwiri = 8;
 
-	lemba(yoyamba  + yachiwiri);
-	lemba(yoyamba  - yachiwiri);
-	lemba(yoyamba  * yachiwiri);
-	lemba(yoyamba  / yachiwiri);
 	nambala yobwereza = phatikiza(yoyamba, yachiwiri);
-	mawu dzina = "wona";
-	lemba(dzina + " " + yoyamba);
-	lemba(yobwereza);
 
     ngati(yoyamba > yachiwiri) {
         lemba("yoyamba ndiyayikulu");

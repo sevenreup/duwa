@@ -13,11 +13,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	lex := lexer.NewLexer(file)
+	lex := lexer.New(file)
 
 	tokens := lex.AccumTokens()
 
 	for _, v := range tokens {
-		fmt.Println(v)
+		fmt.Println(v.Token, " ", v.Literal)
 	}
 }

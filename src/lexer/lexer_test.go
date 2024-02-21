@@ -7,7 +7,14 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `=+(){},;`
+	input := `
+	nambala phatikiza(yambi: nambala, chiwiri: nambala) {
+		bweza yamba + chiwiri;
+	}
+	
+	nambala yobwereza = phatikiza(yoyamba, yachiwiri);
+	lemba(yobwereza);
+	`
 	tests := []struct {
 		expectedType    token.TokenType
 		expectedLiteral string
@@ -22,7 +29,7 @@ func TestNextToken(t *testing.T) {
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
-	l := NewLexer([]byte(input))
+	l := New([]byte(input))
 	for i, tt := range tests {
 		tok := l.NextToken()
 		if tok.Type != tt.expectedType {
