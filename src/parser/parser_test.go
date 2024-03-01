@@ -7,7 +7,7 @@ import (
 	"github.com/sevenreup/chewa/src/lexer"
 )
 
-func TestLetStatements(t *testing.T) {
+func TestAssignmentStatements(t *testing.T) {
 	input := `
 	nambala x = 5;
 	nambala y = 10;
@@ -33,12 +33,13 @@ func TestLetStatements(t *testing.T) {
 	}
 	for i, tt := range tests {
 		stmt := program.Statements[i]
-		if !testLetStatement(t, stmt, tt.expectedIdentifier) {
+		if !testAssignmentStatement(t, stmt, tt.expectedIdentifier) {
 			return
 		}
 	}
 }
-func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
+
+func testAssignmentStatement(t *testing.T, s ast.Statement, name string) bool {
 	if s.TokenLiteral() != "nambala" {
 		t.Errorf("s.TokenLiteral not 'nambala'. got=%q", s.TokenLiteral())
 		return false
@@ -57,6 +58,32 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 		return false
 	}
 	return true
+}
+
+func TestReturnStatements(t *testing.T) {
+	input := `
+	bweza 5;
+	bweza 10;
+	bweza 993322;
+	`
+	l := lexer.New([]byte(input))
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	if len(program.Statements) != 3 {
+		t.Fatalf("program.Statements does not contain 3 statements. got=%d", len(program.Statements))
+	}
+	for _, stmt := range program.Statements {
+		returnStmt, ok := stmt.(*ast.ReturnStatement)
+		if !ok {
+			t.Errorf("stmt not *ast.returnStatement. got=%T", stmt)
+			continue
+		}
+		if returnStmt.TokenLiteral() != "bweza" {
+			t.Errorf("returnStmt.TokenLiteral not 'bweza', got %q",
+				returnStmt.TokenLiteral())
+		}
+	}
 }
 
 func checkParserErrors(t *testing.T, p *Parser) {
