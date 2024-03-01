@@ -6,8 +6,8 @@ nambala phatikiza(yambi: nambala, chiwiri: nambala) {
 ndondomeko lolowera() {
     lemba("Poyambira");
 
-	namba yoyamba = 6;
-	namba yachiwiri = 8;
+	nambala yoyamba = 6;
+	nambala yachiwiri = 8;
 
 	nambala yobwereza = phatikiza(yoyamba, yachiwiri);
 

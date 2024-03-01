@@ -66,6 +66,19 @@ var keywords = map[string]TokenType{
 	"bweza":   RETURN,
 }
 
+var variableTypes = map[TokenType]TokenType{
+	INTEGER: INTEGER,
+	STRING:  STRING,
+}
+
+func LookupVariableType(ident TokenType) TokenType {
+	if tok, ok := variableTypes[ident]; ok {
+		return tok
+	}
+	// TODO: Return an error
+	return IDENT
+}
+
 func LookupIdent(ident string) TokenType {
 	if tok, ok := keywords[ident]; ok {
 		return tok

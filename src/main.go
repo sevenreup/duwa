@@ -6,18 +6,18 @@ import (
 	"os"
 
 	"github.com/sevenreup/chewa/src/lexer"
+	"github.com/sevenreup/chewa/src/parser"
 )
 
 func main() {
-	file, err := os.ReadFile("./examples/main.ny")
+	file, err := os.ReadFile("./examples/variables.ny")
 	if err != nil {
 		log.Fatal(err)
 	}
-	lex := lexer.New(file)
-
-	tokens := lex.AccumTokens()
-
-	for _, v := range tokens {
-		fmt.Println(v.Token, " ", v.Literal)
+	l := lexer.New(file)
+	p := parser.New(l)
+	program := p.ParseProgram()
+	for _, v := range program.Statements {
+		fmt.Printf("%+v\n", v)
 	}
 }
