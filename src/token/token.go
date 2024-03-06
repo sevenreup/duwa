@@ -20,6 +20,7 @@ const (
 	OPENING_PAREN = "("
 	CLOSING_PAREN = ")"
 	FULL_STOP     = "."
+	BANG          = "!"
 
 	// One or two character token
 	GREATER_THAN_OR_EQUAL_TO = ">="

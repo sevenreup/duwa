@@ -121,6 +121,7 @@ func (l *Lexer) NextToken() token.Token {
 				l.Next()
 				return newToken(l.pos, token.NOT_EQUAL_TO, "!=")
 			}
+			return newToken(l.pos, token.BANG, "!")
 		default:
 			if unicode.IsSpace(r) {
 				continue
