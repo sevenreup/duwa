@@ -31,7 +31,7 @@ func (p *Program) TokenLiteral() string {
 }
 
 type AssigmentStatement struct {
-	Token token.Token // the token.LET token
+	Token token.Token // the token.Nambala token
 	Name  *Identifier
 	Value Expression
 }
