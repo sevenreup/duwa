@@ -6,8 +6,8 @@ const (
 	// Single character tokens
 	EOF           = "EOF"
 	MINUS         = "-"
-	STAR          = "*"
-	DIVIDE        = "/"
+	ASTERISK          = "*"
+	SLASH        = "/"
 	PLUS          = "+"
 	SEMICOLON     = ";"
 	GREATER_THAN  = ">"
