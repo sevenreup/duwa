@@ -6,8 +6,8 @@ const (
 	// Single character tokens
 	EOF           = "EOF"
 	MINUS         = "-"
-	ASTERISK          = "*"
-	SLASH        = "/"
+	ASTERISK      = "*"
+	SLASH         = "/"
 	PLUS          = "+"
 	SEMICOLON     = ";"
 	GREATER_THAN  = ">"
@@ -88,4 +88,11 @@ func LookupIdent(ident string) TokenType {
 		return tok
 	}
 	return IDENT
+}
+
+func BooleanToString(b bool) string {
+	if b {
+		return "zoona"
+	}
+	return "bodza"
 }

@@ -36,7 +36,7 @@ func (l *Lexer) NextToken() token.Token {
 			if err == io.EOF {
 				return newToken(l.pos, token.EOF, "")
 			}
-			fmt.Println(err)
+			fmt.Println("failed", l.pos.Line, l.pos.Column)
 			panic(err)
 		}
 
