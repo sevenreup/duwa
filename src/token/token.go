@@ -34,6 +34,9 @@ const (
 
 	IDENT = "identifier"
 
+	// Literals
+	INT = "INT"
+
 	// Keywords
 	INTEGER  = "INTEGER"
 	STRING   = "STRING"

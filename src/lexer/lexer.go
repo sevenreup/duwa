@@ -210,7 +210,7 @@ func (l *Lexer) ReadNumber(current rune) token.Token {
 			break
 		}
 	}
-	return newToken(l.pos, token.INTEGER, number)
+	return newToken(l.pos, token.INT, number)
 }
 
 func (l *Lexer) ReadIdentifier(current rune) token.Token {
