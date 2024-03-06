@@ -320,7 +320,6 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 		l := lexer.New([]byte(tt.input))
 		p := New(l)
 		program := p.ParseProgram()
-		fmt.Println(tt.input)
 		checkParserErrors(t, p)
 		actual := program.String()
 		if actual != tt.expected {

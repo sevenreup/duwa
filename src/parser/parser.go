@@ -109,7 +109,6 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 func (p *Parser) parseStatement() ast.Statement {
 	if token.LookupVariableType(p.curToken.Type) != token.IDENT {
-		fmt.Println(p.curToken)
 		return p.parseAssignmentStatement()
 	}
 	switch p.curToken.Type {
