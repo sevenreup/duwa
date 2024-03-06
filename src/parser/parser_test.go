@@ -411,6 +411,26 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 			"3 < 5 == zoona",
 			"((3 < 5) == zoona)",
 		},
+		{
+			"1 + (2 + 3) + 4",
+			"((1 + (2 + 3)) + 4)",
+		},
+		{
+			"(5 + 5) * 2",
+			"((5 + 5) * 2)",
+		},
+		{
+			"2 / (5 + 5)",
+			"(2 / (5 + 5))",
+		},
+		{
+			"-(5 + 5)",
+			"(-(5 + 5))",
+		},
+		{
+			"!(zoona == zoona)",
+			"(!(zoona == zoona))",
+		},
 	}
 
 	for _, tt := range tests {
