@@ -41,7 +41,7 @@ const (
 	// Keywords
 	INTEGER  = "INTEGER"
 	STRING   = "STRING"
-	FUNCTION = "function"
+	FUNCTION = "FUNCTION"
 	TRUE     = "TRUE"
 	FALSE    = "FALSE"
 	IF       = "IF"
@@ -61,13 +61,14 @@ type Token struct {
 }
 
 var keywords = map[string]TokenType{
-	"nambala": INTEGER,
-	"mawu":    STRING,
-	"zoona":   TRUE,
-	"bodza":   FALSE,
-	"ngati":   IF,
-	"kapena":  ELSE,
-	"bweza":   RETURN,
+	"nambala":    INTEGER,
+	"mawu":       STRING,
+	"zoona":      TRUE,
+	"bodza":      FALSE,
+	"ngati":      IF,
+	"kapena":     ELSE,
+	"bweza":      RETURN,
+	"ndondomeko": FUNCTION,
 }
 
 var variableTypes = map[TokenType]TokenType{
