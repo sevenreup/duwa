@@ -3,6 +3,7 @@ package repl
 import (
 	"bufio"
 	"fmt"
+	"github.com/sevenreup/chewa/evaluator"
 	"github.com/sevenreup/chewa/src/parser"
 	"io"
 
@@ -28,10 +29,14 @@ func Start(in io.Reader, out io.Writer) {
 			printParserErrors(out, p.Errors())
 			continue
 		}
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		evaluated := evaluator.Eval(program)
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
+
 func printParserErrors(out io.Writer, errors []string) {
 	io.WriteString(out, ERROR_HEDEAR)
 	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
