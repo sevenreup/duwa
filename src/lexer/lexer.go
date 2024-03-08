@@ -3,6 +3,7 @@ package lexer
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"strings"
 	"unicode"
@@ -21,9 +22,9 @@ type TokenInfo struct {
 	Literal  string
 }
 
-func New(path []byte) *Lexer {
+func New(value []byte) *Lexer {
 	return &Lexer{
-		r:   bufio.NewReader(bytes.NewReader(path)),
+		r:   bufio.NewReader(bytes.NewReader(value)),
 		pos: token.Position{Line: 1, Column: 0},
 	}
 }
@@ -35,6 +36,7 @@ func (l *Lexer) NextToken() token.Token {
 			if err == io.EOF {
 				return newToken(l.pos, token.EOF, "")
 			}
+			fmt.Println("failed", l.pos.Line, l.pos.Column)
 			panic(err)
 		}
 
@@ -81,7 +83,7 @@ func (l *Lexer) NextToken() token.Token {
 				builder.WriteString("*/")
 				return newToken(l.pos, token.MULTILINE_COMMENT, builder.String())
 			}
-			return newToken(l.pos, token.DIVIDE, "/")
+			return newToken(l.pos, token.SLASH, "/")
 		case '{':
 			return newToken(l.pos, token.OPENING_BRACE, "{")
 		case '}':
@@ -121,6 +123,9 @@ func (l *Lexer) NextToken() token.Token {
 				l.Next()
 				return newToken(l.pos, token.NOT_EQUAL_TO, "!=")
 			}
+			return newToken(l.pos, token.BANG, "!")
+		case '*':
+			return newToken(l.pos, token.ASTERISK, "*")
 		default:
 			if unicode.IsSpace(r) {
 				continue
@@ -198,8 +203,9 @@ func (l *Lexer) ReadNumber(current rune) token.Token {
 		r, _, err := l.r.ReadRune()
 		if err != nil {
 			if err == io.EOF {
-				return newToken(l.pos, token.EOF, "")
+				break
 			}
+			fmt.Println("failed", current, number, l.pos.Line, l.pos.Column)
 			panic(err)
 		}
 		l.pos.Column++
@@ -210,7 +216,7 @@ func (l *Lexer) ReadNumber(current rune) token.Token {
 			break
 		}
 	}
-	return newToken(l.pos, token.INTEGER, number)
+	return newToken(l.pos, token.INT, number)
 }
 
 func (l *Lexer) ReadIdentifier(current rune) token.Token {
@@ -219,8 +225,9 @@ func (l *Lexer) ReadIdentifier(current rune) token.Token {
 		r, _, err := l.r.ReadRune()
 		if err != nil {
 			if err == io.EOF {
-				return newToken(l.pos, token.EOF, "")
+				break
 			}
+			fmt.Println("failed", current, identifier, l.pos.Line, l.pos.Column)
 			panic(err)
 		}
 		l.pos.Column++

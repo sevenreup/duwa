@@ -6,8 +6,8 @@ const (
 	// Single character tokens
 	EOF           = "EOF"
 	MINUS         = "-"
-	STAR          = "*"
-	DIVIDE        = "/"
+	ASTERISK      = "*"
+	SLASH         = "/"
 	PLUS          = "+"
 	SEMICOLON     = ";"
 	GREATER_THAN  = ">"
@@ -20,6 +20,7 @@ const (
 	OPENING_PAREN = "("
 	CLOSING_PAREN = ")"
 	FULL_STOP     = "."
+	BANG          = "!"
 
 	// One or two character token
 	GREATER_THAN_OR_EQUAL_TO = ">="
@@ -34,10 +35,13 @@ const (
 
 	IDENT = "identifier"
 
+	// Literals
+	INT = "INT"
+
 	// Keywords
 	INTEGER  = "INTEGER"
 	STRING   = "STRING"
-	FUNCTION = "function"
+	FUNCTION = "FUNCTION"
 	TRUE     = "TRUE"
 	FALSE    = "FALSE"
 	IF       = "IF"
@@ -57,13 +61,14 @@ type Token struct {
 }
 
 var keywords = map[string]TokenType{
-	"nambala": INTEGER,
-	"mawu":    STRING,
-	"zoona":   TRUE,
-	"bodza":   FALSE,
-	"ngati":   IF,
-	"kapena":  ELSE,
-	"bweza":   RETURN,
+	"nambala":    INTEGER,
+	"mawu":       STRING,
+	"zoona":      TRUE,
+	"bodza":      FALSE,
+	"ngati":      IF,
+	"kapena":     ELSE,
+	"bweza":      RETURN,
+	"ndondomeko": FUNCTION,
 }
 
 var variableTypes = map[TokenType]TokenType{
@@ -84,4 +89,11 @@ func LookupIdent(ident string) TokenType {
 		return tok
 	}
 	return IDENT
+}
+
+func BooleanToString(b bool) string {
+	if b {
+		return "zoona"
+	}
+	return "bodza"
 }
