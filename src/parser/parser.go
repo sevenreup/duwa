@@ -28,14 +28,15 @@ const (
 )
 
 var precedences = map[token.TokenType]int{
-	token.EQUAL_TO:     EQUALS,
-	token.NOT_EQUAL_TO: EQUALS,
-	token.LESS_THAN:    LESSGREATER,
-	token.GREATER_THAN: LESSGREATER,
-	token.PLUS:         SUM,
-	token.MINUS:        SUM,
-	token.SLASH:        PRODUCT,
-	token.ASTERISK:     PRODUCT,
+	token.EQUAL_TO:      EQUALS,
+	token.NOT_EQUAL_TO:  EQUALS,
+	token.LESS_THAN:     LESSGREATER,
+	token.GREATER_THAN:  LESSGREATER,
+	token.PLUS:          SUM,
+	token.MINUS:         SUM,
+	token.SLASH:         PRODUCT,
+	token.ASTERISK:      PRODUCT,
+	token.OPENING_PAREN: CALL,
 }
 
 // Pratt parser
@@ -74,6 +75,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.NOT_EQUAL_TO, p.parseInfixExpression)
 	p.registerInfix(token.LESS_THAN, p.parseInfixExpression)
 	p.registerInfix(token.GREATER_THAN, p.parseInfixExpression)
+	p.registerInfix(token.OPENING_PAREN, p.parseCallExpression)
 
 	p.nextToken()
 	p.nextToken()
@@ -353,4 +355,28 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 		return nil
 	}
 	return identifiers
+}
+
+func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {
+	exp := &ast.CallExpression{Token: p.curToken, Function: function}
+	exp.Arguments = p.parseCallArguments()
+	return exp
+}
+func (p *Parser) parseCallArguments() []ast.Expression {
+	args := []ast.Expression{}
+	if p.peekTokenIs(token.CLOSING_PAREN) {
+		p.nextToken()
+		return args
+	}
+	p.nextToken()
+	args = append(args, p.parseExpression(LOWEST))
+	for p.peekTokenIs(token.COMMA) {
+		p.nextToken()
+		p.nextToken()
+		args = append(args, p.parseExpression(LOWEST))
+	}
+	if !p.expectPeek(token.CLOSING_PAREN) {
+		return nil
+	}
+	return args
 }
