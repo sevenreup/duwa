@@ -37,6 +37,7 @@ const (
 
 	// Literals
 	INT = "INT"
+	STR = "STR"
 
 	// Keywords
 	INTEGER  = "INTEGER"

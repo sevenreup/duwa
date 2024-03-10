@@ -11,6 +11,8 @@ func TestNextToken(t *testing.T) {
 	nambala phatikiza(yambi, chiwiri) {
 		bweza yamba + chiwiri;
 	}
+ 	"foobar"
+	"foo bar"
 	`
 	tests := []struct {
 		expectedType    token.TokenType
@@ -30,6 +32,8 @@ func TestNextToken(t *testing.T) {
 		{token.IDENT, "chiwiri"},
 		{token.SEMICOLON, ";"},
 		{token.CLOSING_BRACE, "}"},
+		{token.STR, "foobar"},
+		{token.STR, "foo bar"},
 		{token.EOF, ""},
 	}
 	l := New([]byte(input))
