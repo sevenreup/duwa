@@ -191,13 +191,13 @@ func TestErrorHandling(t *testing.T) {
 			"unknown operator: BOOLEAN + BOOLEAN",
 		},
 		{
-			"if (10 > 1) { zoona + bodza; }",
+			"ngati (10 > 1) { zoona + bodza; }",
 			"unknown operator: BOOLEAN + BOOLEAN",
 		},
 		{
 			`
-					if (10 > 1) {
- 						if (10 > 1) {
+					ngati (10 > 1) {
+ 						ngati (10 > 1) {
  							bweza zoona + bodza;
  						}
  						bweza 1;
@@ -234,6 +234,43 @@ func TestAssignmentStatements(t *testing.T) {
 		{"nambala a = 5 * 5; a;", 25},
 		{"nambala a = 5; nambala b = a; b;", 5},
 		{"nambala a = 5; nambala b = a; nambala c = a + b + 5; c;", 15},
+	}
+	for _, tt := range tests {
+		testIntegerObject(t, testEval(tt.input), tt.expected)
+	}
+}
+
+func TestFunctionObject(t *testing.T) {
+	input := "ndondomeko phatikizaZiwiri(x) { x + 2; };"
+	evaluated := testEval(input)
+	fn, ok := evaluated.(*object.Function)
+	if !ok {
+		t.Fatalf("object is not Function. got=%T (%+v)", evaluated, evaluated)
+	}
+	if len(fn.Parameters) != 1 {
+		t.Fatalf("function has wrong parameters. Parameters=%+v",
+			fn.Parameters)
+	}
+	if fn.Parameters[0].String() != "x" {
+		t.Fatalf("parameter is not 'x'. got=%q", fn.Parameters[0])
+	}
+	expectedBody := "(x + 2)"
+	if fn.Body.String() != expectedBody {
+		t.Fatalf("body is not %q. got=%q", expectedBody, fn.Body.String())
+	}
+}
+
+func TestFunctionApplication(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"ndondomeko identity(x) { x; }; identity(5);", 5},
+		{"ndondomeko  identity(x) { bweza x; }; identity(5);", 5},
+		{"ndondomeko double(x){ x * 2; }; double(5);", 10},
+		{"ndondomeko  add(x, y) { x + y; }; add(5, 5);", 10},
+		{"ndondomeko add(x, y) { x + y; }; add(5 + 5, add(5, 5));", 20},
+		{"ndondomeko zina(x) { x; }(5)", 5},
 	}
 	for _, tt := range tests {
 		testIntegerObject(t, testEval(tt.input), tt.expected)
