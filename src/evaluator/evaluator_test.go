@@ -147,3 +147,19 @@ func TestIfElseExpressions(t *testing.T) {
 		}
 	}
 }
+
+func TestReturnStatements(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int64
+	}{
+		{"bweza 10;", 10},
+		{"bweza 10; 9;", 10},
+		{"bweza 2 * 5; 9;", 10},
+		{"9; bweza 2 * 5; 9;", 10},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		testIntegerObject(t, evaluated, tt.expected)
+	}
+}
