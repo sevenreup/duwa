@@ -1,7 +1,7 @@
 package evaluator
 
 import (
-	"github.com/sevenreup/chewa/object"
+	"github.com/sevenreup/chewa/src/object"
 	"github.com/sevenreup/chewa/src/ast"
 )
 

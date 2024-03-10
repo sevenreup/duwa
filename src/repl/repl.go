@@ -3,7 +3,7 @@ package repl
 import (
 	"bufio"
 	"fmt"
-	"github.com/sevenreup/chewa/evaluator"
+	"github.com/sevenreup/chewa/src/evaluator"
 	"github.com/sevenreup/chewa/src/parser"
 	"io"
 
