@@ -8,25 +8,28 @@ import (
 
 func TestNextToken(t *testing.T) {
 	input := `
-	nambala phatikiza(yambi: nambala, chiwiri: nambala) {
+	nambala phatikiza(yambi, chiwiri) {
 		bweza yamba + chiwiri;
 	}
-	
-	nambala yobwereza = phatikiza(yoyamba, yachiwiri);
-	lemba(yobwereza);
 	`
 	tests := []struct {
 		expectedType    token.TokenType
 		expectedLiteral string
 	}{
-		{token.ASSIGN, "="},
-		{token.PLUS, "+"},
+		{token.INTEGER, "nambala"},
+		{token.IDENT, "phatikiza"},
 		{token.OPENING_PAREN, "("},
+		{token.IDENT, "yambi"},
+		{token.COMMA, ","},
+		{token.IDENT, "chiwiri"},
 		{token.CLOSING_PAREN, ")"},
 		{token.OPENING_BRACE, "{"},
-		{token.CLOSING_BRACE, "}"},
-		{token.COMMA, ","},
+		{token.RETURN, "bweza"},
+		{token.IDENT, "yamba"},
+		{token.PLUS, "+"},
+		{token.IDENT, "chiwiri"},
 		{token.SEMICOLON, ";"},
+		{token.CLOSING_BRACE, "}"},
 		{token.EOF, ""},
 	}
 	l := New([]byte(input))
