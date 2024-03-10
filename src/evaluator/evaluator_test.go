@@ -276,3 +276,13 @@ func TestFunctionApplication(t *testing.T) {
 		testIntegerObject(t, testEval(tt.input), tt.expected)
 	}
 }
+
+func TestClosures(t *testing.T) {
+	input := `
+ 	ndondomeko newAdder(x) {
+ 		ndondomeko temp(y) { x + y };
+ 	};
+ 	nambala addTwo = newAdder(2);
+ 	addTwo(2);`
+	testIntegerObject(t, testEval(input), 4)
+}
