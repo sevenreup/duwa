@@ -122,7 +122,6 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.RETURN:
 		return p.parseReturnStatement()
 	default:
-		fmt.Println(p.curToken)
 		return p.parseExpressionStatement()
 	}
 }
@@ -166,7 +165,6 @@ func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
 	prefix := p.prefixParseFns[p.curToken.Type]
-	fmt.Println(p.curToken.Literal)
 	if prefix == nil {
 		p.noPrefixParseFnError(p.curToken.Type)
 		return nil

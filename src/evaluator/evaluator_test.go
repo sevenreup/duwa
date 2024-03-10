@@ -1,8 +1,8 @@
 package evaluator
 
 import (
-	"github.com/sevenreup/chewa/src/object"
 	"github.com/sevenreup/chewa/src/lexer"
+	"github.com/sevenreup/chewa/src/object"
 	"github.com/sevenreup/chewa/src/parser"
 	"testing"
 )
@@ -13,6 +13,7 @@ func testEval(input string) object.Object {
 	program := p.ParseProgram()
 	return Eval(program)
 }
+
 func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 	result, ok := obj.(*object.Integer)
 	if !ok {
@@ -22,6 +23,14 @@ func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 	if result.Value != expected {
 		t.Errorf("object has wrong value. got=%d, want=%d",
 			result.Value, expected)
+		return false
+	}
+	return true
+}
+
+func testNullObject(t *testing.T, obj object.Object) bool {
+	if obj != NULL {
+		t.Errorf("object is not NULL. got=%T (%+v)", obj, obj)
 		return false
 	}
 	return true
@@ -112,5 +121,29 @@ func TestBangOperator(t *testing.T) {
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
 		testBooleanObject(t, evaluated, tt.expected)
+	}
+}
+
+func TestIfElseExpressions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{"ngati (zoona) { 10 }", 10},
+		{"ngati (bodza) { 10 }", nil},
+		{"ngati (1) { 10 }", 10},
+		{"ngati (1 < 2) { 10 }", 10},
+		{"ngati (1 > 2) { 10 }", nil},
+		{"ngati (1 > 2) { 10 } kapena { 20 }", 20},
+		{"ngati (1 < 2) { 10 } kapena { 20 }", 10},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		integer, ok := tt.expected.(int)
+		if ok {
+			testIntegerObject(t, evaluated, int64(integer))
+		} else {
+			testNullObject(t, evaluated)
+		}
 	}
 }
