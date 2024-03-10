@@ -163,3 +163,59 @@ func TestReturnStatements(t *testing.T) {
 		testIntegerObject(t, evaluated, tt.expected)
 	}
 }
+
+func TestErrorHandling(t *testing.T) {
+	tests := []struct {
+		input           string
+		expectedMessage string
+	}{
+		{
+			"5 + zoona;",
+			"type mismatch: INTEGER + BOOLEAN",
+		},
+		{
+			"5 + zoona; 5;",
+			"type mismatch: INTEGER + BOOLEAN",
+		},
+		{
+			"-zoona",
+			"unknown operator:-BOOLEAN",
+		},
+		{
+			"zoona + bodza;",
+			"unknown operator: BOOLEAN + BOOLEAN",
+		},
+		{
+			"5; zoona + bodza; 5",
+			"unknown operator: BOOLEAN + BOOLEAN",
+		},
+		{
+			"if (10 > 1) { zoona + bodza; }",
+			"unknown operator: BOOLEAN + BOOLEAN",
+		},
+		{
+			`
+					if (10 > 1) {
+ 						if (10 > 1) {
+ 							return zoona + bodza;
+ 						}
+ 						bweza 1;
+ 					}
+				`,
+			"unknown operator: BOOLEAN + BOOLEAN",
+		},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		errObj, ok := evaluated.(*object.Error)
+		if !ok {
+			t.Errorf("no error object returned. got=%T(%+v)",
+				evaluated, evaluated)
+			continue
+		}
+		if errObj.Message != tt.expectedMessage {
+			t.Errorf("wrong error message. expected=%q, got=%q",
+				tt.expectedMessage, errObj.Message)
+		}
+	}
+}
