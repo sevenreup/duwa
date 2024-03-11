@@ -29,6 +29,53 @@ func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
 	return true
 }
 
+func testStringObject(t *testing.T, obj object.Object, expected string) bool {
+	result, ok := obj.(*object.String)
+	if !ok {
+		t.Errorf("object is not String. got=%T (%+v)", obj, obj)
+		return false
+	}
+	if result.Value != expected {
+		t.Errorf("object has wrong value. got=%s, want=%s",
+			result.Value, expected)
+		return false
+	}
+	return true
+}
+
+func testBooleanObject(t *testing.T, obj object.Object, expected bool) bool {
+	result, ok := obj.(*object.Boolean)
+	if !ok {
+		t.Errorf("object is not Boolean. got=%T (%+v)", obj, obj)
+		return false
+	}
+	if result.Value != expected {
+		t.Errorf("object has wrong value. got=%t, want=%t",
+			result.Value, expected)
+		return false
+	}
+	return true
+}
+
+func testLiteralExpression(
+	t *testing.T,
+	obj object.Object,
+	expected interface{},
+) bool {
+	switch v := expected.(type) {
+	case int:
+		return testIntegerObject(t, obj, int64(v))
+	case int64:
+		return testIntegerObject(t, obj, v)
+	case bool:
+		return testBooleanObject(t, obj, v)
+	case string:
+		return testStringObject(t, obj, v)
+	}
+	t.Errorf("type of exp not handled. got=%T", expected)
+	return false
+}
+
 func testNullObject(t *testing.T, obj object.Object) bool {
 	if obj != NULL {
 		t.Errorf("object is not NULL. got=%T (%+v)", obj, obj)
@@ -88,24 +135,13 @@ func TestEvalBooleanExpression(t *testing.T) {
 		{"(1 < 2) == bodza", false},
 		{"(1 > 2) == zoona", false},
 		{"(1 > 2) == bodza", true},
+		{`("foo" == "bar") == bodza`, true},
+		{`("foo" == "foo") == zoona`, true},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
 		testBooleanObject(t, evaluated, tt.expected)
 	}
-}
-func testBooleanObject(t *testing.T, obj object.Object, expected bool) bool {
-	result, ok := obj.(*object.Boolean)
-	if !ok {
-		t.Errorf("object is not Boolean. got=%T (%+v)", obj, obj)
-		return false
-	}
-	if result.Value != expected {
-		t.Errorf("object has wrong value. got=%t, want=%t",
-			result.Value, expected)
-		return false
-	}
-	return true
 }
 
 func TestBangOperator(t *testing.T) {
@@ -232,15 +268,17 @@ func TestErrorHandling(t *testing.T) {
 func TestAssignmentStatements(t *testing.T) {
 	tests := []struct {
 		input    string
-		expected int64
+		expected interface{}
 	}{
 		{"nambala a = 5; a;", 5},
 		{"nambala a = 5 * 5; a;", 25},
 		{"nambala a = 5; nambala b = a; b;", 5},
 		{"nambala a = 5; nambala b = a; nambala c = a + b + 5; c;", 15},
+		{`mawu a = "b"; a;`, "b"},
+		{`mawu a = "5"; mawu b = a; mawu c = a + b + "5"; c;`, "555"},
 	}
 	for _, tt := range tests {
-		testIntegerObject(t, testEval(tt.input), tt.expected)
+		testLiteralExpression(t, testEval(tt.input), tt.expected)
 	}
 }
 
