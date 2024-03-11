@@ -6,13 +6,13 @@ import (
 	"github.com/sevenreup/chewa/src/evaluator"
 	"github.com/sevenreup/chewa/src/object"
 	"github.com/sevenreup/chewa/src/parser"
+	"github.com/sevenreup/chewa/src/utils"
 	"io"
 
 	"github.com/sevenreup/chewa/src/lexer"
 )
 
 const PROMPT = ">> "
-const ERROR_HEDEAR = "Errorr!!"
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
@@ -28,7 +28,7 @@ func Start(in io.Reader, out io.Writer) {
 		p := parser.New(l)
 		program := p.ParseProgram()
 		if len(p.Errors()) != 0 {
-			printParserErrors(out, p.Errors())
+			utils.PrintParserErrors(out, p.Errors())
 			continue
 		}
 		evaluated := evaluator.Eval(program, env)
@@ -36,14 +36,5 @@ func Start(in io.Reader, out io.Writer) {
 			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
 		}
-	}
-}
-
-func printParserErrors(out io.Writer, errors []string) {
-	io.WriteString(out, ERROR_HEDEAR)
-	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
-	io.WriteString(out, " parser errors:\n")
-	for _, msg := range errors {
-		io.WriteString(out, "\t"+msg+"\n")
 	}
 }
