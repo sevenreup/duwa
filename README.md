@@ -4,8 +4,8 @@ This Language is written in Golang.
 
 Main Milestones
 - [ ] Create initial interpreter
-    - [ ] Lexer
-    - [ ] Parser (Recursive descent parser)
+    - [x] Lexer
+    - [x] Parser (Recursive descent parser)
     - [ ] Interpreter (Tree walking interpreter)
 - [ ] Language features
     - [ ] Basic data types (string, numbers)

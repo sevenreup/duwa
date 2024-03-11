@@ -1,3 +1,9 @@
+ndondomeko phatikiza(yoyamba, chiwiri) {
+	bweza yoyamba + chiwiri;
+}
+
 nambala x = 5;
 nambala y = 10;
-nambala foobar = 838383;
+mawu foobar = "Iyi ndi foo bar";
+
+phatikiza(x, y);

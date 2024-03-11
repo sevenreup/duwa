@@ -134,7 +134,7 @@ func (l *Lexer) NextToken() token.Token {
 			} else if unicode.IsDigit(r) {
 				return l.ReadNumber(r)
 			}
-			return newToken(l.pos, token.STRING, string(r))
+			return newToken(l.pos, token.STR, string(r))
 		}
 	}
 }
@@ -194,7 +194,7 @@ func (l *Lexer) ReadString() token.Token {
 			rawString += string(r)
 		}
 	}
-	return newToken(l.pos, token.STRING, rawString)
+	return newToken(l.pos, token.STR, rawString)
 }
 
 func (l *Lexer) ReadNumber(current rune) token.Token {
