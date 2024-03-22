@@ -19,6 +19,8 @@ const (
 	CLOSING_BRACE = "}"
 	OPENING_PAREN = "("
 	CLOSING_PAREN = ")"
+	OPENING_BRACKET = "["
+	CLOSING_BRACKET = "]"
 	FULL_STOP     = "."
 	BANG          = "!"
 

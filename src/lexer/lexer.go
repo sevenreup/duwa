@@ -92,6 +92,10 @@ func (l *Lexer) NextToken() token.Token {
 			return newToken(l.pos, token.OPENING_PAREN, "(")
 		case ')':
 			return newToken(l.pos, token.CLOSING_PAREN, ")")
+		case '[':
+			return newToken(l.pos, token.OPENING_BRACKET, "[")
+		case ']':
+			return newToken(l.pos, token.CLOSING_BRACKET, "]")
 		case '.':
 			return newToken(l.pos, token.FULL_STOP, ".")
 		case ',':
