@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"github.com/shopspring/decimal"
 	"testing"
 
 	"github.com/sevenreup/chewa/src/ast"
@@ -27,7 +28,7 @@ func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
 		t.Errorf("il not *ast.IntegerLiteral. got=%T", il)
 		return false
 	}
-	if integ.Value != value {
+	if !integ.Value.Equal(decimal.NewFromInt(value)) {
 		t.Errorf("integ.Value not %d. got=%d", value, integ.Value)
 		return false
 	}
@@ -238,7 +239,7 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	if !ok {
 		t.Fatalf("exp not *ast.IntegerLiteral. got=%T", stmt.Expression)
 	}
-	if literal.Value != 5 {
+	if !literal.Value.Equal(decimal.NewFromInt(5)) {
 		t.Errorf("literal.Value not %d. got=%d", 5, literal.Value)
 	}
 	if literal.TokenLiteral() != "5" {

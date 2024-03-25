@@ -4,6 +4,7 @@ import (
 	"github.com/sevenreup/chewa/src/lexer"
 	"github.com/sevenreup/chewa/src/object"
 	"github.com/sevenreup/chewa/src/parser"
+	"github.com/shopspring/decimal"
 	"testing"
 )
 
@@ -15,13 +16,13 @@ func testEval(input string) object.Object {
 	return Eval(program, env)
 }
 
-func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
+func testIntegerObject(t *testing.T, obj object.Object, expected decimal.Decimal) bool {
 	result, ok := obj.(*object.Integer)
 	if !ok {
 		t.Errorf("object is not Integer. got=%T (%+v)", obj, obj)
 		return false
 	}
-	if result.Value != expected {
+	if !result.Value.Equal(expected) {
 		t.Errorf("object has wrong value. got=%d, want=%d",
 			result.Value, expected)
 		return false
@@ -64,9 +65,9 @@ func testLiteralExpression(
 ) bool {
 	switch v := expected.(type) {
 	case int:
-		return testIntegerObject(t, obj, int64(v))
+		return testIntegerObject(t, obj, decimal.NewFromInt(int64(v)))
 	case int64:
-		return testIntegerObject(t, obj, v)
+		return testIntegerObject(t, obj, decimal.NewFromInt(v))
 	case bool:
 		return testBooleanObject(t, obj, v)
 	case string:
@@ -107,7 +108,7 @@ func TestEvalIntegerExpression(t *testing.T) {
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
-		testIntegerObject(t, evaluated, tt.expected)
+		testIntegerObject(t, evaluated, decimal.NewFromInt(tt.expected))
 	}
 }
 
@@ -178,7 +179,7 @@ func TestIfElseExpressions(t *testing.T) {
 		evaluated := testEval(tt.input)
 		integer, ok := tt.expected.(int)
 		if ok {
-			testIntegerObject(t, evaluated, int64(integer))
+			testIntegerObject(t, evaluated, decimal.NewFromInt(int64(integer)))
 		} else {
 			testNullObject(t, evaluated)
 		}
@@ -197,7 +198,7 @@ func TestReturnStatements(t *testing.T) {
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
-		testIntegerObject(t, evaluated, tt.expected)
+		testIntegerObject(t, evaluated, decimal.NewFromInt(tt.expected))
 	}
 }
 
@@ -315,7 +316,7 @@ func TestFunctionApplication(t *testing.T) {
 		{"ndondomeko zina(x) { x; }(5)", 5},
 	}
 	for _, tt := range tests {
-		testIntegerObject(t, testEval(tt.input), tt.expected)
+		testIntegerObject(t, testEval(tt.input), decimal.NewFromInt(tt.expected))
 	}
 }
 
@@ -326,7 +327,7 @@ func TestClosures(t *testing.T) {
  	};
  	nambala addTwo = newAdder(2);
  	addTwo(2);`
-	testIntegerObject(t, testEval(input), 4)
+	testIntegerObject(t, testEval(input), decimal.NewFromInt(4))
 }
 
 func TestStringLiteral(t *testing.T) {
@@ -364,9 +365,9 @@ func TestArrayLiterals(t *testing.T) {
 		t.Fatalf("array has wrong num of elements. got=%d",
 			len(result.Elements))
 	}
-	testIntegerObject(t, result.Elements[0], 1)
-	testIntegerObject(t, result.Elements[1], 4)
-	testIntegerObject(t, result.Elements[2], 6)
+	testIntegerObject(t, result.Elements[0], decimal.NewFromInt(1))
+	testIntegerObject(t, result.Elements[1], decimal.NewFromInt(4))
+	testIntegerObject(t, result.Elements[2], decimal.NewFromInt(6))
 }
 
 func TestArrayIndexExpressions(t *testing.T) {
@@ -419,7 +420,7 @@ func TestArrayIndexExpressions(t *testing.T) {
 		evaluated := testEval(tt.input)
 		integer, ok := tt.expected.(int)
 		if ok {
-			testIntegerObject(t, evaluated, int64(integer))
+			testIntegerObject(t, evaluated, decimal.NewFromInt(int64(integer)))
 		} else {
 			testNullObject(t, evaluated)
 		}

@@ -15,6 +15,7 @@ type Function struct {
 }
 
 func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
+
 func (f *Function) Inspect() string {
 	var out bytes.Buffer
 	params := []string{}
@@ -28,4 +29,9 @@ func (f *Function) Inspect() string {
 	out.WriteString(f.Body.String())
 	out.WriteString("\n}")
 	return out.String()
+}
+
+func (i *Function) Method(method string, args []Object) (Object, bool) {
+	//TODO implement me
+	panic("implement me")
 }

@@ -159,8 +159,8 @@ func evalMinusPrefixOperatorExpression(right object.Object) object.Object {
 	if right.Type() != object.INTEGER_OBJ {
 		return newError("unknown operator:-%s", right.Type())
 	}
-	value := right.(*object.Integer).Value
-	return &object.Integer{Value: -value}
+	value := right.(*object.Integer).Value.Neg()
+	return &object.Integer{Value: value}
 }
 
 func evalInfixExpression(
@@ -193,21 +193,21 @@ func evalIntegerInfixExpression(
 	rightVal := right.(*object.Integer).Value
 	switch operator {
 	case "+":
-		return &object.Integer{Value: leftVal + rightVal}
+		return &object.Integer{Value: leftVal.Add(rightVal)}
 	case "-":
-		return &object.Integer{Value: leftVal - rightVal}
+		return &object.Integer{Value: leftVal.Sub(rightVal)}
 	case "*":
-		return &object.Integer{Value: leftVal * rightVal}
+		return &object.Integer{Value: leftVal.Mul(rightVal)}
 	case "/":
-		return &object.Integer{Value: leftVal / rightVal}
+		return &object.Integer{Value: leftVal.Div(rightVal)}
 	case "<":
-		return nativeBoolToBooleanObject(leftVal < rightVal)
+		return nativeBoolToBooleanObject(leftVal.LessThan(rightVal))
 	case ">":
-		return nativeBoolToBooleanObject(leftVal > rightVal)
+		return nativeBoolToBooleanObject(leftVal.GreaterThan(rightVal))
 	case "==":
-		return nativeBoolToBooleanObject(leftVal == rightVal)
+		return nativeBoolToBooleanObject(leftVal.Equal(rightVal))
 	case "!=":
-		return nativeBoolToBooleanObject(leftVal != rightVal)
+		return nativeBoolToBooleanObject(!leftVal.Equal(rightVal))
 	default:
 		return newError("unknown operator: %s %s %s",
 			left.Type(), operator, right.Type())
@@ -333,7 +333,7 @@ func evalIndexExpression(left, index object.Object) object.Object {
 
 func evalArrayIndexExpression(array, index object.Object) object.Object {
 	arrayObject := array.(*object.Array)
-	idx := index.(*object.Integer).Value
+	idx := index.(*object.Integer).Value.IntPart()
 	maxValue := int64(len(arrayObject.Elements) - 1)
 	if idx < 0 || idx > maxValue {
 		return NULL
