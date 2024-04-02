@@ -37,6 +37,7 @@ var precedences = map[token.TokenType]int{
 	token.ASTERISK:        PRODUCT,
 	token.OPENING_PAREN:   CALL,
 	token.OPENING_BRACKET: INDEX,
+	token.FULL_STOP:       INDEX,
 }
 
 // Pratt parser
@@ -73,6 +74,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.MINUS, p.parseInfixExpression)
 	p.registerInfix(token.SLASH, p.parseInfixExpression)
 	p.registerInfix(token.ASTERISK, p.parseInfixExpression)
+	p.registerInfix(token.FULL_STOP, p.dotExpression)
 	p.registerInfix(token.EQUAL_TO, p.parseInfixExpression)
 	p.registerInfix(token.NOT_EQUAL_TO, p.parseInfixExpression)
 	p.registerInfix(token.LESS_THAN, p.parseInfixExpression)
