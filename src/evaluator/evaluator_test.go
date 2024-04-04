@@ -426,3 +426,24 @@ func TestArrayIndexExpressions(t *testing.T) {
 		}
 	}
 }
+
+func TestMethodCalls(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{
+			"nambala myArray = [1, 2, 3];myArray.length();",
+			3,
+		},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		integer, ok := tt.expected.(int)
+		if ok {
+			testIntegerObject(t, evaluated, decimal.NewFromInt(int64(integer)))
+		} else {
+			testNullObject(t, evaluated)
+		}
+	}
+}
