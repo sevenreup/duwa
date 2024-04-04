@@ -11,14 +11,7 @@ ndondomeko lolowera() {
 
 	nambala yobwereza = phatikiza(yoyamba, yachiwiri);
 
-    ngati(yoyamba > yachiwiri) {
-        lemba("yoyamba ndiyayikulu");
-    } kapena {
-        lemba("yachiwiri ndiyayikulu");
-    }
-
-    pamene(x>4) {
-    // Do something
-    x++;
-    }
+    lemba("yoyamba ndiyayikulu");
 }
+
+lolowera();

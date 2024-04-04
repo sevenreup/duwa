@@ -1,15 +1,37 @@
 package evaluator
 
-import "github.com/sevenreup/chewa/src/object"
+import (
+	"github.com/sevenreup/chewa/src/ast"
+	"github.com/sevenreup/chewa/src/object"
+	"github.com/sevenreup/chewa/src/token"
+)
 
-func applyFunction(fn object.Object, args []object.Object) object.Object {
-	function, ok := fn.(*object.Function)
-	if !ok {
+func evaluateFunctionCall(node *ast.CallExpression, env *object.Environment) object.Object {
+	function := Eval(node.Function, env)
+	if isError(function) {
+		return function
+	}
+	args := evalExpressions(node.Arguments, env)
+	if len(args) == 1 && isError(args[0]) {
+		return args[0]
+	}
+	return applyFunction(node.Token, function, args, env)
+}
+
+func applyFunction(tok token.Token, fn object.Object, args []object.Object, env *object.Environment) object.Object {
+	switch fn := fn.(type) {
+	case *object.LibraryFunction:
+		if result := fn.Function(env, tok, args...); result != nil {
+			return result
+		}
+		return nil
+	case *object.Function:
+		extendedEnv := extendFunctionEnv(fn, args)
+		evaluated := Eval(fn.Body, extendedEnv)
+		return unwrapReturnValue(evaluated)
+	default:
 		return newError("not a function: %s", fn.Type())
 	}
-	extendedEnv := extendFunctionEnv(function, args)
-	evaluated := Eval(function.Body, extendedEnv)
-	return unwrapReturnValue(evaluated)
 }
 
 func extendFunctionEnv(

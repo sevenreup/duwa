@@ -60,15 +60,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return function
 	case *ast.CallExpression:
-		function := Eval(node.Function, env)
-		if isError(function) {
-			return function
-		}
-		args := evalExpressions(node.Arguments, env)
-		if len(args) == 1 && isError(args[0]) {
-			return args[0]
-		}
-		return applyFunction(function, args)
+		return evaluateFunctionCall(node, env)
 	case *ast.ArrayLiteral:
 		elements := evalExpressions(node.Elements, env)
 		if len(elements) == 1 && isError(elements[0]) {
