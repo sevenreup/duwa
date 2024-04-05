@@ -396,15 +396,15 @@ func TestArrayIndexExpressions(t *testing.T) {
 			3,
 		},
 		{
-			"nambala myArray = [1, 2, 3]; myArray[2];",
+			"nambala[] myArray = [1, 2, 3]; myArray[2];",
 			3,
 		},
 		{
-			"nambala myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];",
+			"nambala[] myArray = [1, 2, 3]; myArray[0] + myArray[1] + myArray[2];",
 			6,
 		},
 		{
-			"nambala myArray = [1, 2, 3]; nambala i = myArray[0]; myArray[i]",
+			"nambala[] myArray = [1, 2, 3]; nambala i = myArray[0]; myArray[i]",
 			2,
 		},
 		{
@@ -433,7 +433,7 @@ func TestMethodCalls(t *testing.T) {
 		expected interface{}
 	}{
 		{
-			"nambala myArray = [1, 2, 3];myArray.length();",
+			"nambala[] myArray = [1, 2, 3];myArray.length();",
 			3,
 		},
 	}

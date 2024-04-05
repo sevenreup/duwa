@@ -8,6 +8,15 @@ import (
 func (p *Parser) parseAssignmentStatement() *ast.AssigmentStatement {
 	stmt := &ast.AssigmentStatement{Token: p.curToken}
 
+	if p.peekTokenIs(token.OPENING_BRACKET) {
+		p.nextToken()
+		if !p.peekTokenIs(token.CLOSING_BRACKET) {
+			// TODO: Should show an error here
+			return nil
+		}
+		p.nextToken()
+	}
+
 	if !p.expectPeek(token.IDENT) {
 		return nil
 	}
