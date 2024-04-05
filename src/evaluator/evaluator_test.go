@@ -85,6 +85,22 @@ func testNullObject(t *testing.T, obj object.Object) bool {
 	return true
 }
 
+func isNumberObject(t *testing.T, obj object.Object, expected int64) bool {
+	number, ok := obj.(*object.Integer)
+
+	if !ok {
+		t.Errorf("object is not Number. got=%T (%+v", obj, obj)
+		return false
+	}
+
+	if number.Value.IntPart() != expected {
+		t.Errorf("object has wrong value. got=%d, expected=%d", number.Value.IntPart(), expected)
+		return false
+	}
+
+	return true
+}
+
 func TestEvalIntegerExpression(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -317,6 +333,31 @@ func TestFunctionApplication(t *testing.T) {
 	}
 	for _, tt := range tests {
 		testIntegerObject(t, testEval(tt.input), decimal.NewFromInt(tt.expected))
+	}
+}
+
+func TestWhileExpressions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{`pamene (false) { }`, nil},
+		{`nambala n = 0; pamene (n < 10) { n = n + 1 }; n`, 10},
+		{"nambala n = 10; pamene (n > 0) { n = n - 1 }; n", 0},
+		{"nambala n = 0; pamene (n < 10) { n = n + 1 }", nil},
+		{"nambala n = 10; pamene (n > 0) { n = n - 1 }", nil},
+		{"pamene (true) { }", nil},
+	}
+
+	for _, tt := range tests {
+		result := testEval(tt.input)
+		number, ok := tt.expected.(int)
+
+		if ok {
+			isNumberObject(t, result, int64(number))
+		} else {
+			testNullObject(t, result)
+		}
 	}
 }
 

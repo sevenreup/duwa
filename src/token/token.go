@@ -4,25 +4,25 @@ type TokenType string
 
 const (
 	// Single character tokens
-	EOF           = "EOF"
-	MINUS         = "-"
-	ASTERISK      = "*"
-	SLASH         = "/"
-	PLUS          = "+"
-	SEMICOLON     = ";"
-	GREATER_THAN  = ">"
-	LESS_THAN     = "<"
-	ASSIGN        = "="
-	COLON         = ":"
-	COMMA         = ","
-	OPENING_BRACE = "{"
-	CLOSING_BRACE = "}"
-	OPENING_PAREN = "("
-	CLOSING_PAREN = ")"
+	EOF             = "EOF"
+	MINUS           = "-"
+	ASTERISK        = "*"
+	SLASH           = "/"
+	PLUS            = "+"
+	SEMICOLON       = ";"
+	GREATER_THAN    = ">"
+	LESS_THAN       = "<"
+	ASSIGN          = "="
+	COLON           = ":"
+	COMMA           = ","
+	OPENING_BRACE   = "{"
+	CLOSING_BRACE   = "}"
+	OPENING_PAREN   = "("
+	CLOSING_PAREN   = ")"
 	OPENING_BRACKET = "["
 	CLOSING_BRACKET = "]"
-	FULL_STOP     = "."
-	BANG          = "!"
+	FULL_STOP       = "."
+	BANG            = "!"
 
 	// One or two character token
 	GREATER_THAN_OR_EQUAL_TO = ">="
@@ -50,6 +50,8 @@ const (
 	IF       = "IF"
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
+	FOR      = "FOR"
+	WHILE    = "WHILE"
 )
 
 type Position struct {
@@ -72,6 +74,8 @@ var keywords = map[string]TokenType{
 	"kapena":     ELSE,
 	"bweza":      RETURN,
 	"ndondomeko": FUNCTION,
+	"za":         FOR,
+	"pamene":     WHILE,
 }
 
 var variableTypes = map[TokenType]TokenType{
