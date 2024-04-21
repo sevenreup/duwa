@@ -85,6 +85,22 @@ func testNullObject(t *testing.T, obj object.Object) bool {
 	return true
 }
 
+func isErrorObject(t *testing.T, obj object.Object, expected string) bool {
+	err, ok := obj.(*object.Error)
+
+	if !ok {
+		t.Errorf("object is not Error. got=%T (%+v", obj, obj)
+		return false
+	}
+
+	if err.Message != expected {
+		t.Errorf("error has wrong message. got=%s, expected=%s", err.Message, expected)
+		return false
+	}
+
+	return true
+}
+
 func isNumberObject(t *testing.T, obj object.Object, expected int64) bool {
 	number, ok := obj.(*object.Integer)
 
@@ -357,6 +373,28 @@ func TestWhileExpressions(t *testing.T) {
 			isNumberObject(t, result, int64(number))
 		} else {
 			testNullObject(t, result)
+		}
+	}
+}
+
+func TestForExpressions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{`x = 10; za (x = y; x > 0; x = x - 1) { x }`, "identifier not found: y"},
+		{`za (x = 0; x < 10; x = x + 1) { y }`, "identifier not found: y"},
+		{`bar = zoona; za (x = 0; x < 10; x = x + 1) { y; print(bar) }`, "identifier not found: y"},
+	}
+
+	for _, tt := range tests {
+		result := testEval(tt.input)
+		number, ok := tt.expected.(int64)
+
+		if ok {
+			isNumberObject(t, result, number)
+		} else {
+			isErrorObject(t, result, tt.expected.(string))
 		}
 	}
 }

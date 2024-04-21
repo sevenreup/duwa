@@ -13,25 +13,31 @@ func (parser *Parser) parseForExpression() ast.Expression {
 
 	parser.nextToken()
 
-	// parse assignment statement
-	if token.LookupVariableType(parser.curToken.Type) == "" {
-		return nil
-	}
+	if token.LookupVariableType(parser.curToken.Type) != "" {
+		assigmnent := parser.parseVariableDeclarationStatement()
 
-	// TODO: handle assignment statement in for loop
-	assigmnent := parser.parseVariableDeclarationStatement()
+		if assigmnent == nil {
+			return nil
+		}
 
-	expression.Initializer = assigmnent
-	expression.Identifier = assigmnent.Identifier
+		expression.Initializer = assigmnent
+		expression.Identifier = assigmnent.Identifier
+	} else if parser.curTokenIs(token.IDENT) {
+		assigmnent := parser.parseAssignmentStatement()
 
-	if expression.Initializer == nil {
+		if assigmnent == nil {
+			return nil
+		}
+
+		expression.Initializer = assigmnent
+		expression.Identifier = assigmnent.Identifier
+	} else {
 		return nil
 	}
 
 	parser.nextToken()
 
 	// parse condition statement
-
 	expression.Condition = parser.parseExpression(LOWEST)
 	if expression.Condition == nil {
 		return nil

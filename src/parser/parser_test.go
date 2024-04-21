@@ -825,6 +825,11 @@ func TestForExpression(t *testing.T) {
 			expectedIdentifier: "x",
 			incrementIsAssign:  false,
 		},
+		{
+			input:              `nambala x = 0; za (x = 0; x < 10; x++) { true }`,
+			expectedIdentifier: "x",
+			incrementIsAssign:  false,
+		},
 	}
 	for _, tt := range tests {
 		l := lexer.New([]byte(tt.input))
@@ -833,14 +838,16 @@ func TestForExpression(t *testing.T) {
 
 		checkParserErrors(t, p)
 
+		loopIndex := 0
+
 		if len(program.Statements) != 1 {
-			t.Fatalf("program.Statements does not contain 1 Statement. got=%d", len(program.Statements))
+			loopIndex = 1
 		}
 
-		statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+		statement, ok := program.Statements[loopIndex].(*ast.ExpressionStatement)
 
 		if !ok {
-			t.Fatalf("program.Statements[0] is not ast.Expression. got=%T", program.Statements[0])
+			t.Fatalf("program.Statements[%T] is not ast.Expression. got=%T", loopIndex, program.Statements[0])
 		}
 
 		expression, ok := statement.Expression.(*ast.ForExpression)
@@ -853,8 +860,14 @@ func TestForExpression(t *testing.T) {
 			return
 		}
 
-		if _, ok = expression.Initializer.(*ast.VariableDeclarationStatement); !ok {
-			t.Fatalf("expression.Initializer is not ast.Assign. got=%T", expression.Initializer)
+		if loopIndex == 1 {
+			if _, ok = expression.Initializer.(*ast.AssigmentStatement); !ok {
+				t.Fatalf("expression.Initializer is not ast.AssigmentStatement. got=%T", expression.Initializer)
+			}
+		} else {
+			if _, ok = expression.Initializer.(*ast.VariableDeclarationStatement); !ok {
+				t.Fatalf("expression.Initializer is not ast.VariableDeclarationStatement. got=%T", expression.Initializer)
+			}
 		}
 
 		if tt.incrementIsAssign {

@@ -3,6 +3,7 @@ package object
 const ERROR_OBJ = "ERROR"
 
 type Error struct {
+	Object
 	Message string
 }
 
