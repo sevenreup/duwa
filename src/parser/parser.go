@@ -2,14 +2,16 @@ package parser
 
 import (
 	"fmt"
+
 	"github.com/sevenreup/chewa/src/ast"
 	"github.com/sevenreup/chewa/src/lexer"
 	"github.com/sevenreup/chewa/src/token"
 )
 
 type (
-	prefixParseFn func() ast.Expression
-	infixParseFn  func(ast.Expression) ast.Expression
+	prefixParseFn   func() ast.Expression
+	infixParseFn    func(ast.Expression) ast.Expression
+	postfixParserFn func() ast.Expression
 )
 
 const (
@@ -46,11 +48,13 @@ type Parser struct {
 
 	errors []string
 
-	curToken  token.Token
-	peekToken token.Token
+	previousToken token.Token
+	curToken      token.Token
+	peekToken     token.Token
 
-	prefixParseFns map[token.TokenType]prefixParseFn
-	infixParseFns  map[token.TokenType]infixParseFn
+	prefixParseFns   map[token.TokenType]prefixParseFn
+	infixParseFns    map[token.TokenType]infixParseFn
+	postfixParserFns map[token.TokenType]postfixParserFn
 }
 
 func New(l *lexer.Lexer) *Parser {
@@ -65,6 +69,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.FALSE, p.parseBoolean)
 	p.registerPrefix(token.OPENING_PAREN, p.parseGroupedExpression)
 	p.registerPrefix(token.IF, p.parseIfExpression)
+	p.registerPrefix(token.FOR, p.parseForExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.STR, p.parseStringLiteral)
 	p.registerPrefix(token.OPENING_BRACKET, p.parseArrayLiteral)
@@ -81,6 +86,15 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.GREATER_THAN, p.parseInfixExpression)
 	p.registerInfix(token.OPENING_PAREN, p.parseCallExpression)
 	p.registerInfix(token.OPENING_BRACKET, p.parseIndexExpression)
+	p.registerInfix(token.PLUS_EQUAL, p.parseCompoundExpression)
+	p.registerInfix(token.MINUS_EQUAL, p.parseCompoundExpression)
+	p.registerInfix(token.STAR_EQUAL, p.parseCompoundExpression)
+	p.registerInfix(token.SLASH_EQUAL, p.parseCompoundExpression)
+
+	// Register all of our postfix parse functions
+	p.postfixParserFns = make(map[token.TokenType]postfixParserFn)
+	p.registerPostfix(token.PLUS_PLUS, p.parsePostfixExpression)
+	p.registerPostfix(token.MINUS_MINUS, p.parsePostfixExpression)
 
 	p.nextToken()
 	p.nextToken()
@@ -99,6 +113,7 @@ func (p *Parser) peekError(t token.TokenType) {
 }
 
 func (p *Parser) nextToken() {
+	p.previousToken = p.curToken
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 }
@@ -143,6 +158,10 @@ func (p *Parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
 
 func (p *Parser) registerInfix(tokenType token.TokenType, fn infixParseFn) {
 	p.infixParseFns[tokenType] = fn
+}
+
+func (parser *Parser) registerPostfix(tokenType token.TokenType, fn postfixParserFn) {
+	parser.postfixParserFns[tokenType] = fn
 }
 
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {

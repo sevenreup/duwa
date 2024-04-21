@@ -29,6 +29,12 @@ const (
 	LESS_THAN_OR_EQUAL_TO    = "<="
 	EQUAL_TO                 = "=="
 	NOT_EQUAL_TO             = "!="
+	MINUS_EQUAL              = "-="
+	SLASH_EQUAL              = "/="
+	STAR_EQUAL               = "*="
+	PLUS_EQUAL               = "+="
+	PLUS_PLUS               = "++"
+	MINUS_MINUS               = "--"
 
 	ILLEGAL
 

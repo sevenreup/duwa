@@ -49,8 +49,24 @@ func (l *Lexer) NextToken() token.Token {
 		case '"', '\'':
 			return l.ReadString()
 		case '+':
+			nextRune := l.Peek()
+			if nextRune == '+' {
+				l.Next()
+				return newToken(l.pos, token.PLUS_PLUS, "++")
+			} else if nextRune == '=' {
+				l.Next()
+				return newToken(l.pos, token.PLUS_EQUAL, "+=")
+			}
 			return newToken(l.pos, token.PLUS, "+")
 		case '-':
+			nextRune := l.Peek()
+			if nextRune == '-' {
+				l.Next()
+				return newToken(l.pos, token.MINUS_MINUS, "--")
+			} else if nextRune == '=' {
+				l.Next()
+				return newToken(l.pos, token.MINUS_EQUAL, "-=")
+			}
 			return newToken(l.pos, token.MINUS, "-")
 		case ':':
 			return newToken(l.pos, token.COLON, ":")
@@ -82,6 +98,9 @@ func (l *Lexer) NextToken() token.Token {
 				}
 				builder.WriteString("*/")
 				return newToken(l.pos, token.MULTILINE_COMMENT, builder.String())
+			} else if nextRune == '=' {
+				l.Next()
+				return newToken(l.pos, token.SLASH_EQUAL, "/=")
 			}
 			return newToken(l.pos, token.SLASH, "/")
 		case '{':
@@ -129,6 +148,11 @@ func (l *Lexer) NextToken() token.Token {
 			}
 			return newToken(l.pos, token.BANG, "!")
 		case '*':
+			nextRune := l.Peek()
+			if nextRune == '=' {
+				l.Next()
+				return newToken(l.pos, token.STAR_EQUAL, "*=")
+			}
 			return newToken(l.pos, token.ASTERISK, "*")
 		default:
 			if unicode.IsSpace(r) {

@@ -144,6 +144,7 @@ func TestAssignmentStatements(t *testing.T) {
 		expectedValue      interface{}
 	}{
 		{"nambala x = 5;", "x", 5},
+		{"x = 5;", "x", 5},
 		{"nambala y = zoona;", "y", true},
 		{"nambala foobar = y;", "foobar", "y"},
 	}
@@ -795,3 +796,45 @@ func TestMethodCall(t *testing.T) {
 }
 
 // TODO: Add method calls tests with infix operation
+
+func TestForExpression(t *testing.T) {
+	input := `za (nambala x = 0; x < 10; x = x + 1) { true }`
+
+	l := lexer.New([]byte(input))
+	p := New(l)
+	program := p.ParseProgram()
+
+	checkParserErrors(t, p)
+
+	if len(program.Statements) != 1 {
+		t.Fatalf("program.Statements does not contain 1 Statement. got=%d", len(program.Statements))
+	}
+
+	statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.Expression. got=%T", program.Statements[0])
+	}
+
+	expression, ok := statement.Expression.(*ast.ForExpression)
+
+	if !ok {
+		t.Fatalf("statement.Expression is not ast.For. got=%T", statement.Expression)
+	}
+
+	if !testIdentifier(t, expression.Identifier, "x") {
+		return
+	}
+
+	if _, ok = expression.Initializer.(*ast.AssigmentStatement); !ok {
+		t.Fatalf("expression.Initializer is not ast.Assign. got=%T", expression.Initializer)
+	}
+
+	if _, ok = expression.Increment.(*ast.AssigmentStatement); !ok {
+		t.Fatalf("expression.Increment is not ast.Assign. got=%T", expression.Increment)
+	}
+
+	if _, ok = expression.Block.Statements[0].(ast.Expression); !ok {
+		t.Fatalf("expression.Block.Statements[0] is not ast.Expression. got=%T", expression.Block.Statements[0])
+	}
+}
