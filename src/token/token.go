@@ -33,8 +33,8 @@ const (
 	SLASH_EQUAL              = "/="
 	STAR_EQUAL               = "*="
 	PLUS_EQUAL               = "+="
-	PLUS_PLUS               = "++"
-	MINUS_MINUS               = "--"
+	PLUS_PLUS                = "++"
+	MINUS_MINUS              = "--"
 
 	ILLEGAL
 
@@ -93,8 +93,7 @@ func LookupVariableType(ident TokenType) TokenType {
 	if tok, ok := variableTypes[ident]; ok {
 		return tok
 	}
-	// TODO: Return an error
-	return IDENT
+	return ""
 }
 
 func LookupIdent(ident string) TokenType {

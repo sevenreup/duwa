@@ -14,14 +14,14 @@ func (parser *Parser) parseForExpression() ast.Expression {
 	parser.nextToken()
 
 	// parse assignment statement
-	if token.LookupVariableType(parser.curToken.Type) == token.IDENT {
+	if token.LookupVariableType(parser.curToken.Type) == "" {
 		return nil
 	}
 
 	assigmnent := parser.parseAssignmentStatement()
 
 	expression.Initializer = assigmnent
-	expression.Identifier = assigmnent.Name
+	expression.Identifier = assigmnent.Identifier
 
 	if expression.Initializer == nil {
 		return nil

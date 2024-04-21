@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+
 	"github.com/sevenreup/chewa/src/ast"
 	"github.com/sevenreup/chewa/src/object"
 )
@@ -47,12 +48,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.ReturnValue{Value: val}
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
+	case *ast.VariableDeclarationStatement:
+		return evaluateDeclaration(node, env)
 	case *ast.AssigmentStatement:
-		val := Eval(node.Value, env)
-		if isError(val) {
-			return val
-		}
-		env.Set(node.Name.Value, val)
+		return evaluateAssigment(node, env)
 	case *ast.FunctionLiteral:
 		function := &object.Function{Parameters: node.Parameters, Env: env, Body: node.Body}
 		if node.Name != nil {

@@ -6,8 +6,11 @@ import (
 )
 
 func (p *Parser) parseStatement() ast.Statement {
-	if token.LookupVariableType(p.curToken.Type) != token.IDENT {
+	if p.curToken.Type == token.IDENT && p.peekTokenIs(token.ASSIGN) {
 		return p.parseAssignmentStatement()
+	}
+	if token.LookupVariableType(p.curToken.Type) != "" {
+		return p.parseVariableDeclarationStatement()
 	}
 	switch p.curToken.Type {
 	case token.RETURN:

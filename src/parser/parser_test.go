@@ -2,8 +2,9 @@ package parser
 
 import (
 	"fmt"
-	"github.com/shopspring/decimal"
 	"testing"
+
+	"github.com/shopspring/decimal"
 
 	"github.com/sevenreup/chewa/src/ast"
 	"github.com/sevenreup/chewa/src/lexer"
@@ -137,16 +138,17 @@ func testBooleanLiteral(t *testing.T, exp ast.Expression, value bool) bool {
 	return true
 }
 
-func TestAssignmentStatements(t *testing.T) {
+func TestDeclerationAndAssignmentStatements(t *testing.T) {
 	tests := []struct {
 		input              string
 		expectedIdentifier string
+		expectedType       string
 		expectedValue      interface{}
 	}{
-		{"nambala x = 5;", "x", 5},
-		{"x = 5;", "x", 5},
-		{"nambala y = zoona;", "y", true},
-		{"nambala foobar = y;", "foobar", "y"},
+		{"nambala x = 5;", "x", "nambala", 5},
+		{"x = 5;", "x", "", 5},
+		{"nambala y = zoona;", "y", "nambala", true},
+		{"nambala foobar = y;", "foobar", "nambala", "y"},
 	}
 	for _, tt := range tests {
 		l := lexer.New([]byte(tt.input))
@@ -158,35 +160,45 @@ func TestAssignmentStatements(t *testing.T) {
 				len(program.Statements))
 		}
 		stmt := program.Statements[0]
-		if !testAssignmentStatement(t, stmt, tt.expectedIdentifier) {
-			return
-		}
-		val := stmt.(*ast.AssigmentStatement).Value
-		if !testLiteralExpression(t, val, tt.expectedValue, true) {
+		if !testDeclarationOrAssignmentStatement(t, stmt, tt.expectedIdentifier, tt.expectedType, tt.expectedValue) {
 			return
 		}
 	}
 }
 
-func testAssignmentStatement(t *testing.T, s ast.Statement, name string) bool {
-	if s.TokenLiteral() != "nambala" {
-		t.Errorf("s.TokenLiteral not 'nambala'. got=%q", s.TokenLiteral())
-		return false
+func testDeclarationOrAssignmentStatement(t *testing.T, s ast.Statement, name string, varType string, value interface{}) bool {
+	switch statement := s.(type) {
+	case *ast.AssigmentStatement:
+		{
+			if statement.Identifier.Value != name {
+				t.Errorf("AssigmentStatement.Name.Value not '%s'. got=%s", name, statement.Identifier.Value)
+				return false
+			}
+			if statement.Identifier.TokenLiteral() != name {
+				t.Errorf("s.Name not '%s'. got=%s", name, statement.Identifier.Value)
+				return false
+			}
+			return testLiteralExpression(t, statement.Value, value, true)
+		}
+	case *ast.VariableDeclarationStatement:
+		{
+			if statement.Type.Literal != varType {
+				t.Errorf("s.TokenLiteral not '%s'. got=%q", varType, statement.Type.Literal)
+				return false
+			}
+			if statement.Identifier.Value != name {
+				t.Errorf("VariableDeclarationStatement.Name.Value not '%s'. got=%s", name, statement.Identifier.Value)
+				return false
+			}
+			if statement.Identifier.TokenLiteral() != name {
+				t.Errorf("s.Name not '%s'. got=%s", name, statement.Identifier.Value)
+				return false
+			}
+			return testLiteralExpression(t, statement.Value, value, true)
+		}
 	}
-	letStmt, ok := s.(*ast.AssigmentStatement)
-	if !ok {
-		t.Errorf("s not *ast.LetStatement. got=%T", s)
-		return false
-	}
-	if letStmt.Name.Value != name {
-		t.Errorf("letStmt.Name.Value not '%s'. got=%s", name, letStmt.Name.Value)
-		return false
-	}
-	if letStmt.Name.TokenLiteral() != name {
-		t.Errorf("s.Name not '%s'. got=%s", name, letStmt.Name.Value)
-		return false
-	}
-	return true
+	t.Errorf("s not *ast.AssigmentStatement or *ast.VariableDeclarationStatement. got=%T", s)
+	return false
 }
 
 func TestReturnStatements(t *testing.T) {
