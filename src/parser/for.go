@@ -18,7 +18,8 @@ func (parser *Parser) parseForExpression() ast.Expression {
 		return nil
 	}
 
-	assigmnent := parser.parseAssignmentStatement()
+	// TODO: handle assignment statement in for loop
+	assigmnent := parser.parseVariableDeclarationStatement()
 
 	expression.Initializer = assigmnent
 	expression.Identifier = assigmnent.Identifier

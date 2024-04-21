@@ -4,14 +4,14 @@ import (
 	"github.com/sevenreup/chewa/src/token"
 )
 
-type Postfix struct {
+type PostfixExpression struct {
 	Token    token.Token
 	Operator string
 }
 
-func (pe *Postfix) TokenLiteral() string { return pe.Token.Literal }
+func (pe *PostfixExpression) TokenLiteral() string { return pe.Token.Literal }
 
 // TODO: Print this one properly
-func (pe *Postfix) String() string {
+func (pe *PostfixExpression) String() string {
 	return ""
 }

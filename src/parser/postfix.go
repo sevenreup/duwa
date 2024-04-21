@@ -5,7 +5,7 @@ import (
 )
 
 func (parser *Parser) parsePostfixExpression() ast.Expression {
-	return &ast.Postfix{
+	return &ast.PostfixExpression{
 		Token:    parser.previousToken,
 		Operator: parser.curToken.Literal,
 	}
