@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	file, err := os.ReadFile("./examples/fibonacci.ny")
+	file, err := os.ReadFile("./examples/array.ny")
 	if err != nil {
 		log.Fatal(err)
 	}
