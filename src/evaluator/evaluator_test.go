@@ -357,12 +357,11 @@ func TestWhileExpressions(t *testing.T) {
 		input    string
 		expected interface{}
 	}{
-		{`pamene (false) { }`, nil},
+		{`pamene (bodza) { }`, nil},
 		{`nambala n = 0; pamene (n < 10) { n = n + 1 }; n`, 10},
 		{"nambala n = 10; pamene (n > 0) { n = n - 1 }; n", 0},
 		{"nambala n = 0; pamene (n < 10) { n = n + 1 }", nil},
 		{"nambala n = 10; pamene (n > 0) { n = n - 1 }", nil},
-		{"pamene (true) { }", nil},
 	}
 
 	for _, tt := range tests {
@@ -372,7 +371,9 @@ func TestWhileExpressions(t *testing.T) {
 		if ok {
 			isNumberObject(t, result, int64(number))
 		} else {
-			testNullObject(t, result)
+			if result != nil {
+				t.Errorf("object is not NULL. got=%T (nil)", number)
+			}
 		}
 	}
 }

@@ -80,6 +80,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evaluateMethod(node, env)
 	case *ast.ForExpression:
 		return evalForLoop(node, env)
+	case *ast.WhileExpression:
+		return evaluateWhile(node, env)
 	// Expressions
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}

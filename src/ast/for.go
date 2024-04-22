@@ -3,6 +3,7 @@ package ast
 import "github.com/sevenreup/chewa/src/token"
 
 type ForExpression struct {
+	Expression
 	Token       token.Token
 	Identifier  *Identifier
 	Initializer Statement
