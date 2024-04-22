@@ -1,11 +1,23 @@
 package evaluator
 
-import "github.com/sevenreup/chewa/src/object"
+import (
+	"github.com/sevenreup/chewa/src/ast"
+	"github.com/sevenreup/chewa/src/object"
+)
 
 func evalInfixExpression(
-	operator string,
-	left, right object.Object,
+	node *ast.InfixExpression,
+	env *object.Environment,
 ) object.Object {
+	left := Eval(node.Left, env)
+	if isError(left) {
+		return left
+	}
+	right := Eval(node.Right, env)
+	if isError(right) {
+		return right
+	}
+	operator := node.Operator
 	switch {
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)

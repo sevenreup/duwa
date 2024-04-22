@@ -6,10 +6,10 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func evaluatePostfix(node *ast.PostfixExpression, scope *object.Environment) object.Object {
+func evaluatePostfix(node *ast.PostfixExpression, env *object.Environment) object.Object {
 	switch node.Operator {
 	case "++":
-		value, ok := scope.Get(node.Token.Literal)
+		value, ok := env.Get(node.Token.Literal)
 
 		if !ok {
 			return newError("%d:%d:%s: runtime error: identifier not found: %s", node.Token.Pos.Line, node.Token.Pos.Column, node.Token.File, node.Token.Literal)
@@ -25,11 +25,11 @@ func evaluatePostfix(node *ast.PostfixExpression, scope *object.Environment) obj
 			Value: value.(*object.Integer).Value.Add(one),
 		}
 
-		scope.Set(node.Token.Literal, newValue)
+		env.Set(node.Token.Literal, newValue)
 
 		return newValue
 	case "--":
-		value, ok := scope.Get(node.Token.Literal)
+		value, ok := env.Get(node.Token.Literal)
 
 		if !ok {
 			return newError("%d:%d:%s: runtime error: identifier not found: %s", node.Token.Pos.Line, node.Token.Pos.Column, node.Token.File, node.Token.Literal)
@@ -45,7 +45,7 @@ func evaluatePostfix(node *ast.PostfixExpression, scope *object.Environment) obj
 			Value: value.(*object.Integer).Value.Sub(one),
 		}
 
-		scope.Set(node.Token.Literal, newValue)
+		env.Set(node.Token.Literal, newValue)
 
 		return newValue
 	default:

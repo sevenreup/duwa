@@ -13,7 +13,7 @@ func init() {
 	RegisterMethod(ConsoleMethods, "lemba", consolePrint)
 }
 
-func consolePrint(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
+func consolePrint(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	values := make([]string, 0)
 
 	for _, value := range args {

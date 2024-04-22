@@ -27,15 +27,9 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 		return evalPrefixExpression(node.Operator, right)
 	case *ast.InfixExpression:
-		left := Eval(node.Left, env)
-		if isError(left) {
-			return left
-		}
-		right := Eval(node.Right, env)
-		if isError(right) {
-			return right
-		}
-		return evalInfixExpression(node.Operator, left, right)
+		return evalInfixExpression(node, env)
+	case *ast.Compound:
+		return evaluateCompound(node, env)
 	case *ast.BlockStatement:
 		return evalBlockStatement(node, env)
 	case *ast.IfExpression:

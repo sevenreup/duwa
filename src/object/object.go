@@ -14,5 +14,5 @@ type HasMethods interface {
 	Method(method string, args []Object) (Object, bool)
 }
 
-type GoFunction func(scope *Environment, tok token.Token, args ...Object) Object
-type GoProperty func(scope *Environment, tok token.Token) Object
+type GoFunction func(env *Environment, tok token.Token, args ...Object) Object
+type GoProperty func(env *Environment, tok token.Token) Object

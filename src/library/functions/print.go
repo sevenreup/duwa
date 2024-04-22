@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func Print(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
+func Print(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) > 0 {
 		str := make([]string, 0)
 
