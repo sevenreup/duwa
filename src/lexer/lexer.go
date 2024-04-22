@@ -74,7 +74,7 @@ func (l *Lexer) NextToken() token.Token {
 			nextRune := l.Peek()
 			if nextRune == '/' {
 				l.Next()
-				return l.ReadComment()
+				l.ReadComment()
 			} else if nextRune == '*' {
 				var builder strings.Builder
 				builder.WriteString("/")
@@ -97,12 +97,13 @@ func (l *Lexer) NextToken() token.Token {
 					builder.WriteString(string(r))
 				}
 				builder.WriteString("*/")
-				return newToken(l.pos, token.MULTILINE_COMMENT, builder.String())
+				newToken(l.pos, token.MULTILINE_COMMENT, builder.String())
 			} else if nextRune == '=' {
 				l.Next()
 				return newToken(l.pos, token.SLASH_EQUAL, "/=")
+			} else {
+				return newToken(l.pos, token.SLASH, "/")
 			}
-			return newToken(l.pos, token.SLASH, "/")
 		case '{':
 			return newToken(l.pos, token.OPENING_BRACE, "{")
 		case '}':
@@ -279,7 +280,8 @@ func (l *Lexer) resetPosition() {
 }
 
 func newToken(pos token.Position, tokenType token.TokenType, ch string) token.Token {
-	return token.Token{Type: tokenType, Literal: ch, Pos: pos}
+	// TODO: Add file name
+	return token.Token{Type: tokenType, Literal: ch, Pos: pos, File: ""}
 }
 
 func (l *Lexer) AccumTokens() []TokenInfo {

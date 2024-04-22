@@ -29,17 +29,23 @@ const (
 )
 
 var precedences = map[token.TokenType]int{
-	token.EQUAL_TO:        EQUALS,
-	token.NOT_EQUAL_TO:    EQUALS,
-	token.LESS_THAN:       LESSGREATER,
-	token.GREATER_THAN:    LESSGREATER,
-	token.PLUS:            SUM,
-	token.MINUS:           SUM,
-	token.SLASH:           PRODUCT,
-	token.ASTERISK:        PRODUCT,
-	token.OPENING_PAREN:   CALL,
-	token.OPENING_BRACKET: INDEX,
-	token.FULL_STOP:       INDEX,
+	token.EQUAL_TO:                 EQUALS,
+	token.NOT_EQUAL_TO:             EQUALS,
+	token.LESS_THAN:                LESSGREATER,
+	token.LESS_THAN_OR_EQUAL_TO:    LESSGREATER,
+	token.GREATER_THAN:             LESSGREATER,
+	token.GREATER_THAN_OR_EQUAL_TO: LESSGREATER,
+	token.PLUS:                     SUM,
+	token.MINUS:                    SUM,
+	token.SLASH:                    PRODUCT,
+	token.ASTERISK:                 PRODUCT,
+	token.OPENING_PAREN:            CALL,
+	token.OPENING_BRACKET:          INDEX,
+	token.FULL_STOP:                INDEX,
+	token.PLUS_EQUAL:               SUM,
+	token.MINUS_EQUAL:              SUM,
+	token.STAR_EQUAL:               PRODUCT,
+	token.SLASH_EQUAL:              PRODUCT,
 }
 
 // Pratt parser
@@ -83,8 +89,10 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.FULL_STOP, p.dotExpression)
 	p.registerInfix(token.EQUAL_TO, p.parseInfixExpression)
 	p.registerInfix(token.NOT_EQUAL_TO, p.parseInfixExpression)
-	p.registerInfix(token.LESS_THAN, p.parseInfixExpression)
 	p.registerInfix(token.GREATER_THAN, p.parseInfixExpression)
+	p.registerInfix(token.GREATER_THAN_OR_EQUAL_TO, p.parseInfixExpression)
+	p.registerInfix(token.LESS_THAN, p.parseInfixExpression)
+	p.registerInfix(token.LESS_THAN_OR_EQUAL_TO, p.parseInfixExpression)
 	p.registerInfix(token.OPENING_PAREN, p.parseCallExpression)
 	p.registerInfix(token.OPENING_BRACKET, p.parseIndexExpression)
 	p.registerInfix(token.PLUS_EQUAL, p.parseCompoundExpression)

@@ -69,6 +69,7 @@ type Token struct {
 	Type    TokenType
 	Literal string
 	Pos     Position
+	File	string
 }
 
 var keywords = map[string]TokenType{

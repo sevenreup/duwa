@@ -1,23 +1,24 @@
 // Iterative Algorithm
-
+console.lemba("Here is the Fibonacci Series: ");
 ndondomeko fibonacci(n) {
-    ngati(n <= 1)
-    {
-        bweza n;
-    }
-    nambala n2 = 0;
-    nambala n1 = 1;
+    nambala a = 0;
+    nambala b = 1;
+    nambala c = 0;
+    nambala i = 0;
 
-    za(nambala i = 2; i <= n; i++) {
-        n2, n1 = n1, n1+n2
+    za(i = 2; i <= n; i++) {
+        c = a + b;
+        a = b;
+        b = c;
     }
 
-    return n1;
+    bweza b;
 }
 
 // Recursive Algorithm
 
 
 // Dynamic Programming Algorithm
-
-console.lemba(fibonacci(9));
+nambala value = fibonacci(9);
+console.lemba("\n");
+console.lemba(value);

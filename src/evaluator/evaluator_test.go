@@ -159,6 +159,8 @@ func TestEvalBooleanExpression(t *testing.T) {
 		{"1 != 1", false},
 		{"1 == 2", false},
 		{"1 != 2", true},
+		{"1 >= 2", false},
+		{"1 <= 2", true},
 		{"zoona == zoona", true},
 		{"bodza == bodza", true},
 		{"zoona == bodza", false},
@@ -359,7 +361,9 @@ func TestWhileExpressions(t *testing.T) {
 	}{
 		{`pamene (bodza) { }`, nil},
 		{`nambala n = 0; pamene (n < 10) { n = n + 1 }; n`, 10},
+		{`nambala n = 0; pamene (n < 10) { n++ }; n`, 10},
 		{"nambala n = 10; pamene (n > 0) { n = n - 1 }; n", 0},
+		{"nambala n = 10; pamene (n > 0) { n-- }; n", 0},
 		{"nambala n = 0; pamene (n < 10) { n = n + 1 }", nil},
 		{"nambala n = 10; pamene (n > 0) { n = n - 1 }", nil},
 	}

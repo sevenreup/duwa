@@ -19,8 +19,12 @@ func evalIntegerInfixExpression(
 		return &object.Integer{Value: leftVal.Div(rightVal)}
 	case "<":
 		return nativeBoolToBooleanObject(leftVal.LessThan(rightVal))
+	case "<=":
+		return nativeBoolToBooleanObject(leftVal.LessThanOrEqual(rightVal))
 	case ">":
 		return nativeBoolToBooleanObject(leftVal.GreaterThan(rightVal))
+	case ">=":
+		return nativeBoolToBooleanObject(leftVal.GreaterThanOrEqual(rightVal))
 	case "==":
 		return nativeBoolToBooleanObject(leftVal.Equal(rightVal))
 	case "!=":
