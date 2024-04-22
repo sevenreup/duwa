@@ -17,8 +17,14 @@ ndondomeko fibonacci(n) {
 
 // Recursive Algorithm
 
+ndondomeko fibonacciRecursive(n) {
+    ngati (n <= 1) {
+        bweza n;
+    }
+    bweza fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2);
+}
 
-// Dynamic Programming Algorithm
-nambala value = fibonacci(9);
 console.lemba("\n");
-console.lemba(value);
+console.lemba(fibonacci(9));
+console.lemba("\n");
+console.lemba(fibonacciRecursive(9));
