@@ -6,8 +6,8 @@ func evalStringInfixExpression(
 	operator string,
 	left, right object.Object,
 ) object.Object {
-	leftVal := left.(*object.String).Value
-	rightVal := right.(*object.String).Value
+	leftVal := _getString(left)
+	rightVal := _getString(right)
 	switch operator {
 	case "+":
 		return &object.String{Value: leftVal + rightVal}
@@ -17,4 +17,11 @@ func evalStringInfixExpression(
 		return newError("unknown operator: %s %s %s",
 			left.Type(), operator, right.Type())
 	}
+}
+
+func _getString(item object.Object) string {
+	if item.Type() == object.STRING_OBJ {
+		return item.(*object.String).Value
+	}
+	return item.Inspect()
 }

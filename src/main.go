@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/sevenreup/chewa/src/evaluator"
 	"github.com/sevenreup/chewa/src/object"
 	"github.com/sevenreup/chewa/src/utils"
@@ -24,9 +23,5 @@ func main() {
 	if len(p.Errors()) != 0 {
 		utils.PrintParserErrors(os.Stdout, p.Errors())
 	}
-	evaluated := evaluator.Eval(program, env)
-	if evaluated != nil {
-		fmt.Print(evaluated.Inspect())
-		fmt.Print("\n")
-	}
+	evaluator.Eval(program, env)
 }

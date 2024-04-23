@@ -423,27 +423,38 @@ func TestClosures(t *testing.T) {
 	testIntegerObject(t, testEval(input), decimal.NewFromInt(4))
 }
 
-func TestStringLiteral(t *testing.T) {
-	input := `"Hello World!"`
-	evaluated := testEval(input)
-	str, ok := evaluated.(*object.String)
-	if !ok {
-		t.Fatalf("object is not String. got=%T (%+v)", evaluated, evaluated)
+func TestStrings(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{
+			input:    `"Hello" + " " + "World!"`,
+			expected: "Hello World!",
+		},
+		{
+			input:    `"Hello" + " " + "World" + "!"`,
+			expected: `Hello World!`,
+		},
+		{
+			input:    `"Hello" + 3`,
+			expected: "Hello3",
+		},
+		{
+			input:    `"Hello" + 3 + " " + "World" + "!"`,
+			expected: "Hello3 World!",
+		},
 	}
-	if str.Value != "Hello World!" {
-		t.Errorf("String has wrong value. got=%q", str.Value)
-	}
-}
 
-func TestStringConcatenation(t *testing.T) {
-	input := `"Hello" + " " + "World!"`
-	evaluated := testEval(input)
-	str, ok := evaluated.(*object.String)
-	if !ok {
-		t.Fatalf("object is not String. got=%T (%+v)", evaluated, evaluated)
-	}
-	if str.Value != "Hello World!" {
-		t.Errorf("String has wrong value. got=%q", str.Value)
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		str, ok := evaluated.(*object.String)
+		if !ok {
+			t.Fatalf("object is not String. got=%T (%+v)", evaluated, evaluated)
+		}
+		if str.Value != tt.expected {
+			t.Errorf("String has wrong value. got=%q (%+v)", str.Value, tt.expected)
+		}
 	}
 }
 

@@ -2,9 +2,11 @@ package modules
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/sevenreup/chewa/src/object"
 	"github.com/sevenreup/chewa/src/token"
-	"strings"
 )
 
 var ConsoleMethods = map[string]*object.LibraryFunction{}
@@ -30,7 +32,7 @@ func libPrint(values []string) {
 		str := make([]string, 0)
 
 		str = append(str, values...)
-
-		fmt.Print(strings.Join(str, " "))
+		strRaw, _ := strconv.Unquote(`"` + strings.Join(str, " ") + `"`)
+		fmt.Print(strRaw)
 	}
 }
