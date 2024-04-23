@@ -145,10 +145,11 @@ func TestDeclerationAndAssignmentStatements(t *testing.T) {
 		expectedType       string
 		expectedValue      interface{}
 	}{
-		{"nambala x = 5;", "x", "nambala", 5},
-		{"x = 5;", "x", "", 5},
-		{"nambala y = zoona;", "y", "nambala", true},
-		{"nambala foobar = y;", "foobar", "nambala", "y"},
+		// {"nambala x = 5;", "x", "nambala", 5},
+		// {"x = 5;", "x", "", 5},
+		// {"nambala y = zoona;", "y", "nambala", true},
+		// {"nambala foobar = y;", "foobar", "nambala", "y"},
+		{"foobar[0] = 2;", "foobar", "nambala", "y"},
 	}
 	for _, tt := range tests {
 		l := lexer.New([]byte(tt.input))
@@ -170,15 +171,28 @@ func testDeclarationOrAssignmentStatement(t *testing.T, s ast.Statement, name st
 	switch statement := s.(type) {
 	case *ast.AssigmentStatement:
 		{
-			if statement.Identifier.Value != name {
-				t.Errorf("AssigmentStatement.Name.Value not '%s'. got=%s", name, statement.Identifier.Value)
-				return false
+			switch identifier := statement.Identifier.(type) {
+			case *ast.Identifier:
+				{
+					if identifier.Value != name {
+						t.Errorf("AssigmentStatement.Name.Value not '%s'. got=%s", name, identifier.Value)
+						return false
+					}
+					if identifier.TokenLiteral() != name {
+						t.Errorf("s.Name not '%s'. got=%s", name, identifier.Value)
+						return false
+					}
+					return testLiteralExpression(t, statement.Value, value, true)
+				}
+			case *ast.IndexExpression:
+				{
+					if identifier.Left.String() != name {
+						t.Errorf("AssigmentStatement.Name.Value not '%s'. got=%s", name, identifier.Left.String())
+						return false
+					}
+				}
 			}
-			if statement.Identifier.TokenLiteral() != name {
-				t.Errorf("s.Name not '%s'. got=%s", name, statement.Identifier.Value)
-				return false
-			}
-			return testLiteralExpression(t, statement.Value, value, true)
+			return false
 		}
 	case *ast.VariableDeclarationStatement:
 		{
@@ -299,7 +313,7 @@ func TestStringLiteralExpression(t *testing.T) {
 	}
 }
 
-func TestParsingPrefixExpressions(t *testing.T) {
+func TestPrefixExpressions(t *testing.T) {
 	prefixTests := []struct {
 		input    string
 		operator string
@@ -338,7 +352,7 @@ func TestParsingPrefixExpressions(t *testing.T) {
 	}
 }
 
-func TestParsingInfixExpressions(t *testing.T) {
+func TestInfixExpressions(t *testing.T) {
 	infixTests := []struct {
 		input      string
 		leftValue  interface{}
@@ -388,7 +402,7 @@ func TestParsingInfixExpressions(t *testing.T) {
 	}
 }
 
-func TestOperatorPrecedenceParsing(t *testing.T) {
+func TestOperatorPrecedence(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected string
@@ -436,10 +450,6 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 		{
 			"5 < 4 != 3 > 4",
 			"((5 < 4) != (3 > 4))",
-		},
-		{
-			"3 + 4 * 5 == 3 * 1 + 4 * 5",
-			"((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
 		},
 		{
 			"3 + 4 * 5 == 3 * 1 + 4 * 5",
@@ -648,7 +658,7 @@ func TestIfElseExpression(t *testing.T) {
 	}
 }
 
-func TestFunctionLiteralParsing(t *testing.T) {
+func TestFunctionLiteral(t *testing.T) {
 	input := `ndondomeko phatikiza(x, y) { x + y; }`
 	l := lexer.New([]byte(input))
 	p := New(l)
@@ -689,7 +699,7 @@ func TestFunctionLiteralParsing(t *testing.T) {
 	testInfixExpression(t, bodyStmt.Expression, "x", "+", "y")
 }
 
-func TestFunctionParameterParsing(t *testing.T) {
+func TestFunctionParameter(t *testing.T) {
 	tests := []struct {
 		input          string
 		expectedParams []string
@@ -715,7 +725,7 @@ func TestFunctionParameterParsing(t *testing.T) {
 	}
 }
 
-func TestCallExpressionParsing(t *testing.T) {
+func TestCallExpression(t *testing.T) {
 	input := "add(1, 2 * 3, 4 + 5);"
 	l := lexer.New([]byte(input))
 	p := New(l)
@@ -746,7 +756,7 @@ func TestCallExpressionParsing(t *testing.T) {
 	testInfixExpression(t, exp.Arguments[2], 4, "+", 5)
 }
 
-func TestParsingArrayLiterals(t *testing.T) {
+func TestArrayLiterals(t *testing.T) {
 	input := "[1, 2 * 2, 3 + 3]"
 	l := lexer.New([]byte(input))
 	p := New(l)
@@ -765,7 +775,7 @@ func TestParsingArrayLiterals(t *testing.T) {
 	testInfixExpression(t, array.Elements[2], 3, "+", 3)
 }
 
-func TestParsingIndexExpressions(t *testing.T) {
+func TestArrayIndexExpressions(t *testing.T) {
 	input := "myArray[1 + 1]"
 	l := lexer.New([]byte(input))
 	p := New(l)

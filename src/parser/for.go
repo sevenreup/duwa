@@ -30,13 +30,19 @@ func (parser *Parser) parseForExpression() ast.Expression {
 		}
 
 		expression.Initializer = assigmnent
-		expression.Identifier = assigmnent.Identifier
+		switch identifier := assigmnent.Identifier.(type) {
+		case *ast.Identifier:
+			{
+				expression.Identifier = identifier
+			}
+
+		}
 	} else {
 		return nil
 	}
 
 	parser.nextToken()
-
+	
 	// parse condition statement
 	expression.Condition = parser.parseExpression(LOWEST)
 	if expression.Condition == nil {

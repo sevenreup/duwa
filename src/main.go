@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	file, err := os.ReadFile("./examples/array.ny")
+	file, err := os.ReadFile("./examples/sorting.ny")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -6,12 +6,12 @@ import (
 )
 
 type IndexExpression struct {
+	Expression
+	AssignmentNode
 	Token token.Token // The [ token
 	Left  Expression
 	Index Expression
 }
-
-func (ie *IndexExpression) expressionNode() {}
 
 func (ie *IndexExpression) TokenLiteral() string { return ie.Token.Literal }
 

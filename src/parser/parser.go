@@ -37,8 +37,8 @@ var precedences = map[token.TokenType]int{
 	token.GREATER_THAN_OR_EQUAL_TO: LESSGREATER,
 	token.PLUS:                     SUM,
 	token.MINUS:                    SUM,
-	token.SLASH:                    PRODUCT,
 	token.ASTERISK:                 PRODUCT,
+	token.SLASH:                    PRODUCT,
 	token.OPENING_PAREN:            CALL,
 	token.OPENING_BRACKET:          INDEX,
 	token.FULL_STOP:                INDEX,
@@ -57,6 +57,8 @@ type Parser struct {
 	previousToken token.Token
 	curToken      token.Token
 	peekToken     token.Token
+
+	previousIndex    *ast.IndexExpression
 
 	prefixParseFns   map[token.TokenType]prefixParseFn
 	infixParseFns    map[token.TokenType]infixParseFn

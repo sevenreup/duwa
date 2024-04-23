@@ -6,16 +6,46 @@ import (
 )
 
 func (p *Parser) parseAssignmentStatement() *ast.AssigmentStatement {
-	stmt := &ast.AssigmentStatement{
-		Identifier: &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal},
+	statement := &ast.AssigmentStatement{}
+
+	if p.curTokenIs(token.IDENT) {
+		statement.Identifier = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	} else if p.curTokenIs(token.ASSIGN) {
+		p.nextToken()
+		indexExp := p.parseIndexExpression(statement.Identifier)
+		statement.Identifier = indexExp
+
+		p.nextToken()
+
+		if !p.curTokenIs(token.ASSIGN) {
+			return nil
+		}
+
+		p.nextToken()
+
+		statement.Value = p.parseExpression(LOWEST)
+
+		p.previousIndex = nil
+
+		if p.peekTokenIs(token.SEMICOLON) {
+			p.nextToken()
+		}
+
+		return statement
 	}
-	if !p.expectPeek(token.ASSIGN) {
+
+	if !p.peekTokenIs(token.ASSIGN) {
 		return nil
 	}
+
 	p.nextToken()
-	stmt.Value = p.parseExpression(LOWEST)
+	p.nextToken()
+
+	statement.Value = p.parseExpression(LOWEST)
+
 	if p.peekTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
-	return stmt
+
+	return statement
 }

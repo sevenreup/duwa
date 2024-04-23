@@ -13,6 +13,7 @@ func init() {
 	RegisterModule("console", modules.ConsoleMethods)
 
 	RegisterFunction("lemba", functions.Print)
+	RegisterFunction("lembanzr", functions.PrintLine)
 }
 
 func RegisterModule(name string, methods map[string]*object.LibraryFunction) {

@@ -10,6 +10,14 @@ func evaluateAssigment(node *ast.AssigmentStatement, env *object.Environment) ob
 	if isError(val) {
 		return val
 	}
-	env.Set(node.Identifier.Value, val)
+	switch smt := node.Identifier.(type) {
+	case *ast.Identifier:
+		return evaluateIdentifierAssignment(smt, val, env)
+	}
+	return nil
+}
+
+func evaluateIdentifierAssignment(node *ast.Identifier, val object.Object, env *object.Environment) object.Object {
+	env.Set(node.Value, val)
 	return nil
 }
