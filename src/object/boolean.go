@@ -5,6 +5,7 @@ import "fmt"
 const BOOLEAN_OBJ = "BOOLEAN"
 
 type Boolean struct {
+	Object
 	Value bool
 }
 

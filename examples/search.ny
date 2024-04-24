@@ -57,7 +57,42 @@ doBinarySearch();
 
 // Jump Search
 
-// TODO: needs math library
+ndondomeko jumpSearch(arr, x) {
+    nambala n = arr.length();
+    nambala step = math.sqrt(n);
+    nambala prev = 0;
+    pamene (arr[math.min(step, n) - 1] < x) {
+        prev = step;
+        step += math.sqrt(n);
+        ngati (prev >= n) {
+            bweza -1;
+        }
+    }
+    pamene (arr[prev] < x) {
+        prev++;
+        ngati (prev == math.min(step, n)) {
+            bweza -1;
+        }
+    }
+    ngati (arr[prev] == x) {
+        bweza prev;
+    }
+    bweza -1;
+}
+
+ndondomeko doJumpSearch() {
+    nambala[] arr = [ 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610];
+    nambala x = 55;
+
+    nambala result = jumpSearch(arr, x);
+    ngati (result == -1) {
+        lembanzr("Jump Search: Element is not present in array");
+    } kapena {
+        lembanzr("Jump Search: Element at index "+ result);
+    }
+}
+
+doJumpSearch();
 
 // Interpolation Search
 
@@ -74,10 +109,10 @@ ndondomeko interpolationSearch(arr, lo, hi, x) {
         ngati (arr[pos] == x){
             bweza pos;
         }
- 
+
         // If x is larger, x is in right sub array
         ngati (arr[pos] < x) {
-            return interpolationSearch(arr, pos + 1, hi, x);
+            bweza interpolationSearch(arr, pos + 1, hi, x);
         }
  
         // If x is smaller, x is in left sub array
@@ -97,18 +132,119 @@ ndondomeko doInterpolationSearch()
  
     nambala x = 18; // Element to be searched
     nambala index = interpolationSearch(arr, 0, n - 1, x);
- 
+    
     // If element was found
     ngati (index != -1) {
-        lembanzr("Element found at index" + index);
+        lembanzr("Interpolation Search: Element found at index" + index);
     } kapena {
-        lembanzr("Element not found.");
+        lembanzr("Interpolation Search: Element not found.");
     }
-
-    bweza 0;
 }
 
 doInterpolationSearch();
 
 // Exponential Search
+
+ndondomeko exponentialSearch(arr, n, x) {
+    // If x is present at first location itself
+    ngati (arr[0] == x) {
+        bweza 0;
+    }
+ 
+    // Find range for binary search by
+    // repeated doubling
+    nambala i = 1;
+    pamene (i < n && arr[i] <= x) {
+        i = i * 2;
+    }
+ 
+    // Call binary search for the found range.
+    bweza binarySearch(arr, i / 2, math.min(i, n), x);
+}
+
+ndondomeko doExponentialSearch() {
+    nambala[] arr = [2, 3, 4, 10, 40];
+    nambala x = 10;
+    nambala n = arr.length();
+    nambala result = exponentialSearch(arr, n, x);
+    ngati (result == -1) {
+        lembanzr("Exponential Search: Element is not present in array");
+    } kapena {
+        lembanzr("Exponential Search: Element at index "+ result);
+    }
+}
+
+doExponentialSearch();
+
 // Fibonacci Search
+
+ndondomeko fibonacciSearch(arr, x, n) {
+    // Initialize fibonacci numbers
+    nambala fibMMm2 = 0; // (m-2)'th Fibonacci No.
+    nambala fibMMm1 = 1; // (m-1)'th Fibonacci No.
+    nambala fibM = fibMMm2 + fibMMm1; // m'th Fibonacci
+ 
+    // fibM is going to store the smallest
+    // Fibonacci Number greater than or equal to n
+    pamene (fibM < n) {
+        fibMMm2 = fibMMm1;
+        fibMMm1 = fibM;
+        fibM = fibMMm2 + fibMMm1;
+    }
+ 
+    // Marks the eliminated range from front
+    nambala offset = -1;
+ 
+    // while there are elements to be inspected.
+    // Note that we compare arr[fibMm2] with x.
+    // When fibM becomes 1, fibMm2 becomes 0
+    pamene (fibM > 1) {
+        // Check if fibMm2 is a valid location
+        nambala i = math.min(offset + fibMMm2, n - 1);
+ 
+        // If x is greater than the value at
+        // index fibMm2, cut the subarray array
+        // from offset to i
+        ngati (arr[i] < x) {
+            fibM = fibMMm1;
+            fibMMm1 = fibMMm2;
+            fibMMm2 = fibM - fibMMm1;
+            offset = i;
+        }
+ 
+        // If x is greater than the value at
+        // index fibMm2, cut the subarray
+        // after i+1
+        ngati (arr[i] > x) {
+            fibM = fibMMm2;
+            fibMMm1 = fibMMm1 - fibMMm2;
+            fibMMm2 = fibM - fibMMm1;
+        }
+ 
+        // element found. return index
+        ngati (arr[i] == x) {
+            bweza i;
+        }
+    }
+ 
+    // comparing the last element with x
+    ngati (fibMMm1 && arr[offset + 1] == x) {
+        bweza offset + 1;
+    }
+
+    bweza -1;
+}
+
+ndondomeko doFibonacciSearch() {
+    nambala[] arr = [10, 22, 35, 40, 45, 50, 80, 82, 85, 90, 100,235];
+    nambala x = 235;
+    nambala n = arr.length();
+    nambala result = fibonacciSearch(arr, x, n);
+    ngati (result == -1) {
+        lembanzr("Fibonacci Search: Element is not present in array");
+    } kapena {
+        lembanzr("Fibonacci Search: Element found at index "+ result);
+    }
+}
+
+doFibonacciSearch();

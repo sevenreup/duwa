@@ -27,11 +27,20 @@ func evalInfixExpression(
 		return nativeBoolToBooleanObject(left == right)
 	case operator == "!=":
 		return nativeBoolToBooleanObject(left != right)
+	case left.Type() == object.BOOLEAN_OBJ && right.Type() == object.BOOLEAN_OBJ:
+		{
+			l, _ := left.(*object.Boolean)
+			r, _ := right.(*object.Boolean)
+			if operator == "&&" {
+				return nativeBoolToBooleanObject(l.Value && r.Value)
+			} else if operator == "||" {
+				return nativeBoolToBooleanObject(l.Value || r.Value)
+			}
+		}
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s",
 			left.Type(), operator, right.Type())
-	default:
-		return newError("unknown operator: %s %s %s",
-			left.Type(), operator, right.Type())
 	}
+	return newError("unknown operator: %s %s %s",
+		left.Type(), operator, right.Type())
 }

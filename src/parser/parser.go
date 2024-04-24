@@ -17,6 +17,8 @@ type (
 const (
 	_ int = iota
 	LOWEST
+	LOGICAL_AND // &&
+	LOGICAL_OR  // ||
 	EQUALS
 	// ==
 	LESSGREATER // > or <
@@ -25,7 +27,7 @@ const (
 	PRODUCT
 	PREFIX
 	CALL
-	INDEX // array[index]
+	INDEX       // array[index]
 )
 
 var precedences = map[token.TokenType]int{
@@ -39,6 +41,8 @@ var precedences = map[token.TokenType]int{
 	token.MINUS:                    SUM,
 	token.ASTERISK:                 PRODUCT,
 	token.SLASH:                    PRODUCT,
+	token.AND_AND:                  LOGICAL_AND,
+	token.OR_OR:                    LOGICAL_OR,
 	token.OPENING_PAREN:            CALL,
 	token.OPENING_BRACKET:          INDEX,
 	token.FULL_STOP:                INDEX,
@@ -58,7 +62,7 @@ type Parser struct {
 	curToken      token.Token
 	peekToken     token.Token
 
-	previousIndex    *ast.IndexExpression
+	previousIndex *ast.IndexExpression
 
 	prefixParseFns   map[token.TokenType]prefixParseFn
 	infixParseFns    map[token.TokenType]infixParseFn
@@ -101,6 +105,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.MINUS_EQUAL, p.parseCompoundExpression)
 	p.registerInfix(token.STAR_EQUAL, p.parseCompoundExpression)
 	p.registerInfix(token.SLASH_EQUAL, p.parseCompoundExpression)
+	p.registerInfix(token.AND_AND, p.parseInfixExpression)
+	p.registerInfix(token.OR_OR, p.parseInfixExpression)
 
 	// Register all of our postfix parse functions
 	p.postfixParserFns = make(map[token.TokenType]postfixParserFn)
@@ -118,8 +124,7 @@ func (p *Parser) Errors() []string {
 }
 
 func (p *Parser) peekError(t token.TokenType) {
-	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
-		t, p.peekToken.Type)
+	msg := fmt.Sprintf("%d:%d: syntax error: expected next token to be %s, got %s instead", p.peekToken.Pos.Line, p.peekToken.Pos.Column, t, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
 }
 

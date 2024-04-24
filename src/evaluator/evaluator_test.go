@@ -175,12 +175,19 @@ func TestEvalBooleanExpression(t *testing.T) {
 		{"zoona == bodza", false},
 		{"zoona != bodza", true},
 		{"bodza != zoona", true},
+		{"zoona && zoona", true},
+		{"bodza && bodza", false},
+		{"zoona && bodza", false},
+		{"zoona || zoona", true},
+		{"bodza || bodza", false},
+		{"zoona || bodza", true},
 		{"(1 < 2) == zoona", true},
 		{"(1 < 2) == bodza", false},
 		{"(1 > 2) == zoona", false},
 		{"(1 > 2) == bodza", true},
 		{`("foo" == "bar") == bodza`, true},
 		{`("foo" == "foo") == zoona`, true},
+		{`0 <= 14 && 10 >= 10 && 18 <= 47`, true},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
@@ -248,7 +255,7 @@ func TestReturnStatements(t *testing.T) {
 				lemba(10);
 				bweza 10; 
 			};
-			five(3);`, 
+			five(3);`,
 			5,
 		},
 	}

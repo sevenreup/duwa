@@ -155,6 +155,20 @@ func (l *Lexer) NextToken() token.Token {
 				return newToken(l.pos, token.STAR_EQUAL, "*=")
 			}
 			return newToken(l.pos, token.ASTERISK, "*")
+		case '&':
+			nextRune := l.Peek()
+			if nextRune == '&' {
+				l.Next()
+				return newToken(l.pos, token.AND_AND, "&&")
+			}
+			return newToken(l.pos, token.AMPERSAND, "&")
+		case '|':
+			nextRune := l.Peek()
+			if nextRune == '|' {
+				l.Next()
+				return newToken(l.pos, token.OR_OR, "||")
+			}
+			return newToken(l.pos, token.OR, "|")
 		default:
 			if unicode.IsSpace(r) {
 				continue

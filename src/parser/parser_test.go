@@ -401,6 +401,12 @@ func TestInfixExpressions(t *testing.T) {
 		{"zoona == zoona", true, "==", true},
 		{"zoona != bodza", true, "!=", false},
 		{"bodza == bodza", false, "==", false},
+		{"zoona && zoona", true, "&&", true},
+		{"zoona && bodza", true, "&&", false},
+		{"bodza && bodza", false, "&&", false},
+		{"zoona || zoona", true, "||", true},
+		{"zoona || bodza", true, "||", false},
+		{"bodza || bodza", false, "||", false},
 	}
 	for _, tt := range infixTests {
 		l := lexer.New([]byte(tt.input))
@@ -541,6 +547,10 @@ func TestOperatorPrecedence(t *testing.T) {
 		{
 			"add(a * b[2], b[1], 2 * [1, 2][1])",
 			"add((a * (b[2])), (b[1]), (2 * ([1, 2][1])))",
+		},
+		{
+			"lo <= hi && x >= arr[lo] && x <= arr[hi]",
+			"(((lo <= hi) && (x >= (arr[lo]))) && (x <= (arr[hi])))",
 		},
 	}
 

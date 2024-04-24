@@ -23,6 +23,8 @@ const (
 	CLOSING_BRACKET = "]"
 	FULL_STOP       = "."
 	BANG            = "!"
+	AMPERSAND       = "&"
+	OR              = "|"
 
 	// One or two character token
 	GREATER_THAN_OR_EQUAL_TO = ">="
@@ -32,6 +34,8 @@ const (
 	MINUS_EQUAL              = "-="
 	SLASH_EQUAL              = "/="
 	STAR_EQUAL               = "*="
+	AND_AND                  = "&&"
+	OR_OR                    = "||"
 	PLUS_EQUAL               = "+="
 	PLUS_PLUS                = "++"
 	MINUS_MINUS              = "--"
@@ -69,7 +73,7 @@ type Token struct {
 	Type    TokenType
 	Literal string
 	Pos     Position
-	File	string
+	File    string
 }
 
 var keywords = map[string]TokenType{
