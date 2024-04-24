@@ -34,6 +34,10 @@ func evalForLoop(node *ast.ForExpression, env *object.Environment) object.Object
 		if isTruthy(condition) {
 			err := Eval(node.Block, env)
 
+			if err.Type() == object.RETURN_VALUE_OBJ {
+				return err
+			}
+
 			if isTerminator(err) {
 				switch val := err.(type) {
 				case *object.Error:

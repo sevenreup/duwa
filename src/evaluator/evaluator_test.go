@@ -238,6 +238,19 @@ func TestReturnStatements(t *testing.T) {
 		{"bweza 10; 9;", 10},
 		{"bweza 2 * 5; 9;", 10},
 		{"9; bweza 2 * 5; 9;", 10},
+		{`ndondomeko five() { bweza 5; };five();`, 5},
+		{`
+			ndondomeko five(n) { 
+				ngati (n > 1) {
+					lemba(n);
+					bweza 5;
+				}
+				lemba(10);
+				bweza 10; 
+			};
+			five(3);`, 
+			5,
+		},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
