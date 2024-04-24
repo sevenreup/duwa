@@ -1,9 +1,11 @@
-ndondomeko printArray(arr) {
+ndondomeko printArray(tag, arr) {
     nambala n = arr.length();
+    lemba(tag + ": [");
     za(nambala i=0; i<n; i++) {
         lemba(arr[i]);
-        lemba(" ");
+        lemba(",");
     }
+    lemba("]");
     lembanzr();
 }
 
@@ -26,12 +28,166 @@ ndondomeko selectionSort(arr) {
     }
 }
 
-nambala[] arr = [64,25,12,22,11];
-selectionSort(arr);
-printArray(arr);
+ndondomeko doSelectionSort() {
+    nambala[] arr = [64,25,12,22,11];
+    selectionSort(arr);
+    printArray("Selection Sort", arr);
+}
+
+doSelectionSort();
 
 // Bubble Sort
+
+ndondomeko bubbleSort(arr) {
+    nambala n = arr.length();
+
+    za(nambala i = 0; i < n-1; i++) {
+        za(nambala j = 0; j < n-i-1; j++) {
+            ngati (arr[j] > arr[j+1]) {
+                nambala temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}
+
+ndondomeko doBubbleSort() {
+    nambala[] arr = [64,25,12,22,11];
+    bubbleSort(arr);
+    printArray("Bubble Sort", arr);
+}
+
+doBubbleSort();
+
 // Insertion Sort
+
+ndondomeko insertionSort(arr) {
+    nambala n = arr.length();
+
+    za(nambala i = 1; i < n; i++) {
+        nambala key = arr[i];
+        nambala j = i-1;
+
+        ngati (j >= 0 && arr[j] > key) {
+            arr[j+1] = arr[j];
+            j = j-1;
+        }
+        arr[j+1] = key;
+    }
+}
+
+ndondomeko doInsertionSort() {
+    nambala[] arr = [64,25,12,22,11];
+    insertionSort(arr);
+    printArray("Insertion Sort", arr);
+}
+
+doInsertionSort();
+
 // Merge Sort
+
+ndondomeko merge(arr, l, m, r) {
+    nambala n1 = m - l + 1;
+    nambala n2 = r - m;
+
+    nambala[] L = [n1];
+    nambala[] R = [n2];
+
+    za(nambala i = 0; i < n1; i++) {
+        L[i] = arr[l + i];
+    }
+    za(nambala j = 0; j < n2; j++) {
+        R[j] = arr[m + 1 + j];
+    }
+
+    nambala i = 0, j = 0;
+    nambala k = l;
+
+    ngati (i < n1 && j < n2) {
+        ngati (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } kapena {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    ngati (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    ngati (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+ndondomeko mergeSort(arr, l, r) {
+    ngati (l < r) {
+        nambala m = l + (r-l)/2;
+
+        mergeSort(arr, l, m);
+        mergeSort(arr, m+1, r);
+
+        merge(arr, l, m, r);
+    }
+}
+
+// mergeSort();
+
 // Quick Sort
+
+
 // Heap Sort
+
+ndondomeko heapify(arr, n, i) {
+    nambala largest = i;
+    nambala l = 2*i + 1;
+    nambala r = 2*i + 2;
+
+    ngati (l < n && arr[l] > arr[largest]) {
+        largest = l;
+    }
+
+    ngati (r < n && arr[r] > arr[largest]) {
+        largest = r;
+    }
+
+    ngati (largest != i) {
+        nambala temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+
+        heapify(arr, n, largest);
+    }
+}
+
+ndondomeko heapSort(arr) {
+    nambala n = arr.length();
+
+    za(nambala i = n/2 - 1; i >= 0; i--) {
+        heapify(arr, n, i);
+    }
+
+    za(nambala i = n-1; i >= 0; i--) {
+        nambala temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+
+        heapify(arr, i, 0);
+    }
+}
+
+ndondomeko doHeapSort() {
+    nambala[] arr = [64,25,12,22,11];
+    heapSort(arr);
+    printArray("Heap Sort", arr);
+}
+
+doHeapSort();
