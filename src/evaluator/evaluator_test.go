@@ -550,6 +550,18 @@ func TestMethodCalls(t *testing.T) {
 			"nambala[] myArray = [1, 2, 3];myArray.length();",
 			3,
 		},
+		{
+			"nambala[] myArray = [1, 2, 3];myArray.pop();myArray[1];",
+			2,
+		},
+		{
+			"nambala[] myArray = [1, 2, 3];myArray.shift();myArray[0];",
+			2,
+		},
+		{
+			"nambala[] myArray = [1, 2, 3];myArray.push(8);myArray[3];",
+			8,
+		},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
