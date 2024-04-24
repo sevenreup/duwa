@@ -1,10 +1,13 @@
 package ast
 
-import "github.com/sevenreup/chewa/src/token"
+import (
+	"github.com/sevenreup/chewa/src/token"
+	"github.com/shopspring/decimal"
+)
 
 type IntegerLiteral struct {
 	Token token.Token
-	Value int64
+	Value decimal.Decimal
 }
 
 func (il *IntegerLiteral) expressionNode()      {}

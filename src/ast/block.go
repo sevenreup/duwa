@@ -6,6 +6,7 @@ import (
 )
 
 type BlockStatement struct {
+	Statement
 	Token      token.Token // the { token
 	Statements []Statement
 }

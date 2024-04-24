@@ -9,9 +9,9 @@ import (
 func TestString(t *testing.T) {
 	program := &Program{
 		Statements: []Statement{
-			&AssigmentStatement{
-				Token: token.Token{Type: token.INTEGER, Literal: "nambala"},
-				Name: &Identifier{
+			&VariableDeclarationStatement{
+				Type: token.Token{Type: token.INTEGER, Literal: "nambala"},
+				Identifier: &Identifier{
 					Token: token.Token{Type: token.IDENT, Literal: "myVar"},
 					Value: "myVar",
 				},

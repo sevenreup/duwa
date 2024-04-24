@@ -4,29 +4,41 @@ type TokenType string
 
 const (
 	// Single character tokens
-	EOF           = "EOF"
-	MINUS         = "-"
-	ASTERISK      = "*"
-	SLASH         = "/"
-	PLUS          = "+"
-	SEMICOLON     = ";"
-	GREATER_THAN  = ">"
-	LESS_THAN     = "<"
-	ASSIGN        = "="
-	COLON         = ":"
-	COMMA         = ","
-	OPENING_BRACE = "{"
-	CLOSING_BRACE = "}"
-	OPENING_PAREN = "("
-	CLOSING_PAREN = ")"
-	FULL_STOP     = "."
-	BANG          = "!"
+	EOF             = "EOF"
+	MINUS           = "-"
+	ASTERISK        = "*"
+	SLASH           = "/"
+	PLUS            = "+"
+	SEMICOLON       = ";"
+	GREATER_THAN    = ">"
+	LESS_THAN       = "<"
+	ASSIGN          = "="
+	COLON           = ":"
+	COMMA           = ","
+	OPENING_BRACE   = "{"
+	CLOSING_BRACE   = "}"
+	OPENING_PAREN   = "("
+	CLOSING_PAREN   = ")"
+	OPENING_BRACKET = "["
+	CLOSING_BRACKET = "]"
+	FULL_STOP       = "."
+	BANG            = "!"
+	AMPERSAND       = "&"
+	OR              = "|"
 
 	// One or two character token
 	GREATER_THAN_OR_EQUAL_TO = ">="
 	LESS_THAN_OR_EQUAL_TO    = "<="
 	EQUAL_TO                 = "=="
 	NOT_EQUAL_TO             = "!="
+	MINUS_EQUAL              = "-="
+	SLASH_EQUAL              = "/="
+	STAR_EQUAL               = "*="
+	AND_AND                  = "&&"
+	OR_OR                    = "||"
+	PLUS_EQUAL               = "+="
+	PLUS_PLUS                = "++"
+	MINUS_MINUS              = "--"
 
 	ILLEGAL
 
@@ -48,6 +60,8 @@ const (
 	IF       = "IF"
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
+	FOR      = "FOR"
+	WHILE    = "WHILE"
 )
 
 type Position struct {
@@ -59,6 +73,7 @@ type Token struct {
 	Type    TokenType
 	Literal string
 	Pos     Position
+	File    string
 }
 
 var keywords = map[string]TokenType{
@@ -70,6 +85,8 @@ var keywords = map[string]TokenType{
 	"kapena":     ELSE,
 	"bweza":      RETURN,
 	"ndondomeko": FUNCTION,
+	"za":         FOR,
+	"pamene":     WHILE,
 }
 
 var variableTypes = map[TokenType]TokenType{
@@ -81,8 +98,7 @@ func LookupVariableType(ident TokenType) TokenType {
 	if tok, ok := variableTypes[ident]; ok {
 		return tok
 	}
-	// TODO: Return an error
-	return IDENT
+	return ""
 }
 
 func LookupIdent(ident string) TokenType {
