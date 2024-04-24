@@ -11,6 +11,7 @@ var Functions = map[string]*object.LibraryFunction{}
 
 func init() {
 	RegisterModule("console", modules.ConsoleMethods)
+	RegisterModule("math", modules.MathMethods)
 
 	RegisterFunction("lemba", functions.Print)
 	RegisterFunction("lembanzr", functions.PrintLine)
