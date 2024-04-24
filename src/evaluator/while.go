@@ -17,11 +17,13 @@ func evaluateWhile(node *ast.WhileExpression, env *object.Environment) object.Ob
 			evaluated := Eval(node.Consequence, env)
 
 			if isTerminator(evaluated) {
+				if evaluated.Type() == object.RETURN_VALUE_OBJ {
+					return evaluated
+				}
 				switch val := evaluated.(type) {
 				case *object.Error:
 					return val
 				case *object.Continue:
-					//
 				case *object.Break:
 					return nil
 				}

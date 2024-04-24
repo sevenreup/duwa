@@ -32,14 +32,13 @@ func evalForLoop(node *ast.ForExpression, env *object.Environment) object.Object
 		}
 
 		if isTruthy(condition) {
-			err := Eval(node.Block, env)
+			evaluated := Eval(node.Block, env)
 
-			if err.Type() == object.RETURN_VALUE_OBJ {
-				return err
-			}
-
-			if isTerminator(err) {
-				switch val := err.(type) {
+			if isTerminator(evaluated) {
+				if evaluated.Type() == object.RETURN_VALUE_OBJ {
+					return evaluated
+				}
+				switch val := evaluated.(type) {
 				case *object.Error:
 					return val
 				case *object.Continue:
@@ -48,10 +47,10 @@ func evalForLoop(node *ast.ForExpression, env *object.Environment) object.Object
 				}
 			}
 
-			err = Eval(node.Increment, env)
+			evaluated = Eval(node.Increment, env)
 
-			if isError(err) {
-				return err
+			if isError(evaluated) {
+				return evaluated
 			}
 
 			continue
