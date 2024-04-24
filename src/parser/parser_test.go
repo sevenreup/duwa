@@ -145,10 +145,10 @@ func TestDeclerationAndAssignmentStatements(t *testing.T) {
 		expectedType       string
 		expectedValue      interface{}
 	}{
-		// {"nambala x = 5;", "x", "nambala", 5},
-		// {"x = 5;", "x", "", 5},
-		// {"nambala y = zoona;", "y", "nambala", true},
-		// {"nambala foobar = y;", "foobar", "nambala", "y"},
+		{"nambala x = 5;", "x", "nambala", 5},
+		{"x = 5;", "x", "", 5},
+		{"nambala y = zoona;", "y", "nambala", true},
+		{"nambala foobar = y;", "foobar", "nambala", "y"},
 		{"foobar[0] = 2;", "foobar", "nambala", "y"},
 	}
 	for _, tt := range tests {
@@ -209,6 +209,15 @@ func testDeclarationOrAssignmentStatement(t *testing.T, s ast.Statement, name st
 				return false
 			}
 			return testLiteralExpression(t, statement.Value, value, true)
+		}
+	case *ast.ExpressionStatement:
+		{
+			s, ok := statement.Expression.(*ast.AssigmentStatement)
+			if !ok {
+				t.Errorf("s not *ast.AssigmentStatement. got=%T", s)
+				return false
+			}
+			return testDeclarationOrAssignmentStatement(t, s, name, varType, value)
 		}
 	}
 	t.Errorf("s not *ast.AssigmentStatement or *ast.VariableDeclarationStatement. got=%T", s)

@@ -16,6 +16,10 @@ func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
 		return nil
 	}
 
+	if p.peekTokenIs(token.ASSIGN) {
+		return p.handleIndexAssigment(exp)
+	}
+
 	p.previousIndex = exp
 
 	return exp

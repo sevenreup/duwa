@@ -10,28 +10,6 @@ func (p *Parser) parseAssignmentStatement() *ast.AssigmentStatement {
 
 	if p.curTokenIs(token.IDENT) {
 		statement.Identifier = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
-	} else if p.curTokenIs(token.ASSIGN) {
-		p.nextToken()
-		indexExp := p.parseIndexExpression(statement.Identifier)
-		statement.Identifier = indexExp
-
-		p.nextToken()
-
-		if !p.curTokenIs(token.ASSIGN) {
-			return nil
-		}
-
-		p.nextToken()
-
-		statement.Value = p.parseExpression(LOWEST)
-
-		p.previousIndex = nil
-
-		if p.peekTokenIs(token.SEMICOLON) {
-			p.nextToken()
-		}
-
-		return statement
 	}
 
 	if !p.peekTokenIs(token.ASSIGN) {
@@ -42,6 +20,32 @@ func (p *Parser) parseAssignmentStatement() *ast.AssigmentStatement {
 	p.nextToken()
 
 	statement.Value = p.parseExpression(LOWEST)
+
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+
+	return statement
+}
+
+func (p *Parser) handleIndexAssigment(indexExp *ast.IndexExpression) *ast.AssigmentStatement {
+	statement := &ast.AssigmentStatement{
+		Identifier: indexExp.Left,
+	}
+
+	p.nextToken()
+	
+	statement.Identifier = indexExp
+
+	if !p.curTokenIs(token.ASSIGN) {
+		return nil
+	}
+
+	p.nextToken()
+
+	statement.Value = p.parseExpression(LOWEST)
+
+	p.previousIndex = nil
 
 	if p.peekTokenIs(token.SEMICOLON) {
 		p.nextToken()
