@@ -512,6 +512,14 @@ func TestArrayIndexExpressions(t *testing.T) {
 			2,
 		},
 		{
+			"nambala[] myArray = [1, 2, 3]; myArray[0] = 5; myArray[0]",
+			5,
+		},
+		{
+			"nambala[] myArray = [1, 2, 3]; nambala temp = myArray[0]; myArray[0] = 5; myArray[0] = temp; myArray[0]",
+			1,
+		},
+		{
 			"[1, 2, 3][3]",
 			nil,
 		},
@@ -530,6 +538,8 @@ func TestArrayIndexExpressions(t *testing.T) {
 		}
 	}
 }
+
+// TODO: Test Array errors
 
 func TestMethodCalls(t *testing.T) {
 	tests := []struct {
