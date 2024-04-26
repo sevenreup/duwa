@@ -3,7 +3,7 @@ name: build
 on:
   push:
     branches:
-      - "master"
+      - "mbuye"
     tags:
       - "v*"
   pull_request:
