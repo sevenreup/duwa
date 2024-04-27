@@ -2,11 +2,8 @@ name: build
 
 on:
   push:
-    branches:
-      - "mbuye"
     tags:
       - "v*"
-  pull_request:
 
 jobs:
   goreleaser:
