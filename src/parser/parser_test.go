@@ -1031,3 +1031,40 @@ func TestWhileExpressions(t *testing.T) {
 		t.Fatalf("body is not *ast.BlockStatement. got=%T", whileExp.Consequence)
 	}
 }
+
+func TestMapExpressions(t *testing.T) {
+	tests := []struct {
+		input string
+	}{
+		{
+			input: `mgwirizano grades = {"one": 1, "two": 2, "three": 3}`,
+		},
+		{
+			input: `mgwirizano grades = {}`,
+		},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New([]byte(tt.input))
+		p := New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+		stmt := program.Statements[0].(*ast.ExpressionStatement)
+		whileExp, ok := stmt.Expression.(*ast.WhileExpression)
+		if !ok {
+			t.Fatalf("exp not *ast.WhileExpression. got=%T", stmt.Expression)
+		}
+		if !testInfixExpression(t, whileExp.Condition, "x", "<", 10) {
+			return
+		}
+		if len(whileExp.Consequence.Statements) != 1 {
+			t.Fatalf("whileExp.Block.Statements does not contain 1 statements. got=%d\n",
+				len(whileExp.Consequence.Statements))
+		}
+
+		if whileExp.Consequence == nil {
+			t.Fatalf("body is not *ast.BlockStatement. got=%T", whileExp.Consequence)
+		}
+	}
+
+}
