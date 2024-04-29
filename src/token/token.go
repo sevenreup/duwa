@@ -94,6 +94,7 @@ var keywords = map[string]TokenType{
 var variableTypes = map[TokenType]TokenType{
 	INTEGER: INTEGER,
 	STRING:  STRING,
+	MAP:     MAP,
 }
 
 func LookupVariableType(ident TokenType) TokenType {

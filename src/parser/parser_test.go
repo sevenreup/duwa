@@ -1032,15 +1032,48 @@ func TestWhileExpressions(t *testing.T) {
 	}
 }
 
-func TestMapExpressions(t *testing.T) {
+func TestMapExpressionsWithStringKeys(t *testing.T) {
 	tests := []struct {
-		input string
+		input      string
+		identifier string
+		length     int
+		values     map[string]int64
 	}{
 		{
-			input: `mgwirizano grades = {"one": 1, "two": 2, "three": 3}`,
+			input:      `mgwirizano grades = {"one": 1, "two": 2, "three": 3};`,
+			identifier: "grades",
+			length:     3,
+			values:     map[string]int64{"one": 1, "two": 2, "three": 3},
 		},
 		{
-			input: `mgwirizano grades = {}`,
+			input:      `mgwirizano grades = {"one": 1, "two": 2, "three": 3}`,
+			identifier: "grades",
+			length:     3,
+			values:     map[string]int64{"one": 1, "two": 2, "three": 3},
+		},
+		{
+			input:      `mgwirizano grades = {};`,
+			identifier: "grades",
+			length:     0,
+			values:     map[string]int64{},
+		},
+		{
+			input:      `mgwirizano grades = {}`,
+			identifier: "grades",
+			length:     0,
+			values:     map[string]int64{},
+		},
+		{
+			input:      `{}`,
+			identifier: "",
+			length:     0,
+			values:     map[string]int64{},
+		},
+		{
+			input:      `{"one": 1, "two": 2, "three": 3};`,
+			identifier: "",
+			length:     3,
+			values:     map[string]int64{"one": 1, "two": 2, "three": 3},
 		},
 	}
 
@@ -1049,22 +1082,224 @@ func TestMapExpressions(t *testing.T) {
 		p := New(l)
 		program := p.ParseProgram()
 		checkParserErrors(t, p)
-		stmt := program.Statements[0].(*ast.ExpressionStatement)
-		whileExp, ok := stmt.Expression.(*ast.WhileExpression)
-		if !ok {
-			t.Fatalf("exp not *ast.WhileExpression. got=%T", stmt.Expression)
-		}
-		if !testInfixExpression(t, whileExp.Condition, "x", "<", 10) {
-			return
-		}
-		if len(whileExp.Consequence.Statements) != 1 {
-			t.Fatalf("whileExp.Block.Statements does not contain 1 statements. got=%d\n",
-				len(whileExp.Consequence.Statements))
+		var mapLiteral *ast.MapExpression
+		switch stmt := program.Statements[0].(type) {
+		case *ast.VariableDeclarationStatement:
+			{
+				expression, ok := stmt.Value.(*ast.MapExpression)
+				if !ok {
+					t.Fatalf("exp not *ast.MapExpression. got=%T", stmt.Value)
+				}
+				mapLiteral = expression
+				if stmt.Identifier.Value != tt.identifier {
+					t.Fatalf("exp not %s. got=%s", tt.identifier, stmt.Identifier.Value)
+				}
+			}
+		case *ast.ExpressionStatement:
+			{
+				expression, ok := stmt.Expression.(*ast.MapExpression)
+				if !ok {
+					t.Fatalf("exp not *ast.MapExpression. got=%T", stmt.Expression)
+				}
+				mapLiteral = expression
+			}
+		default:
+			{
+				t.Fatalf("exp not *ast.MapExpression or *ast.VariableDeclarationStatement. got=%T", stmt)
+				return
+			}
+
 		}
 
-		if whileExp.Consequence == nil {
-			t.Fatalf("body is not *ast.BlockStatement. got=%T", whileExp.Consequence)
+		if len(mapLiteral.Pairs) != tt.length {
+			t.Fatalf("map.Pairs has wrong length. got=%d", len(mapLiteral.Pairs))
+		}
+
+		for key, value := range mapLiteral.Pairs {
+			identifier, ok := key.(*ast.StringLiteral)
+
+			if !ok {
+				t.Errorf("key is not ast.StringLiteral. got=%T", key)
+			}
+
+			expectedValue := tt.values[identifier.Value]
+
+			testIntegerLiteral(t, value, expectedValue)
 		}
 	}
+}
 
+func TestMapLiteralsWithStringKeys(t *testing.T) {
+	input := `{"one": 1, "two": 2, "three": 3}`
+
+	l := lexer.New([]byte(input))
+	p := New(l)
+	program := p.ParseProgram()
+
+	checkParserErrors(t, p)
+
+	statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.Expression. got=%T", program.Statements[0])
+	}
+
+	mapLiteral, ok := statement.Expression.(*ast.MapExpression)
+
+	if !ok {
+		t.Fatalf("statement is not ast.Map. got=%T", statement.Expression)
+	}
+
+	if len(mapLiteral.Pairs) != 3 {
+		t.Fatalf("map.Pairs has wrong length. got=%d", len(mapLiteral.Pairs))
+	}
+
+	expected := map[string]int64{
+		"one":   1,
+		"two":   2,
+		"three": 3,
+	}
+
+	for key, value := range mapLiteral.Pairs {
+		literal, ok := key.(*ast.StringLiteral)
+
+		if !ok {
+			t.Errorf("key is not ast.String. got=%T", key)
+		}
+
+		expectedValue := expected[literal.Value]
+
+		testIntegerLiteral(t, value, expectedValue)
+	}
+}
+
+func TestMapLiteralsWithBooleanKeys(t *testing.T) {
+	input := `{zoona: 1, bodza: 2}`
+
+	l := lexer.New([]byte(input))
+	p := New(l)
+	program := p.ParseProgram()
+
+	checkParserErrors(t, p)
+
+	statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.Expression. got=%T", program.Statements[0])
+	}
+
+	mapLiteral, ok := statement.Expression.(*ast.MapExpression)
+
+	if !ok {
+		t.Fatalf("statement is not ast.Map. got=%T", statement.Expression)
+	}
+
+	if len(mapLiteral.Pairs) != 2 {
+		t.Fatalf("map.Pairs has wrong length. got=%d", len(mapLiteral.Pairs))
+	}
+
+	expected := map[bool]int64{
+		true:  1,
+		false: 2,
+	}
+
+	for key, value := range mapLiteral.Pairs {
+		boolean, ok := key.(*ast.Boolean)
+
+		if !ok {
+			t.Errorf("key is not ast.Boolean. got=%T", key)
+		}
+
+		expectedValue := expected[boolean.Value]
+
+		testIntegerLiteral(t, value, expectedValue)
+	}
+}
+
+func TestMapLiteralsWithIntegerKeys(t *testing.T) {
+	input := `{1: 1, 2: 2, 3: 3}`
+
+	l := lexer.New([]byte(input))
+	p := New(l)
+	program := p.ParseProgram()
+
+	checkParserErrors(t, p)
+
+	statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.Expression. got=%T", program.Statements[0])
+	}
+
+	mapLiteral, ok := statement.Expression.(*ast.MapExpression)
+
+	if !ok {
+		t.Fatalf("statement is not ast.Map. got=%T", statement.Expression)
+	}
+
+	if len(mapLiteral.Pairs) != 3 {
+		t.Fatalf("map.Pairs has wrong length. got=%d", len(mapLiteral.Pairs))
+	}
+
+	expected := map[int64]int64{
+		1: 1,
+		2: 2,
+		3: 3,
+	}
+
+	for key, value := range mapLiteral.Pairs {
+		number, ok := key.(*ast.IntegerLiteral)
+
+		if !ok {
+			t.Errorf("key is not ast.Number. got=%T", key)
+		}
+
+		expectedValue := expected[number.Value.IntPart()]
+
+		testIntegerLiteral(t, value, expectedValue)
+	}
+}
+
+func TestMapLiteralsWithVariableKeys(t *testing.T) {
+	input := `{foo: 1, bar: 2, baz: 3}`
+
+	l := lexer.New([]byte(input))
+	p := New(l)
+	program := p.ParseProgram()
+
+	checkParserErrors(t, p)
+
+	statement, ok := program.Statements[0].(*ast.ExpressionStatement)
+
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.Expression. got=%T", program.Statements[0])
+	}
+
+	mapLiteral, ok := statement.Expression.(*ast.MapExpression)
+
+	if !ok {
+		t.Fatalf("statement is not ast.Map. got=%T", statement.Expression)
+	}
+
+	if len(mapLiteral.Pairs) != 3 {
+		t.Fatalf("map.Pairs has wrong length. got=%d", len(mapLiteral.Pairs))
+	}
+
+	expected := map[string]int64{
+		"foo": 1,
+		"bar": 2,
+		"baz": 3,
+	}
+
+	for key, value := range mapLiteral.Pairs {
+		identifier, ok := key.(*ast.Identifier)
+
+		if !ok {
+			t.Errorf("key is not ast.Identifier. got=%T", key)
+		}
+
+		expectedValue := expected[identifier.Value]
+
+		testIntegerLiteral(t, value, expectedValue)
+	}
 }
