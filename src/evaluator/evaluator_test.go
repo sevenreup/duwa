@@ -313,6 +313,10 @@ func TestErrorHandling(t *testing.T) {
 			`"Hello"- "World"`,
 			"unknown operator: STRING - STRING",
 		},
+		{
+			`{"name": "Monkey"}[ndondomeko(x) { x }];`,
+			"unusable as hash key: FUNCTION",
+		},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
@@ -588,6 +592,86 @@ func TestMethodCalls(t *testing.T) {
 		integer, ok := tt.expected.(int)
 		if ok {
 			testIntegerObject(t, evaluated, decimal.NewFromInt(int64(integer)))
+		} else {
+			testNullObject(t, evaluated)
+		}
+	}
+}
+
+func TestHashLiterals(t *testing.T) {
+	input := `mawu two = "two";
+	{
+		"one": 10- 9,
+		two: 1 + 1,
+		"thr" + "ee": 6 / 2,
+		4: 4,
+		zoona: 5,
+		bodza: 6
+	}`
+	evaluated := testEval(input)
+	result, ok := evaluated.(*object.Map)
+	if !ok {
+		t.Fatalf("Eval didn't return Hash. got=%T (%+v)", evaluated, evaluated)
+	}
+	expected := map[object.MapKey]int64{
+		(&object.String{Value: "one"}).MapKey():                  1,
+		(&object.String{Value: "two"}).MapKey():                  2,
+		(&object.String{Value: "three"}).MapKey():                3,
+		(&object.Integer{Value: decimal.NewFromInt(4)}).MapKey(): 4,
+		TRUE.MapKey():  5,
+		FALSE.MapKey(): 6,
+	}
+	if len(result.Pairs) != len(expected) {
+		t.Fatalf("Hash has wrong num of pairs. got=%d", len(result.Pairs))
+	}
+	for expectedKey, expectedValue := range expected {
+		pair, ok := result.Pairs[expectedKey]
+		if !ok {
+			t.Errorf("no pair for given key in Pairs")
+		}
+		testLiteralExpression(t, pair.Value, expectedValue)
+	}
+}
+
+func TestHashIndexExpressions(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{
+			`{"foo": 5}["foo"]`,
+			5,
+		},
+		{
+			`{"foo": 5}["bar"]`,
+			nil,
+		},
+		{
+			`mawu key = "foo"; {"foo": 5}[key]`,
+			5,
+		},
+		{
+			`{}["foo"]`,
+			nil,
+		},
+		{
+			`{5: 5}[5]`,
+			5,
+		},
+		{
+			`{zoona: 5}[zoona]`,
+			5,
+		},
+		{
+			`{bodza: 5}[bodza]`,
+			5,
+		},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		integer, ok := tt.expected.(int)
+		if ok {
+			testLiteralExpression(t, evaluated, int64(integer))
 		} else {
 			testNullObject(t, evaluated)
 		}
