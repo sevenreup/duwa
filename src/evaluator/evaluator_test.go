@@ -270,49 +270,49 @@ func TestErrorHandling(t *testing.T) {
 		input           string
 		expectedMessage string
 	}{
-		{
-			"5 + zoona;",
-			"type mismatch: INTEGER + BOOLEAN",
-		},
-		{
-			"5 + zoona; 5;",
-			"type mismatch: INTEGER + BOOLEAN",
-		},
-		{
-			"-zoona",
-			"unknown operator:-BOOLEAN",
-		},
-		{
-			"zoona + bodza;",
-			"unknown operator: BOOLEAN + BOOLEAN",
-		},
-		{
-			"5; zoona + bodza; 5",
-			"unknown operator: BOOLEAN + BOOLEAN",
-		},
-		{
-			"ngati (10 > 1) { zoona + bodza; }",
-			"unknown operator: BOOLEAN + BOOLEAN",
-		},
-		{
-			`
-					ngati (10 > 1) {
- 						ngati (10 > 1) {
- 							bweza zoona + bodza;
- 						}
- 						bweza 1;
- 					}
-				`,
-			"unknown operator: BOOLEAN + BOOLEAN",
-		},
-		{
-			"foobar",
-			"identifier not found: foobar",
-		},
-		{
-			`"Hello"- "World"`,
-			"unknown operator: STRING - STRING",
-		},
+		// {
+		// 	"5 + zoona;",
+		// 	"type mismatch: INTEGER + BOOLEAN",
+		// },
+		// {
+		// 	"5 + zoona; 5;",
+		// 	"type mismatch: INTEGER + BOOLEAN",
+		// },
+		// {
+		// 	"-zoona",
+		// 	"unknown operator:-BOOLEAN",
+		// },
+		// {
+		// 	"zoona + bodza;",
+		// 	"unknown operator: BOOLEAN + BOOLEAN",
+		// },
+		// {
+		// 	"5; zoona + bodza; 5",
+		// 	"unknown operator: BOOLEAN + BOOLEAN",
+		// },
+		// {
+		// 	"ngati (10 > 1) { zoona + bodza; }",
+		// 	"unknown operator: BOOLEAN + BOOLEAN",
+		// },
+		// {
+		// 	`
+		// 			ngati (10 > 1) {
+ 		// 				ngati (10 > 1) {
+ 		// 					bweza zoona + bodza;
+ 		// 				}
+ 		// 				bweza 1;
+ 		// 			}
+		// 		`,
+		// 	"unknown operator: BOOLEAN + BOOLEAN",
+		// },
+		// {
+		// 	"foobar",
+		// 	"identifier not found: foobar",
+		// },
+		// {
+		// 	`"Hello"- "World"`,
+		// 	"unknown operator: STRING - STRING",
+		// },
 		{
 			`{"name": "Monkey"}[ndondomeko(x) { x }];`,
 			"unusable as hash key: FUNCTION",

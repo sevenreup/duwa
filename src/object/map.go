@@ -17,7 +17,7 @@ type MapPair struct {
 	Value Object
 }
 
-func (m *Map) Type() ObjectType { return STRING_OBJ }
+func (m *Map) Type() ObjectType { return MAP_OBJ }
 
 func (m *Map) Inspect() string {
 	var out bytes.Buffer
