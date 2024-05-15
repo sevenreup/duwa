@@ -27,7 +27,7 @@ const (
 	PRODUCT
 	PREFIX
 	CALL
-	INDEX       // array[index]
+	INDEX // array[index]
 )
 
 var precedences = map[token.TokenType]int{
@@ -73,18 +73,21 @@ func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l, errors: []string{}}
 
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
-	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	p.registerPrefix(token.INT, p.parseIntegerLiteral)
+	p.registerPrefix(token.STR, p.parseStringLiteral)
+
+	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
 	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
 	p.registerPrefix(token.TRUE, p.parseBoolean)
 	p.registerPrefix(token.FALSE, p.parseBoolean)
-	p.registerPrefix(token.OPENING_PAREN, p.parseGroupedExpression)
 	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.FOR, p.parseForExpression)
 	p.registerPrefix(token.WHILE, p.parseWhileExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
-	p.registerPrefix(token.STR, p.parseStringLiteral)
+	
+	p.registerPrefix(token.OPENING_BRACE, p.mapLiteral)
+	p.registerPrefix(token.OPENING_PAREN, p.parseGroupedExpression)
 	p.registerPrefix(token.OPENING_BRACKET, p.parseArrayLiteral)
 
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)

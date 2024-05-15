@@ -62,6 +62,7 @@ const (
 	RETURN   = "RETURN"
 	FOR      = "FOR"
 	WHILE    = "WHILE"
+	MAP      = "MAP"
 )
 
 type Position struct {
@@ -87,11 +88,13 @@ var keywords = map[string]TokenType{
 	"ndondomeko": FUNCTION,
 	"za":         FOR,
 	"pamene":     WHILE,
+	"mgwirizano": MAP,
 }
 
 var variableTypes = map[TokenType]TokenType{
 	INTEGER: INTEGER,
 	STRING:  STRING,
+	MAP:     MAP,
 }
 
 func LookupVariableType(ident TokenType) TokenType {

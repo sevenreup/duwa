@@ -36,7 +36,7 @@ You can check out examples in `./examples` folder to quickly see what the langua
     - [ ] Type checking (for now it does not strictly enforce types)
     - [ ] Data Structures
         - [x] arrays
-        - [ ] dictionaries
+        - [x] dictionaries
     - [ ] Input/ Output
     - [ ] Error Handling
     - [ ] Class support

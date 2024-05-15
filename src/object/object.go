@@ -10,6 +10,15 @@ type Object interface {
 	Inspect() string
 }
 
+type MapKey struct {
+	Type  ObjectType
+	Value uint64
+}
+
+type Mappable interface {
+	MapKey() MapKey
+}
+
 type HasMethods interface {
 	Method(method string, args []Object) (Object, bool)
 }
