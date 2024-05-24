@@ -1,10 +1,13 @@
 package evaluator
 
-import "github.com/sevenreup/chewa/src/object"
+import (
+	"github.com/sevenreup/chewa/src/object"
+	"github.com/sevenreup/chewa/src/values"
+)
 
 func nativeBoolToBooleanObject(input bool) *object.Boolean {
 	if input {
-		return TRUE
+		return values.TRUE
 	}
-	return FALSE
+	return values.FALSE
 }

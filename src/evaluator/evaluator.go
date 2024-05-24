@@ -5,12 +5,7 @@ import (
 
 	"github.com/sevenreup/chewa/src/ast"
 	"github.com/sevenreup/chewa/src/object"
-)
-
-var (
-	NULL  = &object.Null{}
-	TRUE  = &object.Boolean{Value: true}
-	FALSE = &object.Boolean{Value: false}
+	"github.com/sevenreup/chewa/src/values"
 )
 
 func Eval(node ast.Node, env *object.Environment) object.Object {
@@ -84,11 +79,11 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 func isTruthy(obj object.Object) bool {
 	switch obj {
-	case NULL:
+	case values.NULL:
 		return false
-	case TRUE:
+	case values.TRUE:
 		return true
-	case FALSE:
+	case values.FALSE:
 		return false
 	default:
 		return true

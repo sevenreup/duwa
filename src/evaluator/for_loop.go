@@ -3,6 +3,7 @@ package evaluator
 import (
 	"github.com/sevenreup/chewa/src/ast"
 	"github.com/sevenreup/chewa/src/object"
+	"github.com/sevenreup/chewa/src/values"
 )
 
 func evalForLoop(node *ast.ForExpression, env *object.Environment) object.Object {
@@ -59,5 +60,5 @@ func evalForLoop(node *ast.ForExpression, env *object.Environment) object.Object
 		loop = false
 	}
 
-	return NULL
+	return values.NULL
 }

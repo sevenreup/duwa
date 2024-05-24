@@ -1,6 +1,9 @@
 package evaluator
 
-import "github.com/sevenreup/chewa/src/object"
+import (
+	"github.com/sevenreup/chewa/src/object"
+	"github.com/sevenreup/chewa/src/values"
+)
 
 func evalPrefixExpression(operator string, right object.Object) object.Object {
 	switch operator {
@@ -15,14 +18,14 @@ func evalPrefixExpression(operator string, right object.Object) object.Object {
 
 func evalBangOperatorExpression(right object.Object) object.Object {
 	switch right {
-	case TRUE:
-		return FALSE
-	case FALSE:
-		return TRUE
-	case NULL:
-		return TRUE
+	case values.TRUE:
+		return values.FALSE
+	case values.FALSE:
+		return values.TRUE
+	case values.NULL:
+		return values.TRUE
 	default:
-		return FALSE
+		return values.FALSE
 	}
 }
 
