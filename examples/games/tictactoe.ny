@@ -19,16 +19,18 @@ ndondomeko move(player, position) {
     } kapena {
         currentPlayer = "X";
     }
+    lembanzr(currentPlayer);
+    lembanzr(player);
 }
 
 ndondomeko playGame() {
     lembanzr(isRunning);
     pamene(isRunning) {
         printBoard();
-        nambala move = console.landira();
-        lembanzr(move);
-        move(currentPlayer, move);
+        nambala playerMove = kuNambala(console.landira());
+        move(currentPlayer, playerMove - 1);
         // console.fufuta();
+        lembanzr(isRunning);
     }
 }
 

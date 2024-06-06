@@ -10,7 +10,12 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceRoot}/src/main.go",
+            "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
+            "args": [
+                "-f",
+                "./examples/games/tictactoe.ny"
+            ]
         }
     ]
 }
