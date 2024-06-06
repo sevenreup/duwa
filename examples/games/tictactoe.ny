@@ -1,20 +1,34 @@
+mawu[] board = ["","","","","","","","",""];
+mawu currentPlayer = "X";
+nambala isRunning = zoona;
+
 ndondomeko printBoard() {
-    console.lemba(" 1 | 2 | 3 ");
-    za (nambala i = 0; i < 3; i++) {
-        console.lemba("---------");
-        console.lemba(" 4 | 5 | 6 ");
-        console.lemba("---------");
-        console.lemba(" 7 | 8 | 9 ");
+    lembanzr("---------");
+    lembanzr(board[0] + " | " + board[1] + " | " + board[2]);
+    lembanzr("---------");
+    lembanzr(board[3] + " | " + board[4] + " | " + board[5]);
+    lembanzr("---------");
+    lembanzr(board[6] + " | " + board[7] + " | " + board[8]);
+    lembanzr("---------");
+}
+
+ndondomeko move(player, position) {
+    board[position] = player;
+    ngati (player == "X") {
+        currentPlayer = "O";
+    } kapena {
+        currentPlayer = "X";
     }
 }
 
 ndondomeko playGame() {
-    mawu currentPlayer = "X";
-    nambala isRunning = zoona;
-    console.lemba(isRunning);
+    lembanzr(isRunning);
     pamene(isRunning) {
         printBoard();
-        isRunning = bodza;
+        nambala move = console.landira();
+        lembanzr(move);
+        move(currentPlayer, move);
+        // console.fufuta();
     }
 }
 
