@@ -15,6 +15,7 @@ func init() {
 
 	RegisterFunction("lemba", functions.Print)
 	RegisterFunction("lembanzr", functions.PrintLine)
+	RegisterFunction("kuNambala", functions.ParseStringToNumber)
 }
 
 func RegisterModule(name string, methods map[string]*object.LibraryFunction) {
