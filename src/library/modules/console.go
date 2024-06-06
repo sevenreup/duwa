@@ -1,10 +1,15 @@
 package modules
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 
+	"github.com/sevenreup/chewa/src/values"
 	"github.com/sevenreup/chewa/src/object"
 	"github.com/sevenreup/chewa/src/token"
 )
@@ -13,6 +18,8 @@ var ConsoleMethods = map[string]*object.LibraryFunction{}
 
 func init() {
 	RegisterMethod(ConsoleMethods, "lemba", consolePrint)
+	RegisterMethod(ConsoleMethods, "fufuta", consoleClear)
+	RegisterMethod(ConsoleMethods, "landira", consoleRead)
 }
 
 func consolePrint(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
@@ -23,6 +30,38 @@ func consolePrint(env *object.Environment, tok token.Token, args ...object.Objec
 	}
 
 	libPrint(values)
+
+	return nil
+}
+
+func consoleRead(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
+	scanner := bufio.NewScanner(os.Stdin)
+
+	if len(args) == 1 {
+		prompt := args[0].(*object.String).Value
+
+		fmt.Print(prompt)
+	}
+
+	val := scanner.Scan()
+
+	if !val {
+		return values.NULL
+	}
+
+	return &object.String{Value: scanner.Text()}
+}
+
+func consoleClear(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
+	if runtime.GOOS == "windows" {
+		cmd := exec.Command("cmd", "/c", "cls")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	} else {
+		cmd := exec.Command("clear")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	}
 
 	return nil
 }

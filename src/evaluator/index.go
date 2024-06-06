@@ -3,6 +3,7 @@ package evaluator
 import (
 	"github.com/sevenreup/chewa/src/ast"
 	"github.com/sevenreup/chewa/src/object"
+	"github.com/sevenreup/chewa/src/values"
 )
 
 func evalIndexExpression(node *ast.IndexExpression, env *object.Environment) object.Object {
@@ -31,7 +32,7 @@ func evalArrayIndexExpression(array, index object.Object) object.Object {
 	maxValue := int64(len(arrayObject.Elements) - 1)
 
 	if idx < 0 || idx > maxValue {
-		return NULL
+		return values.NULL
 	}
 
 	return arrayObject.Elements[idx]
@@ -49,7 +50,7 @@ func evaluateMapIndex(node *ast.IndexExpression, left, index object.Object) obje
 	pair, ok := mapObject.Pairs[key.MapKey()]
 
 	if !ok {
-		return NULL
+		return values.NULL
 	}
 
 	return pair.Value

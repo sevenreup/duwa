@@ -3,6 +3,7 @@ package evaluator
 import (
 	"github.com/sevenreup/chewa/src/ast"
 	"github.com/sevenreup/chewa/src/object"
+	"github.com/sevenreup/chewa/src/values"
 )
 
 func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Object {
@@ -15,6 +16,6 @@ func evalIfExpression(ie *ast.IfExpression, env *object.Environment) object.Obje
 	} else if ie.Alternative != nil {
 		return Eval(ie.Alternative, env)
 	} else {
-		return NULL
+		return values.NULL
 	}
 }

@@ -1,0 +1,69 @@
+mawu[] board = ["","","","","","","","",""];
+mawu currentPlayer = "X";
+nambala isRunning = zoona;
+
+ndondomeko printBoard() {
+    lembanzr("---------");
+    lembanzr(board[0] + " | " + board[1] + " | " + board[2]);
+    lembanzr("---------");
+    lembanzr(board[3] + " | " + board[4] + " | " + board[5]);
+    lembanzr("---------");
+    lembanzr(board[6] + " | " + board[7] + " | " + board[8]);
+    lembanzr("---------");
+}
+
+ndondomeko checkWin() {
+  mawu[] winConditions = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
+  ];
+
+  za (x = 0; x < winConditions.length(); x++) {
+    mawu condition = winConditions[x];
+    ngati (board[condition[0]] != "" && board[condition[0]] == board[condition[1]] && board[condition[0]] == board[condition[2]]) {
+      bweza zoona;
+    }
+  }
+  bweza bodza;
+}
+
+ndondomeko move(player, position) {
+    ngati (board[position] != "") {
+        bweza bodza;
+    }
+
+    board[position] = player;
+    ngati (player == "X") {
+        currentPlayer = "O";
+    } kapena {
+        currentPlayer = "X";
+    }
+    bweza zoona;
+}
+
+ndondomeko playGame() {
+    pamene(isRunning) {
+        printBoard();
+        lembanzr("Player " + currentPlayer + " turn: ");
+        nambala playerMove = kuNambala(console.landira());
+        mawu moved = move(currentPlayer, playerMove - 1);
+        ngati(moved == bodza) {
+            lembanzr("Invalid move");
+            lembanzr("Try again");
+            lembanzr("---------");
+            // TODO: Implement a way to continue loop
+        } kapena {
+            mawu hasWon = checkWin();
+            ngati (hasWon == zoona) {
+                lembanzr("Player " + player + " has won!");
+                lembanzr("Game Over");
+                isRunning = bodza;
+            } kapena {
+               console.fufuta();
+            }
+        }
+    }
+}
+
+playGame();

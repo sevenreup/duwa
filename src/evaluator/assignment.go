@@ -3,6 +3,7 @@ package evaluator
 import (
 	"github.com/sevenreup/chewa/src/ast"
 	"github.com/sevenreup/chewa/src/object"
+	"github.com/sevenreup/chewa/src/values"
 )
 
 func evaluateAssigment(node *ast.AssigmentStatement, env *object.Environment) object.Object {
@@ -42,7 +43,7 @@ func evaluateIndexAssignment(node *ast.IndexExpression, val object.Object, env *
 
 	if idx >= len(elements) {
 		for i := len(elements); i <= idx; i++ {
-			elements = append(elements, NULL)
+			elements = append(elements, values.NULL)
 		}
 
 		left.Elements = elements

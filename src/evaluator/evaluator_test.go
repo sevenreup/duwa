@@ -4,6 +4,7 @@ import (
 	"github.com/sevenreup/chewa/src/lexer"
 	"github.com/sevenreup/chewa/src/object"
 	"github.com/sevenreup/chewa/src/parser"
+	"github.com/sevenreup/chewa/src/values"
 	"github.com/shopspring/decimal"
 	"testing"
 )
@@ -78,7 +79,7 @@ func testLiteralExpression(
 }
 
 func testNullObject(t *testing.T, obj object.Object) bool {
-	if obj != NULL {
+	if obj != values.NULL {
 		t.Errorf("object is not NULL. got=%T (%+v)", obj, obj)
 		return false
 	}
@@ -618,8 +619,8 @@ func TestHashLiterals(t *testing.T) {
 		(&object.String{Value: "two"}).MapKey():                  2,
 		(&object.String{Value: "three"}).MapKey():                3,
 		(&object.Integer{Value: decimal.NewFromInt(4)}).MapKey(): 4,
-		TRUE.MapKey():  5,
-		FALSE.MapKey(): 6,
+		values.TRUE.MapKey():  5,
+		values.FALSE.MapKey(): 6,
 	}
 	if len(result.Pairs) != len(expected) {
 		t.Fatalf("Hash has wrong num of pairs. got=%d", len(result.Pairs))
