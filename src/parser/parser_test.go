@@ -1346,24 +1346,26 @@ func TestParsingHashLiteralsWithExpressions(t *testing.T) {
 
 func TestParsingClassExpressions(t *testing.T) {
 	input := `
-		kalasi Person { 
+		kalasi Person {
+			nambala age = 5;
 		}`
 	l := lexer.New([]byte(input))
 	p := New(l)
 	program := p.ParseProgram()
 	checkParserErrors(t, p)
-	stmt := program.Statements[0].(*ast.ClassStatement)
-	if stmt.Name.Value != "Person" {
-		t.Fatalf("stmt.Name.Value not 'Person'. got=%q", stmt.Name.Value)
+	stmt := program.Statements[0].(*ast.ExpressionStatement)
+	classStatement := stmt.Expression.(*ast.ClassStatement)
+	if classStatement.Name.Value != "Person" {
+		t.Fatalf("stmt.Name.Value not 'Person'. got=%q", classStatement.Name.Value)
 	}
-	if len(stmt.Body.Statements) != 1 {
+	if len(classStatement.Body.Statements) != 1 {
 		t.Fatalf("stmt.Body.Statements does not contain 1 statements. got=%d\n",
-			len(stmt.Body.Statements))
+			len(classStatement.Body.Statements))
 	}
-	bodyStmt, ok := stmt.Body.Statements[0].(*ast.VariableDeclarationStatement)
+	bodyStmt, ok := classStatement.Body.Statements[0].(*ast.VariableDeclarationStatement)
 	if !ok {
 		t.Fatalf("stmt.Body.Statements[0] is not ast.VariableDeclarationStatement. got=%T",
-			stmt.Body.Statements[0])
+			classStatement.Body.Statements[0])
 	}
 	if bodyStmt.Identifier.Value != "age" {
 		t.Fatalf("bodyStmt.Identifier.Value not 'age'. got=%s", bodyStmt.Identifier.Value)
