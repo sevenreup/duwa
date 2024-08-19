@@ -678,3 +678,7 @@ func TestHashIndexExpressions(t *testing.T) {
 		}
 	}
 }
+
+func TestClasses(t*testing.T) {
+	
+}

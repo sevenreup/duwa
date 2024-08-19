@@ -180,6 +180,43 @@ func TestDeclerationAndAssignmentStatements(t *testing.T) {
 	}
 }
 
+func TestCustomTypeDeclaration(t *testing.T) {
+	tests := []struct {
+		input              string
+		expectedIdentifier string
+		expectedType       string
+	}{
+		{"Munthu maria = Munthu();", "x", "Munthu"},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New([]byte(tt.input))
+		p := New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain 1 statements. got=%d",
+				len(program.Statements))
+		}
+		stmt := program.Statements[0]
+		switch statement := stmt.(type) {
+		case *ast.AssigmentStatement:
+			{
+				if identifier, ok := statement.Identifier.(*ast.Identifier); ok {
+					if identifier.Value != tt.expectedIdentifier {
+						t.Errorf("AssigmentStatement.Name.Value not '%s'. got=%s", tt.expectedIdentifier, identifier.Value)
+						continue
+					}
+					if identifier.TokenLiteral() != tt.expectedIdentifier {
+						t.Errorf("s.Name not '%s'. got=%s", tt.expectedIdentifier, identifier.Value)
+						continue
+					}
+				}
+			}
+		}
+	}
+}
+
 func testDeclarationOrAssignmentStatement(t *testing.T, s ast.Statement, name string, varType string, value interface{}) bool {
 	switch statement := s.(type) {
 	case *ast.AssigmentStatement:
@@ -1346,7 +1383,7 @@ func TestParsingHashLiteralsWithExpressions(t *testing.T) {
 
 func TestParsingClassExpressions(t *testing.T) {
 	input := `
-		kalasi Person {
+		kalasi Munthu {
 			nambala age = 5;
 		}`
 	l := lexer.New([]byte(input))
@@ -1355,8 +1392,8 @@ func TestParsingClassExpressions(t *testing.T) {
 	checkParserErrors(t, p)
 	stmt := program.Statements[0].(*ast.ExpressionStatement)
 	classStatement := stmt.Expression.(*ast.ClassStatement)
-	if classStatement.Name.Value != "Person" {
-		t.Fatalf("stmt.Name.Value not 'Person'. got=%q", classStatement.Name.Value)
+	if classStatement.Name.Value != "Munthu" {
+		t.Fatalf("stmt.Name.Value not 'Munthu'. got=%q", classStatement.Name.Value)
 	}
 	if len(classStatement.Body.Statements) != 1 {
 		t.Fatalf("stmt.Body.Statements does not contain 1 statements. got=%d\n",
