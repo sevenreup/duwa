@@ -33,6 +33,14 @@ func (e *Environment) Set(name string, val Object) Object {
 	return val
 }
 
+func (e *Environment) Has(name string) bool {
+	_, ok := e.store[name]
+	if !ok && e.outer != nil {
+		return e.outer.Has(name)
+	}
+	return ok
+}
+
 func (e *Environment) Delete(name string) {
 	delete(e.store, name)
 }
