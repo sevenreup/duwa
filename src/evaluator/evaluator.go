@@ -75,6 +75,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.String{Value: node.Value}
 	case *ast.PostfixExpression:
 		return evaluatePostfix(node, env)
+	case *ast.ClassStatement:
+		return evaluateClass(node, env)
 	}
 	return nil
 }

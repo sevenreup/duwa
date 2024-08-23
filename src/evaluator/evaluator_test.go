@@ -14,6 +14,10 @@ func testEval(input string) object.Object {
 	p := parser.New(l)
 	program := p.ParseProgram()
 	env := object.NewEnvironment()
+
+	evaluatorInstance := Eval
+	object.RegisterEvaluator(evaluatorInstance)
+
 	return Eval(program, env)
 }
 
@@ -619,8 +623,8 @@ func TestHashLiterals(t *testing.T) {
 		(&object.String{Value: "two"}).MapKey():                  2,
 		(&object.String{Value: "three"}).MapKey():                3,
 		(&object.Integer{Value: decimal.NewFromInt(4)}).MapKey(): 4,
-		values.TRUE.MapKey():  5,
-		values.FALSE.MapKey(): 6,
+		values.TRUE.MapKey():                                     5,
+		values.FALSE.MapKey():                                    6,
 	}
 	if len(result.Pairs) != len(expected) {
 		t.Fatalf("Hash has wrong num of pairs. got=%d", len(result.Pairs))
@@ -679,6 +683,32 @@ func TestHashIndexExpressions(t *testing.T) {
 	}
 }
 
-func TestClasses(t*testing.T) {
-	
+func TestClasses(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected interface{}
+	}{
+		{
+			`
+			kalasi Munthu {
+				ndondomeko zaka() { 
+					bweza 10;
+				}
+			}
+			Munthu maliko = Munthu();
+			maliko.zaka();
+			`,
+			5,
+		},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		integer, ok := tt.expected.(int)
+		if ok {
+			testIntegerObject(t, evaluated, decimal.NewFromInt(int64(integer)))
+		} else {
+			testNullObject(t, evaluated)
+		}
+	}
 }

@@ -10,7 +10,7 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseReturnStatement()
 	}
 
-	if token.LookupVariableType(p.curToken.Type) != "" {
+	if token.LookupVariableType(p.curToken.Type) != "" || (p.curToken.Type == token.IDENT && p.peekTokenIs(token.IDENT)) {
 		return p.parseVariableDeclarationStatement()
 	}
 
