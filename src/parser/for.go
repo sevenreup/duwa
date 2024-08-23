@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/sevenreup/chewa/src/ast"
-	"github.com/sevenreup/chewa/src/token"
+	"github.com/sevenreup/duwa/src/ast"
+	"github.com/sevenreup/duwa/src/token"
 )
 
 func (parser *Parser) parseForExpression() ast.Expression {
@@ -42,7 +42,7 @@ func (parser *Parser) parseForExpression() ast.Expression {
 	}
 
 	parser.nextToken()
-	
+
 	// parse condition statement
 	expression.Condition = parser.parseExpression(LOWEST)
 	if expression.Condition == nil {

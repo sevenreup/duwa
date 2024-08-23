@@ -1,4 +1,4 @@
-module github.com/sevenreup/chewa
+module github.com/sevenreup/duwa
 
 go 1.22.0
 

@@ -2,8 +2,8 @@ package functions
 
 import (
 	"fmt"
-	"github.com/sevenreup/chewa/src/object"
-	"github.com/sevenreup/chewa/src/token"
+	"github.com/sevenreup/duwa/src/object"
+	"github.com/sevenreup/duwa/src/token"
 	"os"
 	"strings"
 )

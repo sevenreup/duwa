@@ -8,7 +8,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/sevenreup/chewa/src/token"
+	"github.com/sevenreup/duwa/src/token"
 )
 
 type Lexer struct {

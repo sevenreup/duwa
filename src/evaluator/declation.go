@@ -1,8 +1,8 @@
 package evaluator
 
 import (
-	"github.com/sevenreup/chewa/src/ast"
-	"github.com/sevenreup/chewa/src/object"
+	"github.com/sevenreup/duwa/src/ast"
+	"github.com/sevenreup/duwa/src/object"
 )
 
 // TODO: Handle type

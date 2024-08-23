@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/sevenreup/chewa/src/ast"
-	"github.com/sevenreup/chewa/src/token"
+	"github.com/sevenreup/duwa/src/ast"
+	"github.com/sevenreup/duwa/src/token"
 )
 
 func (p *Parser) parseBoolean() ast.Expression {

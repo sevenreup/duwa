@@ -1,6 +1,6 @@
 package object
 
-import "github.com/sevenreup/chewa/src/ast"
+import "github.com/sevenreup/duwa/src/ast"
 
 const CLASS_OBJ = "CLASS"
 

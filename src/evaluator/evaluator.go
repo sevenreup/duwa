@@ -3,9 +3,9 @@ package evaluator
 import (
 	"fmt"
 
-	"github.com/sevenreup/chewa/src/ast"
-	"github.com/sevenreup/chewa/src/object"
-	"github.com/sevenreup/chewa/src/values"
+	"github.com/sevenreup/duwa/src/ast"
+	"github.com/sevenreup/duwa/src/object"
+	"github.com/sevenreup/duwa/src/values"
 )
 
 type Evaluator func(node ast.Node, env *object.Environment) object.Object

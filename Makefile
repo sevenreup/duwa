@@ -1,11 +1,11 @@
 build:
-	@go build -C src -o ../bin/chewa
+	@go build -C src -o ../bin/duwa
 
 dev:
 	@go run src/main.go
 
 run: build
-	@./bin/chewa
+	@./bin/duwa
 
 lint:
 	@golangci-lint run -c ./golangci.yml ./...

@@ -3,13 +3,13 @@ package repl
 import (
 	"bufio"
 	"fmt"
-	"github.com/sevenreup/chewa/src/evaluator"
-	"github.com/sevenreup/chewa/src/object"
-	"github.com/sevenreup/chewa/src/parser"
-	"github.com/sevenreup/chewa/src/utils"
+	"github.com/sevenreup/duwa/src/evaluator"
+	"github.com/sevenreup/duwa/src/object"
+	"github.com/sevenreup/duwa/src/parser"
+	"github.com/sevenreup/duwa/src/utils"
 	"io"
 
-	"github.com/sevenreup/chewa/src/lexer"
+	"github.com/sevenreup/duwa/src/lexer"
 )
 
 const PROMPT = ">> "

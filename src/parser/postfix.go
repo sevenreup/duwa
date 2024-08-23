@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/sevenreup/chewa/src/ast"
+	"github.com/sevenreup/duwa/src/ast"
 )
 
 func (parser *Parser) parsePostfixExpression() ast.Expression {

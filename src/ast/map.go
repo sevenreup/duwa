@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"github.com/sevenreup/chewa/src/token"
+	"github.com/sevenreup/duwa/src/token"
 )
 
 type MapExpression struct {

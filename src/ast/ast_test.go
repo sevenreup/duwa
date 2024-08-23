@@ -3,7 +3,7 @@ package ast
 import (
 	"testing"
 
-	"github.com/sevenreup/chewa/src/token"
+	"github.com/sevenreup/duwa/src/token"
 )
 
 func TestString(t *testing.T) {
