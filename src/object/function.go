@@ -2,7 +2,7 @@ package object
 
 import (
 	"bytes"
-	"github.com/sevenreup/chewa/src/ast"
+	"github.com/sevenreup/duwa/src/ast"
 	"strings"
 )
 

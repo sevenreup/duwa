@@ -1,32 +1,32 @@
-package chewa
+package duwa
 
 import (
 	"log"
 	"os"
 
-	"github.com/sevenreup/chewa/src/evaluator"
-	"github.com/sevenreup/chewa/src/object"
-	"github.com/sevenreup/chewa/src/utils"
+	"github.com/sevenreup/duwa/src/evaluator"
+	"github.com/sevenreup/duwa/src/object"
+	"github.com/sevenreup/duwa/src/utils"
 
-	"github.com/sevenreup/chewa/src/lexer"
-	"github.com/sevenreup/chewa/src/parser"
+	"github.com/sevenreup/duwa/src/lexer"
+	"github.com/sevenreup/duwa/src/parser"
 )
 
-type Chewa struct {
+type Duwa struct {
 	file        string
 	Environment *object.Environment
 }
 
-func New(file string) *Chewa {
-	chewa := &Chewa{
+func New(file string) *Duwa {
+	duwa := &Duwa{
 		file:        file,
 		Environment: object.NewEnvironment(),
 	}
-	chewa.registerEvaluator()
-	return chewa
+	duwa.registerEvaluator()
+	return duwa
 }
 
-func (c *Chewa) Run() {
+func (c *Duwa) Run() {
 	file, err := os.ReadFile(c.file)
 	if err != nil {
 		log.Fatal(err)
@@ -41,6 +41,6 @@ func (c *Chewa) Run() {
 	evaluator.Eval(program, env)
 }
 
-func (c *Chewa) registerEvaluator() {
+func (c *Duwa) registerEvaluator() {
 	object.RegisterEvaluator(evaluator.Eval)
 }

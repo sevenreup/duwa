@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"github.com/sevenreup/chewa/src/ast"
-	"github.com/sevenreup/chewa/src/token"
+	"github.com/sevenreup/duwa/src/ast"
+	"github.com/sevenreup/duwa/src/token"
 )
 
 func (parser *Parser) mapLiteral() ast.Expression {
@@ -14,7 +14,6 @@ func (parser *Parser) mapLiteral() ast.Expression {
 			break
 		}
 		parser.nextToken()
-
 
 		key := parser.parseExpression(LOWEST)
 

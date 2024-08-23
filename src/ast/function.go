@@ -2,7 +2,7 @@ package ast
 
 import (
 	"bytes"
-	"github.com/sevenreup/chewa/src/token"
+	"github.com/sevenreup/duwa/src/token"
 	"strings"
 )
 

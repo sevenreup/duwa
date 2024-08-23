@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/sevenreup/chewa/src/chewa"
+	"github.com/sevenreup/duwa/src/duwa"
 )
 
 var (
@@ -22,6 +22,6 @@ func main() {
 		log.Fatal("Please provide a file to run")
 	}
 
-	chewa := chewa.New(file)
-	chewa.Run()
+	duwa := duwa.New(file)
+	duwa.Run()
 }

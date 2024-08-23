@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/sevenreup/chewa/src/values"
-	"github.com/sevenreup/chewa/src/object"
-	"github.com/sevenreup/chewa/src/token"
+	"github.com/sevenreup/duwa/src/object"
+	"github.com/sevenreup/duwa/src/token"
+	"github.com/sevenreup/duwa/src/values"
 )
 
 var ConsoleMethods = map[string]*object.LibraryFunction{}

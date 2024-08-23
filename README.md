@@ -1,9 +1,9 @@
-# Chewa Programming Language (in progress)
-This project is an interpreter for the `chewa` language (Name still getting worked shopped), a language based on the Chewa Bantu language.
+# Duwa Programming Language (in progress)
+This project is an interpreter for the `duwa` language (Name still getting worked shopped), a language based on the Chewa Bantu language.
 This project is written in Golang.
 
 ## Setup and Moni ku dziko
-Download the prebuilt binaries for your platform from the [release](https://github.com/sevenreup/chewa/releases)
+Download the prebuilt binaries for your platform from the [release](https://github.com/sevenreup/duwa/releases)
 
 Create a new source file, `main.ny` (💀 for now the extension does not matter).
 
@@ -15,7 +15,7 @@ lemba("Moni Dziko");
 Run you new application
 
 ```bash
-chewa -f ./main.ny
+duwa -f ./main.ny
 ```
 
 ## Zowerenga bwa?

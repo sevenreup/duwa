@@ -1,6 +1,6 @@
 package ast
 
-import "github.com/sevenreup/chewa/src/token"
+import "github.com/sevenreup/duwa/src/token"
 
 type Compound struct {
 	Expression
@@ -16,4 +16,3 @@ func (fl *Compound) TokenLiteral() string { return fl.Token.Literal }
 func (fl *Compound) String() string {
 	return ""
 }
-

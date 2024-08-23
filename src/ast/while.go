@@ -1,6 +1,6 @@
 package ast
 
-import "github.com/sevenreup/chewa/src/token"
+import "github.com/sevenreup/duwa/src/token"
 
 type WhileExpression struct {
 	Expression

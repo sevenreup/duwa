@@ -1,8 +1,8 @@
 package evaluator
 
 import (
-	"github.com/sevenreup/chewa/src/object"
-	"github.com/sevenreup/chewa/src/values"
+	"github.com/sevenreup/duwa/src/object"
+	"github.com/sevenreup/duwa/src/values"
 )
 
 func nativeBoolToBooleanObject(input bool) *object.Boolean {

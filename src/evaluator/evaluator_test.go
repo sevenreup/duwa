@@ -1,10 +1,10 @@
 package evaluator
 
 import (
-	"github.com/sevenreup/chewa/src/lexer"
-	"github.com/sevenreup/chewa/src/object"
-	"github.com/sevenreup/chewa/src/parser"
-	"github.com/sevenreup/chewa/src/values"
+	"github.com/sevenreup/duwa/src/lexer"
+	"github.com/sevenreup/duwa/src/object"
+	"github.com/sevenreup/duwa/src/parser"
+	"github.com/sevenreup/duwa/src/values"
 	"github.com/shopspring/decimal"
 	"testing"
 )

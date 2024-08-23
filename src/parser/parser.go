@@ -3,9 +3,9 @@ package parser
 import (
 	"fmt"
 
-	"github.com/sevenreup/chewa/src/ast"
-	"github.com/sevenreup/chewa/src/lexer"
-	"github.com/sevenreup/chewa/src/token"
+	"github.com/sevenreup/duwa/src/ast"
+	"github.com/sevenreup/duwa/src/lexer"
+	"github.com/sevenreup/duwa/src/token"
 )
 
 type (
@@ -86,7 +86,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.WHILE, p.parseWhileExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.CLASS, p.classStatement)
-	
+
 	p.registerPrefix(token.OPENING_BRACE, p.mapLiteral)
 	p.registerPrefix(token.OPENING_PAREN, p.parseGroupedExpression)
 	p.registerPrefix(token.OPENING_BRACKET, p.parseArrayLiteral)
