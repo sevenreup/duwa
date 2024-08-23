@@ -1343,3 +1343,88 @@ func TestParsingHashLiteralsWithExpressions(t *testing.T) {
 		testFunc(value)
 	}
 }
+
+func TestParsingClassExpressions(t *testing.T) {
+	input := `
+		kalasi Munthu {
+			nambala age = 5;
+		}`
+	l := lexer.New([]byte(input))
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	stmt := program.Statements[0].(*ast.ExpressionStatement)
+	classStatement := stmt.Expression.(*ast.ClassStatement)
+	if classStatement.Name.Value != "Munthu" {
+		t.Fatalf("stmt.Name.Value not 'Munthu'. got=%q", classStatement.Name.Value)
+	}
+	if len(classStatement.Body.Statements) != 1 {
+		t.Fatalf("stmt.Body.Statements does not contain 1 statements. got=%d\n",
+			len(classStatement.Body.Statements))
+	}
+	bodyStmt, ok := classStatement.Body.Statements[0].(*ast.VariableDeclarationStatement)
+	if !ok {
+		t.Fatalf("stmt.Body.Statements[0] is not ast.VariableDeclarationStatement. got=%T",
+			classStatement.Body.Statements[0])
+	}
+	if bodyStmt.Identifier.Value != "age" {
+		t.Fatalf("bodyStmt.Identifier.Value not 'age'. got=%s", bodyStmt.Identifier.Value)
+	}
+}
+
+func TestInstanceCreation(t *testing.T) {
+	tests := []struct {
+		input              string
+		expectedIdentifier string
+		expectedType       string
+	}{
+		{"Munthu maria = Munthu();", "maria", "Munthu"},
+		{"maria = Munthu();", "maria", "Munthu"},
+	}
+
+	for _, tt := range tests {
+		l := lexer.New([]byte(tt.input))
+		p := New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain 1 statements. got=%d",
+				len(program.Statements))
+		}
+		stmt := program.Statements[0]
+		switch statement := stmt.(type) {
+		case *ast.AssigmentStatement:
+			{
+				if identifier, ok := statement.Identifier.(*ast.Identifier); ok {
+					if identifier.Value != tt.expectedIdentifier {
+						t.Errorf("AssigmentStatement.Name.Value not '%s'. got=%s", tt.expectedIdentifier, identifier.Value)
+						continue
+					}
+				} else {
+					t.Errorf("AssigmentStatement.Name not *ast.Identifier. got=%T", statement.Identifier)
+					continue
+				}
+				if callExpression, ok := statement.Value.(*ast.CallExpression); ok {
+					if callExpression.Function.String() != tt.expectedType {
+						t.Errorf("CallExpression.Function not '%s'. got=%s", tt.expectedType, callExpression.Function.String())
+						continue
+					}
+				} else {
+					t.Errorf("AssigmentStatement.Value not *ast.CallExpression. got=%T", statement.Value)
+					continue
+				}
+			}
+		case *ast.VariableDeclarationStatement:
+			{
+				if statement.Type.Literal != tt.expectedType {
+					t.Errorf("s.TokenLiteral not '%s'. got=%q", tt.expectedType, statement.Type.Literal)
+					continue
+				}
+				if statement.Identifier.Value != tt.expectedIdentifier {
+					t.Errorf("VariableDeclarationStatement.Name.Value not '%s'. got=%s", tt.expectedIdentifier, statement.Identifier.Value)
+					continue
+				}
+			}
+		}
+	}
+}

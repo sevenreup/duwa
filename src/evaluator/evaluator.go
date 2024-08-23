@@ -8,6 +8,8 @@ import (
 	"github.com/sevenreup/chewa/src/values"
 )
 
+type Evaluator func(node ast.Node, env *object.Environment) object.Object
+
 func Eval(node ast.Node, env *object.Environment) object.Object {
 	switch node := node.(type) {
 	case *ast.Program:
@@ -73,6 +75,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return &object.String{Value: node.Value}
 	case *ast.PostfixExpression:
 		return evaluatePostfix(node, env)
+	case *ast.ClassStatement:
+		return evaluateClass(node, env)
 	}
 	return nil
 }

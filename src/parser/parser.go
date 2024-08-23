@@ -85,6 +85,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.FOR, p.parseForExpression)
 	p.registerPrefix(token.WHILE, p.parseWhileExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
+	p.registerPrefix(token.CLASS, p.classStatement)
 	
 	p.registerPrefix(token.OPENING_BRACE, p.mapLiteral)
 	p.registerPrefix(token.OPENING_PAREN, p.parseGroupedExpression)

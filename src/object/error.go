@@ -1,5 +1,7 @@
 package object
 
+import "fmt"
+
 const ERROR_OBJ = "ERROR"
 
 type Error struct {
@@ -14,4 +16,8 @@ func (e *Error) Inspect() string { return "ERROR: " + e.Message }
 func (i *Error) Method(method string, args []Object) (Object, bool) {
 	//TODO implement me
 	panic("implement me")
+}
+
+func NewError(format string, a ...interface{}) *Error {
+	return &Error{Message: fmt.Sprintf(format, a...)}
 }

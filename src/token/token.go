@@ -63,6 +63,7 @@ const (
 	FOR      = "FOR"
 	WHILE    = "WHILE"
 	MAP      = "MAP"
+	CLASS    = "CLASS"
 )
 
 type Position struct {
@@ -89,6 +90,7 @@ var keywords = map[string]TokenType{
 	"za":         FOR,
 	"pamene":     WHILE,
 	"mgwirizano": MAP,
+	"kalasi":     CLASS,
 }
 
 var variableTypes = map[TokenType]TokenType{
