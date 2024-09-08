@@ -29,6 +29,11 @@ func applyFunction(tok token.Token, fn object.Object, args []object.Object, env 
 		extendedEnv := extendFunctionEnv(fn, args)
 		evaluated := Eval(fn.Body, extendedEnv)
 		return unwrapReturnValue(evaluated)
+	case *object.Class:
+		if tok.Literal != fn.Name.TokenLiteral() {
+			return newError("class name mismatch: expected %s, got %s", fn.Name.TokenLiteral(), tok.Literal)
+		}
+		return fn.CreateInstance(tok.Literal, args)
 	default:
 		return newError("not a function: %s", fn.Type())
 	}

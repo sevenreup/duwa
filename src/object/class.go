@@ -16,20 +16,20 @@ func (c *Class) Inspect() string {
 	return "class " + c.Name.String()
 }
 
-func (i *Class) Method(method string, args []Object) (Object, bool) {
-	switch method {
-	case "new":
-		instance := &Instance{Class: i, Env: NewEnclosedEnvironment(i.Env)}
+func (c *Class) CreateInstance(method string, args []Object) Object {
+	instance := &Instance{Class: c, Env: NewEnclosedEnvironment(c.Env)}
 
-		if ok := i.Env.Has("constructor"); ok {
-			result := instance.Call("constructor", args)
+	if ok := c.Env.Has("constructor"); ok {
+		result := instance.Call("constructor", args)
 
-			if result != nil && result.Type() == ERROR_OBJ {
-				return result, false
-			}
+		if result != nil && result.Type() == ERROR_OBJ {
+			return result
 		}
-
-		return instance, true
 	}
+
+	return instance
+}
+
+func (i *Class) Method(method string, args []Object) (Object, bool) {
 	return nil, false
 }

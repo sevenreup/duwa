@@ -698,7 +698,7 @@ func TestClasses(t *testing.T) {
 			Munthu maliko = Munthu();
 			maliko.zaka();
 			`,
-			5,
+			10,
 		},
 	}
 
