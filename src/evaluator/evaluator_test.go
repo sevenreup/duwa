@@ -700,6 +700,20 @@ func TestClasses(t *testing.T) {
 			`,
 			10,
 		},
+		{
+			`
+			kalasi Munthu {
+				numbala zaka = 2;
+				ndondomeko yikaZaka() { 
+					zaka = 10;
+				}
+			}
+			Munthu maliko = Munthu();
+			maliko.yikaZaka();
+			maliko.zaka;
+			`,
+			10,
+		},
 	}
 
 	for _, tt := range tests {

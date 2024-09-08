@@ -23,7 +23,6 @@ func (parser *Parser) dotExpression(left ast.Expression) ast.Expression {
 		return expression
 	}
 
-	// TODO: Add logic for handling properties "class.me"
-
-	return nil
+	// Property
+	return &ast.PropertyExpression{Token: parser.curToken, Left: left, Property: parser.parseExpression(currentPrecedence)}
 }

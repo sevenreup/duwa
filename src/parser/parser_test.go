@@ -1428,3 +1428,33 @@ func TestInstanceCreation(t *testing.T) {
 		}
 	}
 }
+
+func TestClassPropertyAccess(t *testing.T) {
+	input := `Munthu maria = Munthu(); maria.zaka;`
+	l := lexer.New([]byte(input))
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	if len(program.Statements) != 2 {
+		t.Fatalf("program.Statements does not contain 2 statements. got=%d", len(program.Statements))
+	}
+	stmt := program.Statements[1]
+
+	expression, ok := stmt.(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("stmt is not ast.ExpressionStatement. got=%T", stmt)
+	}
+	propertyExp, ok := expression.Expression.(*ast.PropertyExpression)
+
+	if !ok {
+		t.Fatalf("stmt.Expression is not ast.PropertyExpression. got=%T", expression.Expression)
+	}
+
+	if !testIdentifier(t, propertyExp.Left, "maria") {
+		return
+	}
+
+	if !testIdentifier(t, propertyExp.Property, "zaka") {
+		return
+	}
+}

@@ -17,7 +17,7 @@ func (c *Class) Inspect() string {
 }
 
 func (c *Class) CreateInstance(method string, args []Object) Object {
-	instance := &Instance{Class: c, Env: NewEnclosedEnvironment(c.Env)}
+	instance := &Instance{Class: c, Env: c.Env}
 
 	if ok := c.Env.Has("constructor"); ok {
 		result := instance.Call("constructor", args)

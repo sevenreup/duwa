@@ -24,11 +24,11 @@ func (e *Environment) Get(name string) (Object, bool) {
 }
 func (e *Environment) Set(name string, val Object) Object {
 	// TODO: Make sure we dont accidentally mutate data that is not in the current scope
-	// _, ok := e.store[name]
-	// if !ok && e.outer != nil {
-	// 	e.outer.Set(name, val)
-	// 	return val
-	// }
+	_, ok := e.store[name]
+	if !ok && e.outer != nil {
+		e.outer.Set(name, val)
+		return val
+	}
 	e.store[name] = val
 	return val
 }

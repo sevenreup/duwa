@@ -50,6 +50,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return function
 	case *ast.CallExpression:
 		return evaluateFunctionCall(node, env)
+	case *ast.PropertyExpression:
+		return evaluateProperty(node, env)
 	case *ast.ArrayLiteral:
 		elements := evalExpressions(node.Elements, env)
 		if len(elements) == 1 && isError(elements[0]) {
