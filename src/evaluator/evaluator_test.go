@@ -698,7 +698,21 @@ func TestClasses(t *testing.T) {
 			Munthu maliko = Munthu();
 			maliko.zaka();
 			`,
-			5,
+			10,
+		},
+		{
+			`
+			kalasi Munthu {
+				numbala zaka = 2;
+				ndondomeko yikaZaka() { 
+					zaka = 10;
+				}
+			}
+			Munthu maliko = Munthu();
+			maliko.yikaZaka();
+			maliko.zaka;
+			`,
+			10,
 		},
 	}
 
