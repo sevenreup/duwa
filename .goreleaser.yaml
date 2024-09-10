@@ -9,7 +9,7 @@ before:
 builds:
   - id: build_archive_all
     env: [CGO_ENABLED=0]
-    main: ./src
+    main: ./src/cmd/duwa
     goos:
       - linux
       - windows
@@ -19,7 +19,7 @@ builds:
       - arm64
   - id: build_no_archive
     env: [CGO_ENABLED=0]
-    main: ./src
+    main: ./src/cmd/duwa
     goos:
       - linux
       - windows

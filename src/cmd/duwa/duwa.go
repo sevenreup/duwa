@@ -22,6 +22,6 @@ func main() {
 		log.Fatal("Please provide a file to run")
 	}
 
-	duwa := duwa.New(file)
-	duwa.Run()
+	duwa := duwa.New()
+	duwa.RunFile(file)
 }
