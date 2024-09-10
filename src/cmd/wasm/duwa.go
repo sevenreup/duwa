@@ -27,6 +27,9 @@ func run(this js.Value, inputs []js.Value) interface{} {
 
 	file := inputs[0].String()
 	result := compiler.Run(file)
+	if result == nil {
+		return js.ValueOf(nil)
+	}
 	return js.ValueOf(result.Inspect())
 }
 
