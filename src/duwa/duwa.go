@@ -13,32 +13,38 @@ import (
 )
 
 type Duwa struct {
-	file        string
 	Environment *object.Environment
 }
 
-func New(file string) *Duwa {
+func New() *Duwa {
 	duwa := &Duwa{
-		file:        file,
 		Environment: object.NewEnvironment(),
 	}
 	duwa.registerEvaluator()
 	return duwa
 }
 
-func (c *Duwa) Run() {
-	file, err := os.ReadFile(c.file)
+func (c *Duwa) RunFile(filePath string) object.Object {
+	file, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	l := lexer.New(file)
+	return c.run(file)
+}
+
+func (c *Duwa) Run(data string) object.Object {
+	return c.run([]byte(data))
+}
+
+func (c *Duwa) run(data []byte) object.Object {
+	l := lexer.New(data)
 	p := parser.New(l)
 	env := object.NewEnvironment()
 	program := p.ParseProgram()
 	if len(p.Errors()) != 0 {
 		utils.PrintParserErrors(os.Stdout, p.Errors())
 	}
-	evaluator.Eval(program, env)
+	return evaluator.Eval(program, env)
 }
 
 func (c *Duwa) registerEvaluator() {
