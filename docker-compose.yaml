@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  tinygo-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - go-cache:/home/dev/go
+      - go-mod-cache:/go/pkg/mod
+    environment:
+      - GOPATH=/go
+      - GOCACHE=/home/dev/go
+      - GOMODCACHE=/go/pkg/mod
+    ports:
+      - "2345:2345" # for delve debugger
+    tty: true
+    stdin_open: true
+
+volumes:
+  go-cache:
+  go-mod-cache:

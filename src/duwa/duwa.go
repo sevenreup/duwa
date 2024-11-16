@@ -16,9 +16,9 @@ type Duwa struct {
 	Environment *object.Environment
 }
 
-func New() *Duwa {
+func New(env *object.Environment) *Duwa {
 	duwa := &Duwa{
-		Environment: object.NewEnvironment(),
+		Environment: env,
 	}
 	duwa.registerEvaluator()
 	return duwa
@@ -39,12 +39,11 @@ func (c *Duwa) Run(data string) object.Object {
 func (c *Duwa) run(data []byte) object.Object {
 	l := lexer.New(data)
 	p := parser.New(l)
-	env := object.NewEnvironment()
 	program := p.ParseProgram()
 	if len(p.Errors()) != 0 {
 		utils.PrintParserErrors(os.Stdout, p.Errors())
 	}
-	return evaluator.Eval(program, env)
+	return evaluator.Eval(program, c.Environment)
 }
 
 func (c *Duwa) registerEvaluator() {

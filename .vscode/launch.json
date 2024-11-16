@@ -9,12 +9,25 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceRoot}/src/main.go",
+            "program": "${workspaceRoot}\\src\\cmd\\duwa\\duwa.go",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceRoot}",
+            "args": [
+                "-f",
+                "${workspaceRoot}\\examples\\games\\tictactoe.duwa"
+            ]
+        },
+        {
+            "name": "Wasm",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceRoot}/src/cmd/wasm/duwa.go",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "args": [
                 "-f",
-                "./examples/games/tictactoe.ny"
+                "${workspaceRoot}\\examples\\games\\tictactoe.duwa"
             ]
         }
     ]

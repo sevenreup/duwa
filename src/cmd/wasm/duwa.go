@@ -3,50 +3,137 @@
 package main
 
 import (
+	"context"
 	"fmt"
-
-	"syscall/js"
-
 	"github.com/sevenreup/duwa/src/duwa"
+	"github.com/sevenreup/duwa/src/object"
+	"log/slog"
+	"runtime"
+	"syscall/js"
 )
 
 var compiler *duwa.Duwa
 
+type WasmConsoleHandler struct {
+}
+
 func main() {
-	compiler = duwa.New()
-	js.Global().Set("runDuwa", js.FuncOf(jsRecover(run)))
+	// Ensure the garbage collector runs more frequently
+	runtime.SetFinalizer(compiler, nil)
+	logger := slog.New(&WasmConsoleHandler{})
+	compiler = duwa.New(object.New(logger))
+
+	// Register the function in the global scope
+	js.Global().Set("runDuwa", js.FuncOf(wrapFunction(run)))
+
 	fmt.Println("Duwa is ready")
-	<-make(chan bool)
+
+	// Keep the program running
+	select {}
 }
 
 func run(this js.Value, inputs []js.Value) interface{} {
 	if len(inputs) < 1 {
-		fmt.Println("Please provide a file to run")
-		return nil
+		return wrap("Please provide a file to run")
 	}
 
 	file := inputs[0].String()
 	result := compiler.Run(file)
 	if result == nil {
-		return js.ValueOf(nil)
+		return wrap(nil)
 	}
-	return js.ValueOf(result.Inspect())
+	return wrap(result.Inspect())
 }
 
-// jsRecover wraps a handler function to recover from panics and return an error message in case of a panic.
-// It ensures that the function's result is compatible with js.ValueOf, is called by the browser when a handler is being executed.
-func jsRecover(fn func(this js.Value, args []js.Value) any) func(this js.Value, args []js.Value) any {
-	return func(this js.Value, args []js.Value) (result any) {
+// wrap safely converts Go values to JavaScript values
+func wrap(value interface{}) interface{} {
+	switch val := value.(type) {
+	case nil:
+		return js.Null()
+	case string:
+		return js.ValueOf(val)
+	case int, int32, int64, float32, float64:
+		return js.ValueOf(val)
+	case bool:
+		return js.ValueOf(val)
+	case []interface{}:
+		arr := make([]interface{}, len(val))
+		for i, v := range val {
+			arr[i] = wrap(v)
+		}
+		return js.ValueOf(arr)
+	case map[string]interface{}:
+		obj := js.Global().Get("Object").New()
+		for k, v := range val {
+			obj.Set(k, wrap(v))
+		}
+		return obj
+	default:
+		return js.ValueOf(fmt.Sprint(val))
+	}
+}
+
+// wrapFunction provides error handling for JavaScript functions
+func wrapFunction(fn func(this js.Value, args []js.Value) interface{}) func(this js.Value, args []js.Value) interface{} {
+	return func(this js.Value, args []js.Value) interface{} {
 		defer func() {
 			if r := recover(); r != nil {
-				result = map[string]any{
-					"error": fmt.Sprintf("Internal error: %v", r),
-				}
+				// Convert panic to JavaScript error object
+				errorObj := make(map[string]interface{})
+				errorObj["error"] = fmt.Sprint(r)
+				wrap(errorObj)
 			}
 		}()
+		return fn(this, args)
+	}
+}
 
-		result = fn(this, args)
-		js.ValueOf(result)
-		return
+func (h *WasmConsoleHandler) Enabled(_ context.Context, level slog.Level) bool {
+	return true
+}
+
+func emitConsoleEvent(r slog.Record) {
+	// Create a custom event
+	eventInit := js.Global().Get("Object").New()
+	eventInit.Set("detail", map[string]interface{}{
+		"message": r.Message,
+		"level":   slogLevelToConsoleLevel(r.Level),
+	})
+
+	event := js.Global().Get("CustomEvent").New("goConsoleEvent", eventInit)
+
+	// Dispatch the event
+	js.Global().Get("window").Call("dispatchEvent", event)
+}
+
+func (h *WasmConsoleHandler) Handle(ctx context.Context, r slog.Record) error {
+	emitConsoleEvent(r)
+	return nil
+}
+
+func (h *WasmConsoleHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
+	return h
+}
+
+func (h *WasmConsoleHandler) WithGroup(name string) slog.Handler {
+	return h
+}
+
+func (h *WasmConsoleHandler) Handler() slog.Handler {
+	return h
+}
+
+func slogLevelToConsoleLevel(level slog.Level) string {
+	switch level {
+	case slog.LevelDebug:
+		return "debug"
+	case slog.LevelInfo:
+		return "info"
+	case slog.LevelWarn:
+		return "warn"
+	case slog.LevelError:
+		return "error"
+	default:
+		return "info"
 	}
 }

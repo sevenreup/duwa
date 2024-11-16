@@ -3,11 +3,12 @@ package repl
 import (
 	"bufio"
 	"fmt"
+	"io"
+
 	"github.com/sevenreup/duwa/src/evaluator"
 	"github.com/sevenreup/duwa/src/object"
 	"github.com/sevenreup/duwa/src/parser"
 	"github.com/sevenreup/duwa/src/utils"
-	"io"
 
 	"github.com/sevenreup/duwa/src/lexer"
 )
@@ -17,7 +18,7 @@ const PROMPT = ">> "
 func Start(in io.Reader, out io.Writer) {
 	object.RegisterEvaluator(evaluator.Eval)
 	scanner := bufio.NewScanner(in)
-	env := object.NewEnvironment()
+	env := object.Default()
 	for {
 		fmt.Printf(PROMPT)
 		scanned := scanner.Scan()

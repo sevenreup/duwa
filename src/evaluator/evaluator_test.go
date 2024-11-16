@@ -1,19 +1,20 @@
 package evaluator
 
 import (
+	"testing"
+
 	"github.com/sevenreup/duwa/src/lexer"
 	"github.com/sevenreup/duwa/src/object"
 	"github.com/sevenreup/duwa/src/parser"
 	"github.com/sevenreup/duwa/src/values"
 	"github.com/shopspring/decimal"
-	"testing"
 )
 
 func testEval(input string) object.Object {
 	l := lexer.New([]byte(input))
 	p := parser.New(l)
 	program := p.ParseProgram()
-	env := object.NewEnvironment()
+	env := object.Default()
 
 	evaluatorInstance := Eval
 	object.RegisterEvaluator(evaluatorInstance)

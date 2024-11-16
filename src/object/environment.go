@@ -1,18 +1,28 @@
 package object
 
+import "log/slog"
+
 func NewEnclosedEnvironment(outer *Environment) *Environment {
-	env := NewEnvironment()
+	env := Default()
 	env.outer = outer
 	return env
 }
-func NewEnvironment() *Environment {
+
+func Default() *Environment {
+	logger := slog.Default()
 	s := make(map[string]Object)
-	return &Environment{store: s, outer: nil}
+	return &Environment{store: s, outer: nil, Logger: logger}
+}
+
+func New(logger *slog.Logger) *Environment {
+	s := make(map[string]Object)
+	return &Environment{store: s, outer: nil, Logger: logger}
 }
 
 type Environment struct {
-	store map[string]Object
-	outer *Environment
+	store  map[string]Object
+	outer  *Environment
+	Logger *slog.Logger
 }
 
 func (e *Environment) Get(name string) (Object, bool) {
