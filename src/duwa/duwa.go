@@ -41,7 +41,7 @@ func (c *Duwa) run(data []byte) object.Object {
 	p := parser.New(l)
 	program := p.ParseProgram()
 	if len(p.Errors()) != 0 {
-		utils.PrintParserErrors(os.Stdout, p.Errors())
+		utils.PrintParserErrors(c.Environment.Logger, p.Errors())
 	}
 	return evaluator.Eval(program, c.Environment)
 }

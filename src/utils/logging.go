@@ -1,14 +1,19 @@
 package utils
 
-import "io"
+import (
+	"log/slog"
+	"strings"
+)
 
 const ERROR_HEDEAR = "Errorr!!"
 
-func PrintParserErrors(out io.Writer, errors []string) {
-	io.WriteString(out, ERROR_HEDEAR)
-	io.WriteString(out, "Woops! We ran into some monkey business here!\n")
-	io.WriteString(out, " parser errors:\n")
+func PrintParserErrors(logger *slog.Logger, errors []string) {
+	var builder strings.Builder
+	builder.WriteString(ERROR_HEDEAR)
+	builder.WriteString("Parser errors:\n")
 	for _, msg := range errors {
-		io.WriteString(out, "\t"+msg+"\n")
+		builder.WriteString("\t" + msg + "\n")
 	}
+
+	logger.Error(builder.String(), "type", "parser")
 }

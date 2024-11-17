@@ -3,14 +3,14 @@ build:
 
 build-wasm:
 	set TEMP=U:\projects\skybox\duwa\chewa\temp
-	@GOOS=js GOARCH=wasm tinygo build -o ../chewa-site/public/duwa.wasm -opt 1 ./src/cmd/wasm/duwa.go
+	@GOOS=js GOARCH=wasm tinygo build -o ../duwa-site/public/duwa.wasm -opt 1 ./src/cmd/wasm/duwa.go
 
 build-docker:
 	@docker-compose up -d
 	@docker-compose exec tinygo-dev tinygo build -o ./bin/duwa.wasm -target=wasm ./src/cmd/wasm/duwa.go
 	@docker-compose exec tinygo-dev cp /tinygo/targets/wasm_exec.js /app/bin/
-	@cp ./bin/duwa.wasm ../chewa-site/public/duwa.wasm
-	@cp ./bin/wasm_exec.js ../chewa-site/src/components/editor/wasm_exec.js
+	@cp ./bin/duwa.wasm ../duwa-site/public/duwa.wasm
+	@cp ./bin/wasm_exec.js ../duwa-site/public/wasm_exec.js
 	@docker-compose stop
 
 build-all: build build-wasm

@@ -100,6 +100,14 @@ func emitConsoleEvent(r slog.Record) {
 		"level":   slogLevelToConsoleLevel(r.Level),
 	})
 
+	logType := "runtime"
+	for attr := range r.Attrs {
+		if attr.Key == "type" {
+			logType = attr.Value.String()
+		}
+	}
+	eventInit.Get("detail").Set("type", logType)
+
 	event := js.Global().Get("CustomEvent").New("goConsoleEvent", eventInit)
 
 	// Dispatch the event
