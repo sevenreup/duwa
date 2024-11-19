@@ -5,11 +5,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/sevenreup/duwa/src/duwa"
-	"github.com/sevenreup/duwa/src/object"
 	"log/slog"
 	"runtime"
 	"syscall/js"
+
+	"github.com/sevenreup/duwa/src/duwa"
+	"github.com/sevenreup/duwa/src/object"
+	"github.com/sevenreup/duwa/src/runtime/wasm"
 )
 
 var compiler *duwa.Duwa
@@ -21,7 +23,8 @@ func main() {
 	// Ensure the garbage collector runs more frequently
 	runtime.SetFinalizer(compiler, nil)
 	logger := slog.New(&WasmConsoleHandler{})
-	compiler = duwa.New(object.New(logger))
+	console := wasm.NewConsole()
+	compiler = duwa.New(object.New(logger, console))
 
 	// Register the function in the global scope
 	js.Global().Set("runDuwa", js.FuncOf(wrapFunction(run)))

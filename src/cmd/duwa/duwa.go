@@ -8,6 +8,7 @@ import (
 
 	"github.com/sevenreup/duwa/src/duwa"
 	"github.com/sevenreup/duwa/src/object"
+	"github.com/sevenreup/duwa/src/runtime/native"
 )
 
 var (
@@ -26,7 +27,7 @@ func main() {
 	}
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-
-	duwa := duwa.New(object.New(logger))
+	console := native.NewConsole()
+	duwa := duwa.New(object.New(logger, console))
 	duwa.RunFile(file)
 }

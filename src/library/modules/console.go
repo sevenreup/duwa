@@ -1,7 +1,6 @@
 package modules
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
@@ -29,27 +28,25 @@ func consolePrint(env *object.Environment, tok token.Token, args ...object.Objec
 		values = append(values, value.Inspect())
 	}
 
-	libPrint(values)
+	libPrint(env, values)
 
 	return nil
 }
 
 func consoleRead(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
-	scanner := bufio.NewScanner(os.Stdin)
-
 	if len(args) == 1 {
 		prompt := args[0].(*object.String).Value
 
 		fmt.Print(prompt)
 	}
 
-	val := scanner.Scan()
+	val, err := scope.Console.Read()
 
-	if !val {
+	if err != nil {
 		return values.NULL
 	}
 
-	return &object.String{Value: scanner.Text()}
+	return &object.String{Value: val}
 }
 
 func consoleClear(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
@@ -66,12 +63,12 @@ func consoleClear(scope *object.Environment, tok token.Token, args ...object.Obj
 	return nil
 }
 
-func libPrint(values []string) {
+func libPrint(env *object.Environment, values []string) {
 	if len(values) > 0 {
 		str := make([]string, 0)
 
 		str = append(str, values...)
 		strRaw, _ := strconv.Unquote(`"` + strings.Join(str, " ") + `"`)
-		fmt.Print(strRaw)
+		env.Logger.Info(strRaw)
 	}
 }
