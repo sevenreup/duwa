@@ -17,21 +17,21 @@ builds:
     goarch:
       - amd64
       - arm64
-  - id: build_no_archive
-    env: [CGO_ENABLED=0]
-    main: ./src/cmd/duwa
-    goos:
-      - linux
-      - windows
-      - darwin
-    goarch:
-      - amd64
-      - arm64
+  # - id: build_no_archive
+  #   env: [CGO_ENABLED=0]
+  #   main: ./src/cmd/duwa
+  #   goos:
+  #     - linux
+  #     - windows
+  #     - darwin
+  #   goarch:
+  #     - amd64
+  #     - arm64
 
 archives:
   - id: archive_noncgo
     builds: [build_archive_all]
     format: zip
-  - id: binary_noncgo
-    builds: [build_no_archive]
-    format: binary
+  # - id: binary_noncgo
+  #   builds: [build_no_archive]
+  #   format: binary
