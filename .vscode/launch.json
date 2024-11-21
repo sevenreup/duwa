@@ -29,6 +29,16 @@
                 "-f",
                 "${workspaceRoot}\\examples\\games\\tictactoe.duwa"
             ]
-        }
+        },
+        {
+            "name": "Tools",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceRoot}\\src\\cmd\\tools\\tools.go",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceRoot}",
+            "args": []
+        },
     ]
 }
