@@ -13,7 +13,7 @@ func init() {
 	RegisterModule("console", modules.ConsoleMethods)
 	RegisterModule("math", modules.MathMethods)
 
-	RegisterFunction("lemba", functions.Print)
+	RegisterFunction("lemba", functions.PrintLine)
 	RegisterFunction("lembanzr", functions.PrintLine)
 	RegisterFunction("kuNambala", functions.ParseStringToNumber)
 }

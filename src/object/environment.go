@@ -1,18 +1,35 @@
 package object
 
+import (
+	"log/slog"
+
+	"github.com/sevenreup/duwa/src/library/runtime"
+	"github.com/sevenreup/duwa/src/runtime/native"
+)
+
 func NewEnclosedEnvironment(outer *Environment) *Environment {
-	env := NewEnvironment()
+	env := Default()
 	env.outer = outer
 	return env
 }
-func NewEnvironment() *Environment {
+
+func Default() *Environment {
+	logger := slog.Default()
 	s := make(map[string]Object)
-	return &Environment{store: s, outer: nil}
+	console := native.NewConsole()
+	return &Environment{store: s, outer: nil, Logger: logger, Console: console}
+}
+
+func New(logger *slog.Logger, console runtime.Console) *Environment {
+	s := make(map[string]Object)
+	return &Environment{store: s, outer: nil, Logger: logger, Console: console}
 }
 
 type Environment struct {
-	store map[string]Object
-	outer *Environment
+	store   map[string]Object
+	outer   *Environment
+	Logger  *slog.Logger
+	Console runtime.Console
 }
 
 func (e *Environment) Get(name string) (Object, bool) {

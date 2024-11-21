@@ -3,8 +3,12 @@ package main
 import (
 	"flag"
 	"log"
+	"log/slog"
+	"os"
 
 	"github.com/sevenreup/duwa/src/duwa"
+	"github.com/sevenreup/duwa/src/object"
+	"github.com/sevenreup/duwa/src/runtime/native"
 )
 
 var (
@@ -22,6 +26,8 @@ func main() {
 		log.Fatal("Please provide a file to run")
 	}
 
-	duwa := duwa.New(file)
-	duwa.Run()
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	console := native.NewConsole()
+	duwa := duwa.New(object.New(logger, console))
+	duwa.RunFile(file)
 }

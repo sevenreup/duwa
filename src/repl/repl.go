@@ -3,11 +3,13 @@ package repl
 import (
 	"bufio"
 	"fmt"
+	"io"
+	"log/slog"
+
 	"github.com/sevenreup/duwa/src/evaluator"
 	"github.com/sevenreup/duwa/src/object"
 	"github.com/sevenreup/duwa/src/parser"
 	"github.com/sevenreup/duwa/src/utils"
-	"io"
 
 	"github.com/sevenreup/duwa/src/lexer"
 )
@@ -17,9 +19,10 @@ const PROMPT = ">> "
 func Start(in io.Reader, out io.Writer) {
 	object.RegisterEvaluator(evaluator.Eval)
 	scanner := bufio.NewScanner(in)
-	env := object.NewEnvironment()
+	env := object.Default()
+	log := slog.Default()
 	for {
-		fmt.Printf(PROMPT)
+		fmt.Print(PROMPT)
 		scanned := scanner.Scan()
 		if !scanned {
 			return
@@ -29,7 +32,7 @@ func Start(in io.Reader, out io.Writer) {
 		p := parser.New(l)
 		program := p.ParseProgram()
 		if len(p.Errors()) != 0 {
-			utils.PrintParserErrors(out, p.Errors())
+			utils.PrintParserErrors(log, p.Errors())
 			continue
 		}
 		evaluated := evaluator.Eval(program, env)
