@@ -11,7 +11,7 @@ type LibraryFunction struct {
 	Function GoFunction
 }
 
-func (libraryFunction *LibraryFunction) Inspect() string {
+func (libraryFunction *LibraryFunction) String() string {
 	return fmt.Sprintf("library function {%s}", libraryFunction.Name)
 }
 

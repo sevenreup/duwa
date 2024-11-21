@@ -2,8 +2,9 @@ package object
 
 import (
 	"bytes"
-	"github.com/sevenreup/duwa/src/ast"
 	"strings"
+
+	"github.com/sevenreup/duwa/src/ast"
 )
 
 const FUNCTION_OBJ = "FUNCTION"
@@ -16,7 +17,7 @@ type Function struct {
 
 func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
 
-func (f *Function) Inspect() string {
+func (f *Function) String() string {
 	var out bytes.Buffer
 	params := []string{}
 	for _, p := range f.Parameters {

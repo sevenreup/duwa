@@ -12,7 +12,7 @@ type ObjectType string
 type Object interface {
 	HasMethods
 	Type() ObjectType
-	Inspect() string
+	String() string
 }
 
 type MapKey struct {

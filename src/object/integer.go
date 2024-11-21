@@ -17,7 +17,7 @@ type Integer struct {
 
 func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
 
-func (i *Integer) Inspect() string { return i.Value.String() }
+func (i *Integer) String() string { return i.Value.String() }
 
 func (i *Integer) Method(method string, args []Object) (Object, bool) {
 	//TODO implement me

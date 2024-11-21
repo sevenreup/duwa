@@ -1,9 +1,10 @@
 package functions
 
 import (
+	"strings"
+
 	"github.com/sevenreup/duwa/src/object"
 	"github.com/sevenreup/duwa/src/token"
-	"strings"
 )
 
 func Print(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
@@ -11,7 +12,7 @@ func Print(env *object.Environment, tok token.Token, args ...object.Object) obje
 		str := make([]string, 0)
 
 		for _, value := range args {
-			str = append(str, value.Inspect())
+			str = append(str, value.String())
 		}
 		env.Logger.Info(strings.Join(str, " "))
 	}
@@ -24,7 +25,7 @@ func PrintLine(env *object.Environment, tok token.Token, args ...object.Object) 
 		str := make([]string, 0)
 
 		for _, value := range args {
-			str = append(str, value.Inspect())
+			str = append(str, value.String())
 		}
 
 		env.Logger.Info(strings.Join(str, " ") + "\n")

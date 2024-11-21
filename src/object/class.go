@@ -12,7 +12,7 @@ type Class struct {
 
 func (c *Class) Type() ObjectType { return CLASS_OBJ }
 
-func (c *Class) Inspect() string {
+func (c *Class) String() string {
 	return "class " + c.Name.String()
 }
 

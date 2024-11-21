@@ -22,7 +22,7 @@ func consolePrint(env *object.Environment, tok token.Token, args ...object.Objec
 	values := make([]string, 0)
 
 	for _, value := range args {
-		values = append(values, value.Inspect())
+		values = append(values, value.String())
 	}
 
 	libPrint(env, values)

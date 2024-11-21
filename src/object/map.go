@@ -19,12 +19,12 @@ type MapPair struct {
 
 func (m *Map) Type() ObjectType { return MAP_OBJ }
 
-func (m *Map) Inspect() string {
+func (m *Map) String() string {
 	var out bytes.Buffer
 	pairs := []string{}
 	for _, pair := range m.Pairs {
 		pairs = append(pairs, fmt.Sprintf("%s: %s",
-			pair.Key.Inspect(), pair.Value.Inspect()))
+			pair.Key.String(), pair.Value.String()))
 	}
 	out.WriteString("{")
 	out.WriteString(strings.Join(pairs, ", "))

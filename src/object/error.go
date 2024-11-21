@@ -11,7 +11,7 @@ type Error struct {
 
 func (e *Error) Type() ObjectType { return ERROR_OBJ }
 
-func (e *Error) Inspect() string { return "ERROR: " + e.Message }
+func (e *Error) String() string { return "ERROR: " + e.Message }
 
 func (i *Error) Method(method string, args []Object) (Object, bool) {
 	//TODO implement me
