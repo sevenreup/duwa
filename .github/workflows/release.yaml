@@ -24,9 +24,6 @@ jobs:
       # - name: Run tests
       #   run: go test ./...
 
-      - name: Zip examples directory
-        run: zip -r examples.zip examples/
-
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
         with:
@@ -35,6 +32,9 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Zip examples directory
+        run: zip -r examples.zip examples/
 
       - name: Upload examples zip to release
         uses: softprops/action-gh-release@v1
