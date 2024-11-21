@@ -2,9 +2,6 @@ package modules
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
-	"runtime"
 	"strconv"
 	"strings"
 
@@ -50,17 +47,12 @@ func consoleRead(scope *object.Environment, tok token.Token, args ...object.Obje
 }
 
 func consoleClear(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
-	if runtime.GOOS == "windows" {
-		cmd := exec.Command("cmd", "/c", "cls")
-		cmd.Stdout = os.Stdout
-		cmd.Run()
-	} else {
-		cmd := exec.Command("clear")
-		cmd.Stdout = os.Stdout
-		cmd.Run()
+	err := scope.Console.Clear()
+	if err != nil {
+		return values.NULL
 	}
 
-	return nil
+	return values.NULL
 }
 
 func libPrint(env *object.Environment, values []string) {

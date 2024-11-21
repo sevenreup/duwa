@@ -4,6 +4,7 @@ package wasm
 
 import (
 	"errors"
+	"fmt"
 	"syscall/js"
 )
 
@@ -20,8 +21,8 @@ func NewConsole() *WasmConsole {
 		ready:     make(chan struct{}),
 	}
 
-	js.Global().Set("goProcessInput", js.FuncOf(console.processInput))
-	js.Global().Set("goConsoleReady", js.FuncOf(console.consoleReady))
+	js.Global().Set("duwaConsoleProcessInput", js.FuncOf(WrapFunction(console.processInput)))
+	js.Global().Set("duwaConsoleReady", js.FuncOf(WrapFunction(console.consoleReady)))
 
 	<-console.ready
 
@@ -37,8 +38,16 @@ func (wc *WasmConsole) Read() (string, error) {
 	}
 }
 
+func (wc *WasmConsole) Clear() error {
+	eventInit := js.Global().Get("Object").New()
+	eventInit.Set("command", "clear")
+	DispatchEvent("duwaConsoleCommandEvent", eventInit)
+	return nil
+}
+
 func (wc *WasmConsole) processInput(this js.Value, args []js.Value) interface{} {
 	if len(args) > 0 {
+		fmt.Println("Received input:", args[0].String())
 		wc.inputChan <- args[0].String()
 	} else {
 		wc.errorChan <- errors.New("no input received")
@@ -48,5 +57,6 @@ func (wc *WasmConsole) processInput(this js.Value, args []js.Value) interface{} 
 
 func (wc *WasmConsole) consoleReady(this js.Value, args []js.Value) interface{} {
 	close(wc.ready)
+	fmt.Println("Console emulator is ready")
 	return nil
 }

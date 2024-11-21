@@ -27,98 +27,47 @@ func main() {
 	compiler = duwa.New(object.New(logger, console))
 
 	// Register the function in the global scope
-	js.Global().Set("runDuwa", js.FuncOf(wrapFunction(run)))
+	js.Global().Set("duwaRun", js.FuncOf(wasm.WrapFunction(run)))
 
 	fmt.Println("Duwa is ready")
 
 	// Keep the program running
-	select {}
+	<-make(chan bool)
 }
 
 func run(this js.Value, inputs []js.Value) interface{} {
 	if len(inputs) < 1 {
-		return wrap("Please provide a file to run")
+		return wasm.Wrap("Please provide a file to run")
 	}
 
 	file := inputs[0].String()
 	result := compiler.Run(file)
 	if result == nil {
-		return wrap(nil)
+		return wasm.Wrap(nil)
 	}
-	return wrap(result.Inspect())
-}
-
-// wrap safely converts Go values to JavaScript values
-func wrap(value interface{}) interface{} {
-	switch val := value.(type) {
-	case nil:
-		return js.Null()
-	case string:
-		return js.ValueOf(val)
-	case int, int32, int64, float32, float64:
-		return js.ValueOf(val)
-	case bool:
-		return js.ValueOf(val)
-	case []interface{}:
-		arr := make([]interface{}, len(val))
-		for i, v := range val {
-			arr[i] = wrap(v)
-		}
-		return js.ValueOf(arr)
-	case map[string]interface{}:
-		obj := js.Global().Get("Object").New()
-		for k, v := range val {
-			obj.Set(k, wrap(v))
-		}
-		return obj
-	default:
-		return js.ValueOf(fmt.Sprint(val))
-	}
-}
-
-// wrapFunction provides error handling for JavaScript functions
-func wrapFunction(fn func(this js.Value, args []js.Value) interface{}) func(this js.Value, args []js.Value) interface{} {
-	return func(this js.Value, args []js.Value) interface{} {
-		defer func() {
-			if r := recover(); r != nil {
-				// Convert panic to JavaScript error object
-				errorObj := make(map[string]interface{})
-				errorObj["error"] = fmt.Sprint(r)
-				wrap(errorObj)
-			}
-		}()
-		return fn(this, args)
-	}
+	return wasm.Wrap(result.Inspect())
 }
 
 func (h *WasmConsoleHandler) Enabled(_ context.Context, level slog.Level) bool {
 	return true
 }
 
-func emitConsoleEvent(r slog.Record) {
-	// Create a custom event
+func emitConsoleLogEvent(r slog.Record) {
 	eventInit := js.Global().Get("Object").New()
-	eventInit.Set("detail", map[string]interface{}{
-		"message": r.Message,
-		"level":   slogLevelToConsoleLevel(r.Level),
-	})
-
+	eventInit.Set("message", r.Message)
+	eventInit.Set("level", slogLevelToConsoleLevel(r.Level))
 	logType := "runtime"
 	for attr := range r.Attrs {
 		if attr.Key == "type" {
 			logType = attr.Value.String()
 		}
 	}
-	eventInit.Get("detail").Set("type", logType)
-
-	event := js.Global().Get("CustomEvent").New("goConsoleEvent", eventInit)
-
-	// Dispatch the event
-	js.Global().Get("window").Call("dispatchEvent", event)
+	eventInit.Set("type", logType)
+	wasm.DispatchEvent("duwaLogEvent", eventInit)
 }
 
 func (h *WasmConsoleHandler) Handle(ctx context.Context, r slog.Record) error {
-	emitConsoleEvent(r)
+	emitConsoleLogEvent(r)
 	return nil
 }
 

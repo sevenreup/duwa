@@ -4,12 +4,11 @@ import (
 	"bufio"
 	"errors"
 	"os"
-
-	"github.com/sevenreup/duwa/src/library/runtime"
+	"os/exec"
+	"runtime"
 )
 
 type NativeConsole struct {
-	runtime.Console
 }
 
 func NewConsole() *NativeConsole {
@@ -21,8 +20,21 @@ func (nc *NativeConsole) Read() (string, error) {
 	val := scanner.Scan()
 
 	if !val {
-		return "", errors.New("Failed to read from console")
+		return "", errors.New("failed to read from console")
 	}
 
 	return scanner.Text(), nil
+}
+
+func (nc *NativeConsole) Clear() error {
+	if runtime.GOOS == "windows" {
+		cmd := exec.Command("cmd", "/c", "cls")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	} else {
+		cmd := exec.Command("clear")
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	}
+	return nil
 }
