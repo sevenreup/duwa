@@ -10,15 +10,19 @@ import (
 	"github.com/sevenreup/duwa/src/values"
 )
 
+// library=Khonso
+// This is the console module
+// It contains functions that interact with the console
+// It is used to read and write to the console
 var ConsoleMethods = map[string]*object.LibraryFunction{}
 
 func init() {
-	RegisterMethod(ConsoleMethods, "lemba", consolePrint)
-	RegisterMethod(ConsoleMethods, "fufuta", consoleClear)
-	RegisterMethod(ConsoleMethods, "landira", consoleRead)
+	RegisterMethod(ConsoleMethods, "lemba", methodConsolePrint)
+	RegisterMethod(ConsoleMethods, "fufuta", methodConsoleClear)
+	RegisterMethod(ConsoleMethods, "landira", methodConsoleRead)
 }
 
-func consolePrint(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
+func methodConsolePrint(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	values := make([]string, 0)
 
 	for _, value := range args {
@@ -30,7 +34,7 @@ func consolePrint(env *object.Environment, tok token.Token, args ...object.Objec
 	return nil
 }
 
-func consoleRead(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
+func methodConsoleRead(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) == 1 {
 		prompt := args[0].(*object.String).Value
 
@@ -46,7 +50,7 @@ func consoleRead(scope *object.Environment, tok token.Token, args ...object.Obje
 	return &object.String{Value: val}
 }
 
-func consoleClear(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
+func methodConsoleClear(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	err := scope.Console.Clear()
 	if err != nil {
 		return values.NULL

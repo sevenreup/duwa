@@ -6,7 +6,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func ParseStringToNumber(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
+func BuiltInParseStringToNumber(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) != 1 {
 		// TODO: Return error dont panic
 		panic("parse requires exactly one argument")

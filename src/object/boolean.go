@@ -7,6 +7,8 @@ import (
 
 const BOOLEAN_OBJ = "BOOLEAN"
 
+// type=Tsimikizi alternative=Boolean
+// The Boolean object represents two values: true and false.
 type Boolean struct {
 	Object
 	Mappable

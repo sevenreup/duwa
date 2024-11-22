@@ -6,6 +6,8 @@ import (
 	"go/doc"
 	"go/parser"
 	"go/token"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -27,121 +29,180 @@ type StructInfo struct {
 	Alternatives []string
 	Doc          string
 	Methods      []FunctionInfo
+	SourceFile   string // Track which file this type came from
 }
 
-// parseStructLine parses the first line of struct documentation
-// Example: "type=Mawu alternative=String"
-func parseStructLine(line string) (string, []string, error) {
-	// Extract type name
-	typeRegex := regexp.MustCompile(`type=(\w+)`)
-	typeMatch := typeRegex.FindStringSubmatch(line)
-	if len(typeMatch) < 2 {
-		return "", nil, fmt.Errorf("type name not found")
-	}
-	typeName := typeMatch[1]
-
-	// Extract alternative names
-	altRegex := regexp.MustCompile(`alternative=(\w+)`)
-	altMatch := altRegex.FindStringSubmatch(line)
-	var alternatives []string
-	if len(altMatch) >= 2 {
-		alternatives = strings.Split(altMatch[1], ",")
-	}
-
-	return typeName, alternatives, nil
+type LibraryInfo struct {
+	Name       string
+	Doc        string
+	Methods    []FunctionInfo
+	SourceFile string
 }
 
-// parseStructDocumentation splits the type information line from the rest of the documentation
-func parseStructDocumentation(docText string) (string, string) {
-	lines := strings.Split(strings.TrimSpace(docText), "\n")
-	if len(lines) == 0 {
-		return "", ""
-	}
-
-	typeLine := lines[0]
-	docLines := lines[1:]
-	return typeLine, strings.TrimSpace(strings.Join(docLines, "\n"))
+type ParserConfig struct {
+	RootDir             string
+	ExcludePatterns     []string
+	IncludePatterns     []string
+	MinMethods          int
+	IncludeUndocumented bool
 }
 
-// parseMethodLine parses the first line of the documentation that contains method information
-func parseMethodLine(line string) (string, []ArgumentData, string, error) {
-	// Extract method name
-	methodRegex := regexp.MustCompile(`method=(\w+)`)
-	methodMatch := methodRegex.FindStringSubmatch(line)
-	if len(methodMatch) < 2 {
-		return "", nil, "", fmt.Errorf("method name not found")
-	}
-	methodName := methodMatch[1]
+type Parser struct {
+	config    ParserConfig
+	types     []StructInfo
+	libraries []LibraryInfo
+}
 
-	// Extract arguments
-	argsRegex := regexp.MustCompile(`args=\[(.*?)\]`)
-	argsMatch := argsRegex.FindStringSubmatch(line)
-	var args []ArgumentData
-	if len(argsMatch) >= 2 && argsMatch[1] != "" {
-		argParts := strings.Split(argsMatch[1], ",")
-		for _, arg := range argParts {
-			// Parse each argument in format "type{name}"
-			argRegex := regexp.MustCompile(`(\w+)\{(\w+)\}`)
-			argMatch := argRegex.FindStringSubmatch(strings.TrimSpace(arg))
-			if len(argMatch) >= 3 {
-				args = append(args, ArgumentData{
-					Type: argMatch[1],
-					Name: argMatch[2],
-				})
+func NewParser(config ParserConfig) *Parser {
+	return &Parser{
+		config:    config,
+		types:     make([]StructInfo, 0),
+		libraries: make([]LibraryInfo, 0),
+	}
+}
+
+func parseLibraryLine(line string) (string, error) {
+	libraryRegex := regexp.MustCompile(`library=(\w+)`)
+	libraryMatch := libraryRegex.FindStringSubmatch(line)
+	if len(libraryMatch) < 2 {
+		return "", fmt.Errorf("library name not found")
+	}
+	return libraryMatch[1], nil
+}
+
+// isLibraryMap checks if a map declaration matches the library function signature
+func isLibraryMap(expr ast.Expr) bool {
+	compositeLit, ok := expr.(*ast.CompositeLit)
+	if !ok {
+		return false
+	}
+	mapType, ok := compositeLit.Type.(*ast.MapType)
+	if !ok {
+		return false
+	}
+
+	// Check key type is string
+	if _, ok := mapType.Key.(*ast.Ident); !ok || mapType.Key.(*ast.Ident).Name != "string" {
+		return false
+	}
+
+	// Check value type is *object.LibraryFunction
+	starExpr, ok := mapType.Value.(*ast.StarExpr)
+	if !ok {
+		return false
+	}
+
+	selector, ok := starExpr.X.(*ast.SelectorExpr)
+	if !ok {
+		return false
+	}
+
+	return selector.Sel.Name == "LibraryFunction"
+}
+
+// analyzeLibraries processes a single file and returns found libraries
+func (p *Parser) analyzeLibraries(filename string, file *ast.File) ([]LibraryInfo, error) {
+	var libraries []LibraryInfo
+
+	ast.Inspect(file, func(n ast.Node) bool {
+		if genDecl, ok := n.(*ast.GenDecl); ok {
+			if genDecl.Doc == nil {
+				return true
+			}
+
+			for _, spec := range genDecl.Specs {
+				if valueSpec, ok := spec.(*ast.ValueSpec); ok {
+					for i, val := range valueSpec.Values {
+						if isLibraryMap(val) {
+							docText := genDecl.Doc.Text()
+							firstLine, documentation := parseDocumentation(docText)
+							libraryName, err := parseLibraryLine(firstLine)
+							if err != nil {
+								continue
+							}
+
+							library := LibraryInfo{
+								Name:       libraryName,
+								Doc:        documentation,
+								Methods:    []FunctionInfo{},
+								SourceFile: filename,
+							}
+
+							// Get the variable name for this library
+							if i < len(valueSpec.Names) {
+								libraryVarName := valueSpec.Names[i].Name
+								// Now find all methods associated with this library
+								methods := p.findLibraryMethods(file, libraryVarName)
+								library.Methods = methods
+							}
+
+							libraries = append(libraries, library)
+						}
+					}
+				}
 			}
 		}
-	}
+		return true
+	})
 
-	// Extract return type
-	returnRegex := regexp.MustCompile(`return=\{(.*?)\}`)
-	returnMatch := returnRegex.FindStringSubmatch(line)
-	if len(returnMatch) < 2 {
-		return "", nil, "", fmt.Errorf("return type not found")
-	}
-	returnType := returnMatch[1]
-
-	return methodName, args, returnType, nil
+	return libraries, nil
 }
 
-// parseMethodDocumentation splits the method information line from the rest of the documentation
-func parseMethodDocumentation(docText string) (string, string) {
-	lines := strings.Split(strings.TrimSpace(docText), "\n")
-	if len(lines) == 0 {
-		return "", ""
-	}
+// findLibraryMethods finds all functions that belong to a library
+func (p *Parser) findLibraryMethods(file *ast.File, libraryVarName string) []FunctionInfo {
+	var methods []FunctionInfo
 
-	methodLine := lines[0]
-	docLines := lines[1:]
-	return methodLine, strings.TrimSpace(strings.Join(docLines, "\n"))
+	ast.Inspect(file, func(n ast.Node) bool {
+		if funcDecl, ok := n.(*ast.FuncDecl); ok {
+			if strings.HasPrefix(funcDecl.Name.Name, "method") && funcDecl.Doc != nil {
+				methodLine, documentation := parseDocumentation(funcDecl.Doc.Text())
+				name, args, returnType, err := parseMethodLine(methodLine)
+				if err == nil {
+					functionInfo := FunctionInfo{
+						Name:      name,
+						Arguments: args,
+						RetunType: returnType,
+						Doc:       documentation,
+					}
+					methods = append(methods, functionInfo)
+				}
+			}
+		}
+		return true
+	})
+
+	return methods
 }
 
-// AnalyzeFile finds all structs and their methods in the file
-func AnalyzeFile(filename string) ([]StructInfo, error) {
-	// Create the file set
+// analyzeFile processes a single file and returns found types and libraries
+func (p *Parser) analyzeFile(filename string) error {
 	fset := token.NewFileSet()
-
-	// Parse the Go source file
-	astFile, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
+	file, err := parser.ParseFile(fset, filename, nil, parser.ParseComments)
 	if err != nil {
-		return nil, fmt.Errorf("error parsing file: %v", err)
+		return fmt.Errorf("error parsing file %s: %v", filename, err)
 	}
 
-	// Create a new package to analyze
+	// Parse libraries first
+	libraries, err := p.analyzeLibraries(filename, file)
+	if err != nil {
+		return err
+	}
+	p.libraries = append(p.libraries, libraries...)
+
+	// Parse types using existing code
 	pkg := &ast.Package{
-		Name:  astFile.Name.Name,
-		Files: map[string]*ast.File{filename: astFile},
+		Name:  file.Name.Name,
+		Files: map[string]*ast.File{filename: file},
 	}
 
-	// Use the doc package to extract documentation
 	docPkg := doc.New(pkg, ".", doc.AllDecls)
-
-	var structs []StructInfo
-
-	// Process each type in the package
 	for _, t := range docPkg.Types {
-		// Parse struct documentation
+		if t.Doc == "" && !p.config.IncludeUndocumented {
+			continue
+		}
+
 		if t.Doc != "" {
-			typeLine, documentation := parseStructDocumentation(t.Doc)
+			typeLine, documentation := parseDocumentation(t.Doc)
 			typeName, alternatives, err := parseStructLine(typeLine)
 			if err != nil {
 				continue
@@ -152,12 +213,12 @@ func AnalyzeFile(filename string) ([]StructInfo, error) {
 				Alternatives: alternatives,
 				Doc:          documentation,
 				Methods:      []FunctionInfo{},
+				SourceFile:   filename,
 			}
 
-			// Process methods
 			for _, method := range t.Methods {
 				if method.Doc != "" {
-					methodLine, documentation := parseMethodDocumentation(method.Doc)
+					methodLine, documentation := parseDocumentation(method.Doc)
 					name, args, returnType, err := parseMethodLine(methodLine)
 					if err == nil {
 						functionInfo := FunctionInfo{
@@ -171,30 +232,178 @@ func AnalyzeFile(filename string) ([]StructInfo, error) {
 				}
 			}
 
-			structs = append(structs, structInfo)
+			if len(structInfo.Methods) >= p.config.MinMethods {
+				p.types = append(p.types, structInfo)
+			}
 		}
 	}
 
-	return structs, nil
+	return nil
+}
+
+// Parse scans the directory and processes all valid files
+func (p *Parser) Parse() error {
+	return filepath.Walk(p.config.RootDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && strings.HasSuffix(path, ".go") {
+			if !p.shouldProcessFile(path) {
+				return nil
+			}
+
+			err := p.analyzeFile(path)
+			if err != nil {
+				fmt.Printf("Warning: Error processing file %s: %v\n", path, err)
+			}
+		}
+
+		return nil
+	})
+}
+
+// GetTypes returns all found types
+func (p *Parser) GetTypes() []StructInfo {
+	return p.types
+}
+
+// GetLibraries returns all found libraries
+func (p *Parser) GetLibraries() []LibraryInfo {
+	return p.libraries
+}
+
+// shouldProcessFile checks if a file should be processed based on include/exclude patterns
+func (p *Parser) shouldProcessFile(filename string) bool {
+	// Check exclude patterns
+	for _, pattern := range p.config.ExcludePatterns {
+		matched, err := filepath.Match(pattern, filepath.Base(filename))
+		if err == nil && matched {
+			return false
+		}
+	}
+
+	// If include patterns are specified, file must match at least one
+	if len(p.config.IncludePatterns) > 0 {
+		for _, pattern := range p.config.IncludePatterns {
+			matched, err := filepath.Match(pattern, filepath.Base(filename))
+			if err == nil && matched {
+				return true
+			}
+		}
+		return false
+	}
+
+	return true
+}
+
+// parseStructLine parses the first line of struct documentation
+func parseStructLine(line string) (string, []string, error) {
+	typeRegex := regexp.MustCompile(`type=(\w+)`)
+	typeMatch := typeRegex.FindStringSubmatch(line)
+	if len(typeMatch) < 2 {
+		return "", nil, fmt.Errorf("type name not found")
+	}
+	typeName := typeMatch[1]
+
+	altRegex := regexp.MustCompile(`alternative=(\w+)`)
+	altMatch := altRegex.FindStringSubmatch(line)
+	var alternatives []string
+	if len(altMatch) >= 2 {
+		alternatives = strings.Split(altMatch[1], ",")
+	}
+
+	return typeName, alternatives, nil
+}
+
+// parseMethodLine parses the method signature line
+func parseMethodLine(line string) (string, []ArgumentData, string, error) {
+	methodRegex := regexp.MustCompile(`method=(\w+)`)
+	methodMatch := methodRegex.FindStringSubmatch(line)
+	if len(methodMatch) < 2 {
+		return "", nil, "", fmt.Errorf("method name not found")
+	}
+	methodName := methodMatch[1]
+
+	var args []ArgumentData
+	argsRegex := regexp.MustCompile(`args=\[(.*?)\]`)
+	argsMatch := argsRegex.FindStringSubmatch(line)
+	if len(argsMatch) >= 2 && argsMatch[1] != "" {
+		argParts := strings.Split(argsMatch[1], ",")
+		for _, arg := range argParts {
+			argRegex := regexp.MustCompile(`(\w+)\{(\w+)\}`)
+			argMatch := argRegex.FindStringSubmatch(strings.TrimSpace(arg))
+			if len(argMatch) >= 3 {
+				args = append(args, ArgumentData{
+					Type: argMatch[1],
+					Name: argMatch[2],
+				})
+			}
+		}
+	}
+
+	returnRegex := regexp.MustCompile(`return=\{(.*?)\}`)
+	returnMatch := returnRegex.FindStringSubmatch(line)
+	if len(returnMatch) < 2 {
+		return "", nil, "", fmt.Errorf("return type not found")
+	}
+	returnType := returnMatch[1]
+
+	return methodName, args, returnType, nil
+}
+
+func parseDocumentation(docText string) (string, string) {
+	lines := strings.Split(strings.TrimSpace(docText), "\n")
+	if len(lines) == 0 {
+		return "", ""
+	}
+	return lines[0], strings.TrimSpace(strings.Join(lines[1:], "\n"))
 }
 
 func main() {
-	filename := "./src/object/string.go"
+	// Example usage
+	config := ParserConfig{
+		RootDir:             "./src",
+		ExcludePatterns:     []string{"*_test.go", "*.generated.go"},
+		IncludePatterns:     []string{"*.go"},
+		MinMethods:          0,
+		IncludeUndocumented: true,
+	}
 
-	structs, err := AnalyzeFile(filename)
+	parser := NewParser(config)
+	err := parser.Parse()
 	if err != nil {
-		fmt.Printf("Error analyzing file: %v\n", err)
+		fmt.Printf("Error parsing directory: %v\n", err)
 		return
 	}
 
-	// Print the results
-	for _, structInfo := range structs {
-		fmt.Printf("\nStruct: %s\n", structInfo.Name)
-		fmt.Printf("Alternatives: %v\n", structInfo.Alternatives)
-		fmt.Printf("Documentation:\n%s\n", structInfo.Doc)
+	// Print results
+	types := parser.GetTypes()
+	for _, t := range types {
+		fmt.Printf("\nType: %s (from %s)\n", t.Name, t.SourceFile)
+		fmt.Printf("Alternatives: %v\n", t.Alternatives)
+		fmt.Printf("Documentation:\n%s\n", t.Doc)
 
 		fmt.Printf("\nMethods:\n")
-		for _, method := range structInfo.Methods {
+		for _, method := range t.Methods {
+			fmt.Printf("\n  Method: %s\n", method.Name)
+			fmt.Printf("  Arguments:\n")
+			for _, arg := range method.Arguments {
+				fmt.Printf("    - %s: %s\n", arg.Name, arg.Type)
+			}
+			fmt.Printf("  Return Type: %s\n", method.RetunType)
+			fmt.Printf("  Documentation:\n%s\n", method.Doc)
+		}
+	}
+
+	// Print libraries
+	fmt.Println("\nFound Libraries:")
+	for _, lib := range parser.GetLibraries() {
+		fmt.Printf("\nLibrary: %s (from %s)\n", lib.Name, lib.SourceFile)
+		fmt.Printf("Documentation:\n%s\n", lib.Doc)
+
+		fmt.Printf("\nMethods:\n")
+		for _, method := range lib.Methods {
 			fmt.Printf("\n  Method: %s\n", method.Name)
 			fmt.Printf("  Arguments:\n")
 			for _, arg := range method.Arguments {

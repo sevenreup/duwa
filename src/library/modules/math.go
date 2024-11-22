@@ -9,11 +9,11 @@ import (
 var MathMethods = map[string]*object.LibraryFunction{}
 
 func init() {
-	RegisterMethod(MathMethods, "yochepa", mathMin)
-	RegisterMethod(MathMethods, "sqrt", mathSqrt)
+	RegisterMethod(MathMethods, "yochepa", methodMathMin)
+	RegisterMethod(MathMethods, "sqrt", methodMathSqrt)
 }
 
-func mathMin(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
+func methodMathMin(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) < 2 {
 		panic("Masamu.yochepa requires at least two arguments")
 	}
@@ -36,7 +36,7 @@ func mathMin(scope *object.Environment, tok token.Token, args ...object.Object) 
 	return number2
 }
 
-func mathSqrt(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
+func methodMathSqrt(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) != 1 {
 		panic("Masamu.sqrt requires one argument")
 	}

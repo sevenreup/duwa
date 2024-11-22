@@ -8,8 +8,11 @@ import (
 
 const MAP_OBJ = "MAP"
 
+// type=mgwirizano altenatives=map
+// This is a map object that is used to store key-value pairs.
 type Map struct {
 	Pairs map[MapKey]MapPair
+	Object
 }
 
 type MapPair struct {

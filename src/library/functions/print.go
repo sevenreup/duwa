@@ -7,7 +7,9 @@ import (
 	"github.com/sevenreup/duwa/src/token"
 )
 
-func Print(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
+// type=builtin-func method=peza args=[any{valueToPrint}] return={null}
+// The lemba function prints a value to the console.
+func BuiltInPrint(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) > 0 {
 		str := make([]string, 0)
 
@@ -20,7 +22,7 @@ func Print(env *object.Environment, tok token.Token, args ...object.Object) obje
 	return nil
 }
 
-func PrintLine(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
+func BuiltInPrintLine(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) > 0 {
 		str := make([]string, 0)
 

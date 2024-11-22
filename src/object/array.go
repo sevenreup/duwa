@@ -9,8 +9,11 @@ import (
 
 const ARRAY_OBJ = "ARRAY"
 
+// type=Array alternative=Array
+// The Array object represents a list of elements.
 type Array struct {
 	Elements []Object
+	Object
 }
 
 func (ao *Array) Type() ObjectType { return ARRAY_OBJ }
