@@ -39,18 +39,26 @@ type LibraryInfo struct {
 	SourceFile string
 }
 
+type BuiltinInfo struct {
+	Functions  []FunctionInfo
+	SourceFile string
+}
+
 type ParserConfig struct {
 	RootDir             string
 	ExcludePatterns     []string
 	IncludePatterns     []string
 	MinMethods          int
 	IncludeUndocumented bool
+	OutputDir           string
+	GenerateFormat      string
 }
 
 type Parser struct {
 	config    ParserConfig
 	types     []StructInfo
 	libraries []LibraryInfo
+	builtins  []BuiltinInfo
 }
 
 func NewParser(config ParserConfig) *Parser {
@@ -58,6 +66,7 @@ func NewParser(config ParserConfig) *Parser {
 		config:    config,
 		types:     make([]StructInfo, 0),
 		libraries: make([]LibraryInfo, 0),
+		builtins:  make([]BuiltinInfo, 0),
 	}
 }
 
@@ -98,6 +107,30 @@ func isLibraryMap(expr ast.Expr) bool {
 	}
 
 	return selector.Sel.Name == "LibraryFunction"
+}
+
+// parseBuiltinFunction parses a builtin function declaration
+func parseBuiltinFunction(funcDoc *doc.Func) (FunctionInfo, error) {
+	if funcDoc.Doc == "" {
+		return FunctionInfo{}, fmt.Errorf("no documentation")
+	}
+
+	docLine, documentation := parseDocumentation(funcDoc.Doc)
+	if !strings.Contains(docLine, "type=builtin-func") {
+		return FunctionInfo{}, fmt.Errorf("not a builtin function")
+	}
+
+	name, args, returnType, err := parseMethodLine(docLine)
+	if err != nil {
+		return FunctionInfo{}, err
+	}
+
+	return FunctionInfo{
+		Name:      name,
+		Arguments: args,
+		RetunType: returnType,
+		Doc:       documentation,
+	}, nil
 }
 
 // analyzeLibraries processes a single file and returns found libraries
@@ -238,6 +271,22 @@ func (p *Parser) analyzeFile(filename string) error {
 		}
 	}
 
+	var currentBuiltins []FunctionInfo
+	for _, fn := range docPkg.Funcs {
+		if strings.HasPrefix(fn.Name, "BuiltIn") {
+			if builtinFunc, err := parseBuiltinFunction(fn); err == nil {
+				currentBuiltins = append(currentBuiltins, builtinFunc)
+			}
+		}
+	}
+
+	if len(currentBuiltins) > 0 {
+		p.builtins = append(p.builtins, BuiltinInfo{
+			Functions:  currentBuiltins,
+			SourceFile: filename,
+		})
+	}
+
 	return nil
 }
 
@@ -271,6 +320,10 @@ func (p *Parser) GetTypes() []StructInfo {
 // GetLibraries returns all found libraries
 func (p *Parser) GetLibraries() []LibraryInfo {
 	return p.libraries
+}
+
+func (p *Parser) GetBuiltins() []BuiltinInfo {
+	return p.builtins
 }
 
 // shouldProcessFile checks if a file should be processed based on include/exclude patterns
@@ -368,6 +421,8 @@ func main() {
 		IncludePatterns:     []string{"*.go"},
 		MinMethods:          0,
 		IncludeUndocumented: true,
+		OutputDir:           "./docs",
+		GenerateFormat:      "markdown",
 	}
 
 	parser := NewParser(config)
@@ -377,40 +432,9 @@ func main() {
 		return
 	}
 
-	// Print results
-	types := parser.GetTypes()
-	for _, t := range types {
-		fmt.Printf("\nType: %s (from %s)\n", t.Name, t.SourceFile)
-		fmt.Printf("Alternatives: %v\n", t.Alternatives)
-		fmt.Printf("Documentation:\n%s\n", t.Doc)
-
-		fmt.Printf("\nMethods:\n")
-		for _, method := range t.Methods {
-			fmt.Printf("\n  Method: %s\n", method.Name)
-			fmt.Printf("  Arguments:\n")
-			for _, arg := range method.Arguments {
-				fmt.Printf("    - %s: %s\n", arg.Name, arg.Type)
-			}
-			fmt.Printf("  Return Type: %s\n", method.RetunType)
-			fmt.Printf("  Documentation:\n%s\n", method.Doc)
-		}
-	}
-
-	// Print libraries
-	fmt.Println("\nFound Libraries:")
-	for _, lib := range parser.GetLibraries() {
-		fmt.Printf("\nLibrary: %s (from %s)\n", lib.Name, lib.SourceFile)
-		fmt.Printf("Documentation:\n%s\n", lib.Doc)
-
-		fmt.Printf("\nMethods:\n")
-		for _, method := range lib.Methods {
-			fmt.Printf("\n  Method: %s\n", method.Name)
-			fmt.Printf("  Arguments:\n")
-			for _, arg := range method.Arguments {
-				fmt.Printf("    - %s: %s\n", arg.Name, arg.Type)
-			}
-			fmt.Printf("  Return Type: %s\n", method.RetunType)
-			fmt.Printf("  Documentation:\n%s\n", method.Doc)
-		}
+	if config.GenerateFormat == "json" {
+		// Generate JSON output
+	} else {
+		parser.generateMarkdown()
 	}
 }
