@@ -20,7 +20,7 @@ type ArgumentData struct {
 type FunctionInfo struct {
 	Name      string
 	Arguments []ArgumentData
-	RetunType string
+	RetunType string `json:"returns"`
 	Doc       string
 }
 
@@ -422,7 +422,7 @@ func main() {
 		MinMethods:          0,
 		IncludeUndocumented: true,
 		OutputDir:           "./docs",
-		GenerateFormat:      "markdown",
+		GenerateFormat:      "json",
 	}
 
 	parser := NewParser(config)
@@ -433,7 +433,7 @@ func main() {
 	}
 
 	if config.GenerateFormat == "json" {
-		// Generate JSON output
+		parser.generateJson()
 	} else {
 		parser.generateMarkdown()
 	}
