@@ -37,13 +37,13 @@ func (str *String) Method(method string, args []Object) (Object, bool) {
 		return str.methodFindAll(args)
 	case "format":
 		return str.methodFormat(args)
-	case "akumalizaNdi":
+	case "kumalizaNdi":
 		return str.methodEndsWith(args)
 	case "kutalika":
 		return str.methodLength(args)
-	case "kufanana":
+	case "gwirizana":
 		return str.methodMatches(args)
-	case "kusintha":
+	case "maloMwa":
 		return str.methodReplace(args)
 	case "gawa":
 		return str.methodSplit(args)
@@ -114,19 +114,24 @@ func (str *String) methodFormat(args []Object) (Object, bool) {
 	return &String{Value: fmt.Sprintf(str.Value, list...)}, true
 }
 
-// method=akumalizaNdi args=[string{mawuOsintha}] return={string}
+// method=kumalizaNdi args=[string{mawuOsintha}] return={string}
+// This method checks if the string ends with the given string.
 func (str *String) methodEndsWith(args []Object) (Object, bool) {
 	hasSuffix := strings.HasSuffix(str.Value, args[0].(*String).Value)
 
 	return &Boolean{Value: hasSuffix}, true
 }
 
+// method=kutalika args=[] return={nambala}
+// This method returns the length of the string.
 func (str *String) methodLength(_ []Object) (Object, bool) {
 	length := &Integer{Value: decimal.NewFromInt(int64(utf8.RuneCountInString(str.Value)))}
 
 	return length, true
 }
 
+// method=gwirizana args=[string{mawuOsintha}] return={nambala}
+// This method checks if the string matches the given regular expression.
 func (str *String) methodMatches(args []Object) (Object, bool) {
 	matches, err := regexp.Match(str.Value, []byte(args[0].(*String).Value))
 
@@ -137,12 +142,16 @@ func (str *String) methodMatches(args []Object) (Object, bool) {
 	return &Boolean{Value: matches}, true
 }
 
+// method=maloMwa args=[string{source},string{value}] return={string}
+// This method replaces all occurrences of the given string with the new string.
 func (str *String) methodReplace(args []Object) (Object, bool) {
 	value := strings.Replace(str.Value, args[0].(*String).Value, args[1].(*String).Value, -1)
 
 	return &String{Value: value}, true
 }
 
+// method=gawa args=[string{mawuOgawa}] return={string[]}
+// This method splits the string by the given string and returns a list of strings.
 func (str *String) methodSplit(args []Object) (Object, bool) {
 	split := strings.Split(str.Value, args[0].(*String).Value)
 	list := &Array{}
@@ -154,38 +163,54 @@ func (str *String) methodSplit(args []Object) (Object, bool) {
 	return list, true
 }
 
+// method=yayambaNdi args=[string{mawuOsintha}] return={string}
+// This method checks if the string starts with the given string.
 func (str *String) methodStartsWith(args []Object) (Object, bool) {
 	hasPrefix := strings.HasPrefix(str.Value, args[0].(*String).Value)
 
 	return &Boolean{Value: hasPrefix}, true
 }
 
+// method=toLowerCase args=[] return={string}
+// This method converts the string to lowercase.
 func (str *String) methodToLowerCase(_ []Object) (Object, bool) {
 	return &String{Value: strings.ToLower(str.Value)}, true
 }
 
+// method=toUpperCase args=[] return={string}
+// This method converts the string to uppercase.
 func (str *String) methodToUpperCase(_ []Object) (Object, bool) {
 	return &String{Value: strings.ToUpper(str.Value)}, true
 }
 
+// method=kuMawu args=[] return={string}
+// This method converts the string to a string.
 func (str *String) methodToString(_ []Object) (Object, bool) {
 	return str, true
 }
 
+// method=kuNambala args=[] return={nambala}
+// This method converts the string to a number.
 func (str *String) methodToNumber(_ []Object) (Object, bool) {
 	number, _ := decimal.NewFromString(str.Value)
 
 	return &Integer{Value: number}, true
 }
 
+// method=chepetsa args=[] return={string}
+// This method removes whitespace from the beginning and end of the string.
 func (str *String) methodTrim(_ []Object) (Object, bool) {
 	return &String{Value: strings.TrimSpace(str.Value)}, true
 }
 
+// method=chepetsaKuMapeto args=[] return={string}
+// This method removes whitespace from the end of the string.
 func (str *String) methodTrimEnd(_ []Object) (Object, bool) {
 	return &String{Value: strings.TrimRight(str.Value, "\t\n\v\f\r ")}, true
 }
 
+// method=chepetsaKuchiyamba args=[] return={string}
+// This method removes whitespace from the beginning of the string.
 func (str *String) methodTrimStart(_ []Object) (Object, bool) {
 	return &String{Value: strings.TrimLeft(str.Value, "\t\n\v\f\r ")}, true
 }

@@ -22,6 +22,8 @@ func init() {
 	RegisterMethod(ConsoleMethods, "landira", methodConsoleRead)
 }
 
+// method=lemba args=[...] return={null}
+// This method prints the arguments to the console
 func methodConsolePrint(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	values := make([]string, 0)
 
@@ -34,6 +36,8 @@ func methodConsolePrint(env *object.Environment, tok token.Token, args ...object
 	return nil
 }
 
+// method=landira args=[string{mawu}] return={string}
+// This method reads a string from the console
 func methodConsoleRead(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) == 1 {
 		prompt := args[0].(*object.String).Value
@@ -50,6 +54,8 @@ func methodConsoleRead(scope *object.Environment, tok token.Token, args ...objec
 	return &object.String{Value: val}
 }
 
+// method=fufuta args=[] return={null}
+// This method clears the console
 func methodConsoleClear(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	err := scope.Console.Clear()
 	if err != nil {

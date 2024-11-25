@@ -33,6 +33,5 @@ func (f *Function) String() string {
 }
 
 func (i *Function) Method(method string, args []Object) (Object, bool) {
-	//TODO implement me
-	panic("implement me")
+	return nil, false
 }

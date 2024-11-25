@@ -577,7 +577,7 @@ func TestMethodCalls(t *testing.T) {
 		expected interface{}
 	}{
 		{
-			"nambala[] myArray = [1, 2, 3];myArray.length();",
+			"nambala[] myArray = [1, 2, 3];myArray.kutalika();",
 			3,
 		},
 		{

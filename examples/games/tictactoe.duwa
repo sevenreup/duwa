@@ -19,7 +19,7 @@ ndondomeko checkWin() {
     [0, 4, 8], [2, 4, 6]
   ];
 
-  za (x = 0; x < winConditions.length(); x++) {
+  za (x = 0; x < winConditions.kutalika(); x++) {
     mawu condition = winConditions[x];
     ngati (board[condition[0]] != "" && board[condition[0]] == board[condition[1]] && board[condition[0]] == board[condition[2]]) {
       bweza zoona;

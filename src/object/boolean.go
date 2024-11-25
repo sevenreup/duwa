@@ -20,8 +20,7 @@ func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
 func (b *Boolean) String() string { return fmt.Sprintf("%t", b.Value) }
 
 func (i *Boolean) Method(method string, args []Object) (Object, bool) {
-	//TODO implement me
-	panic("implement me")
+	return nil, false
 }
 
 func (s *Boolean) MapKey() MapKey {

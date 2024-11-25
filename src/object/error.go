@@ -14,8 +14,7 @@ func (e *Error) Type() ObjectType { return ERROR_OBJ }
 func (e *Error) String() string { return "ERROR: " + e.Message }
 
 func (i *Error) Method(method string, args []Object) (Object, bool) {
-	//TODO implement me
-	panic("implement me")
+	return nil, false
 }
 
 func NewError(format string, a ...interface{}) *Error {

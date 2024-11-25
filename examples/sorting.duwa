@@ -1,5 +1,5 @@
 ndondomeko printArray(tag, arr) {
-    nambala n = arr.length();
+    nambala n = arr.kutalika();
     lemba(tag + ": [");
     za(nambala i=0; i<n; i++) {
         lemba(arr[i]);
@@ -12,7 +12,7 @@ ndondomeko printArray(tag, arr) {
 // Selection Sort
 
 ndondomeko selectionSort(arr) {
-    nambala n = arr.length();
+    nambala n = arr.kutalika();
 
     za(nambala i = 0; i < n-1; i++) {
         nambala min_idx = i;
@@ -39,7 +39,7 @@ doSelectionSort();
 // Bubble Sort
 
 ndondomeko bubbleSort(arr) {
-    nambala n = arr.length();
+    nambala n = arr.kutalika();
 
     za(nambala i = 0; i < n-1; i++) {
         za(nambala j = 0; j < n-i-1; j++) {
@@ -63,7 +63,7 @@ doBubbleSort();
 // Insertion Sort
 
 ndondomeko insertionSort(arr) {
-    nambala n = arr.length();
+    nambala n = arr.kutalika();
 
     za(nambala i = 1; i < n; i++) {
         nambala key = arr[i];
@@ -169,7 +169,7 @@ ndondomeko heapify(arr, n, i) {
 }
 
 ndondomeko heapSort(arr) {
-    nambala n = arr.length();
+    nambala n = arr.kutalika();
 
     za(nambala i = n/2 - 1; i >= 0; i--) {
         heapify(arr, n, i);
