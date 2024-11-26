@@ -15,7 +15,7 @@ func (p *Parser) generateJson() error {
 
 	// Generate documentation for types
 	for _, t := range p.types {
-		filename := filepath.Join(p.config.OutputDir, fmt.Sprintf("type_%s.json", strings.ToLower(t.Name)))
+		filename := filepath.Join(p.config.OutputDir, "types", fmt.Sprintf("%s.json", strings.ToLower(t.Name)))
 		err := writeStructToFile(filename, t)
 		if err != nil {
 			return err
@@ -24,7 +24,7 @@ func (p *Parser) generateJson() error {
 
 	// Generate documentation for libraries
 	for _, lib := range p.libraries {
-		filename := filepath.Join(p.config.OutputDir, fmt.Sprintf("library_%s.json", strings.ToLower(lib.Name)))
+		filename := filepath.Join(p.config.OutputDir, "libraries", fmt.Sprintf("%s.json", strings.ToLower(lib.Name)))
 		err := writeStructToFile(filename, lib)
 		if err != nil {
 			return err
@@ -33,7 +33,10 @@ func (p *Parser) generateJson() error {
 
 	// Generate documentation for builtins
 	filename := filepath.Join(p.config.OutputDir, "builtins.json")
-	err := writeStructToFile(filename, p.builtins)
+	data := map[string]interface{}{
+		"Data": p.builtins,
+	}
+	err := writeStructToFile(filename, data)
 	if err != nil {
 		return err
 	}

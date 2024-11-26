@@ -9,7 +9,7 @@ import (
 
 const INTEGER_OBJ = "INTEGER"
 
-// type=Nambala alternative=Number
+// type=nambala alternative=Number
 // The Integer object represents a number.
 type Integer struct {
 	Object

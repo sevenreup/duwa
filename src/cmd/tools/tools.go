@@ -421,7 +421,7 @@ func main() {
 		IncludePatterns:     []string{"*.go"},
 		MinMethods:          0,
 		IncludeUndocumented: true,
-		OutputDir:           "./docs",
+		OutputDir:           "../duwa-site/content/generated",
 		GenerateFormat:      "json",
 	}
 

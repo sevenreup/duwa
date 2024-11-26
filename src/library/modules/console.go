@@ -24,6 +24,11 @@ func init() {
 
 // method=lemba args=[...] return={null}
 // This method prints the arguments to the console
+//
+// `Example`
+// ```
+// Khonso.lemba("Hello, World!") # prints "Hello, World!"
+// ```
 func methodConsolePrint(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	values := make([]string, 0)
 
@@ -36,8 +41,13 @@ func methodConsolePrint(env *object.Environment, tok token.Token, args ...object
 	return nil
 }
 
-// method=landira args=[string{mawu}] return={string}
+// method=landira args=[mawu{zolemba}] return={mawu}
 // This method reads a string from the console
+//
+// `Example`
+// ```
+// Khonso.landira() # returns the string entered by the user
+// ```
 func methodConsoleRead(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) == 1 {
 		prompt := args[0].(*object.String).Value
@@ -56,6 +66,11 @@ func methodConsoleRead(scope *object.Environment, tok token.Token, args ...objec
 
 // method=fufuta args=[] return={null}
 // This method clears the console
+//
+// `Example`
+// ```
+// Khonso.fufuta() # clears the console
+// ```
 func methodConsoleClear(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	err := scope.Console.Clear()
 	if err != nil {

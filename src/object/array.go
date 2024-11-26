@@ -9,7 +9,7 @@ import (
 
 const ARRAY_OBJ = "ARRAY"
 
-// type=Array alternative=Array
+// type=array alternative=Array
 // The Array object represents a list of elements.
 type Array struct {
 	Elements []Object

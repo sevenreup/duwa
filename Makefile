@@ -30,3 +30,7 @@ test:
 test-report:
 	@go test ./... -v --cover -coverprofile=coverage.out
 	@go tool cover -html=coverage.out
+
+
+docs-json:
+	@go run src/cmd/tools/*

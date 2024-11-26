@@ -7,7 +7,7 @@ import (
 
 const BOOLEAN_OBJ = "BOOLEAN"
 
-// type=Tsimikizi alternative=Boolean
+// type=tsimikizi alternative=Boolean
 // The Boolean object represents two values: true and false.
 type Boolean struct {
 	Object

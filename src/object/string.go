@@ -12,7 +12,7 @@ import (
 
 const STRING_OBJ = "STRING"
 
-// type=Mawu alternative=String
+// type=mawu alternative=String
 // The String object represents a string of characters.
 // It is used to store and manipulate text.
 // It is a sequence of characters, where each character is a Unicode code point.
@@ -74,7 +74,7 @@ func (string *String) MapKey() MapKey {
 	return MapKey{Type: string.Type(), Value: h.Sum64()}
 }
 
-// method=peza args=[string{mawuOpeza}] return={string}
+// method=peza args=[mawu{mawuOpeza}] return={mawu}
 // This method finds the first occurrence of the given string in the string and returns it.
 func (str *String) methodFind(args []Object) (Object, bool) {
 	re := regexp.MustCompile(str.Value)
@@ -88,7 +88,7 @@ func (str *String) methodFind(args []Object) (Object, bool) {
 	return &String{}, true
 }
 
-// method=pezaZonse args=[string{mawuOpeza}] return={string[]}
+// method=pezaZonse args=[mawu{mawuOpeza}] return={string[]}
 // This method finds all occurrences of the given string in the string and returns them.
 func (str *String) methodFindAll(args []Object) (Object, bool) {
 	re := regexp.MustCompile(str.Value)
@@ -102,7 +102,7 @@ func (str *String) methodFindAll(args []Object) (Object, bool) {
 	return list, true
 }
 
-// method=format args=[string{mawuOsintha}] return={string}
+// method=format args=[mawu{mawuOsintha}] return={mawu}
 // This method formats the string with the given arguments.
 func (str *String) methodFormat(args []Object) (Object, bool) {
 	list := []interface{}{}
@@ -114,7 +114,7 @@ func (str *String) methodFormat(args []Object) (Object, bool) {
 	return &String{Value: fmt.Sprintf(str.Value, list...)}, true
 }
 
-// method=kumalizaNdi args=[string{mawuOsintha}] return={string}
+// method=kumalizaNdi args=[mawu{mawuOsintha}] return={mawu}
 // This method checks if the string ends with the given string.
 func (str *String) methodEndsWith(args []Object) (Object, bool) {
 	hasSuffix := strings.HasSuffix(str.Value, args[0].(*String).Value)
@@ -130,7 +130,7 @@ func (str *String) methodLength(_ []Object) (Object, bool) {
 	return length, true
 }
 
-// method=gwirizana args=[string{mawuOsintha}] return={nambala}
+// method=gwirizana args=[mawu{mawuOsintha}] return={nambala}
 // This method checks if the string matches the given regular expression.
 func (str *String) methodMatches(args []Object) (Object, bool) {
 	matches, err := regexp.Match(str.Value, []byte(args[0].(*String).Value))
@@ -142,7 +142,7 @@ func (str *String) methodMatches(args []Object) (Object, bool) {
 	return &Boolean{Value: matches}, true
 }
 
-// method=maloMwa args=[string{source},string{value}] return={string}
+// method=maloMwa args=[mawu{source},mawu{value}] return={mawu}
 // This method replaces all occurrences of the given string with the new string.
 func (str *String) methodReplace(args []Object) (Object, bool) {
 	value := strings.Replace(str.Value, args[0].(*String).Value, args[1].(*String).Value, -1)
@@ -150,7 +150,7 @@ func (str *String) methodReplace(args []Object) (Object, bool) {
 	return &String{Value: value}, true
 }
 
-// method=gawa args=[string{mawuOgawa}] return={string[]}
+// method=gawa args=[mawu{mawuOgawa}] return={string[]}
 // This method splits the string by the given string and returns a list of strings.
 func (str *String) methodSplit(args []Object) (Object, bool) {
 	split := strings.Split(str.Value, args[0].(*String).Value)
@@ -163,7 +163,7 @@ func (str *String) methodSplit(args []Object) (Object, bool) {
 	return list, true
 }
 
-// method=yayambaNdi args=[string{mawuOsintha}] return={string}
+// method=yayambaNdi args=[mawu{mawuOsintha}] return={mawu}
 // This method checks if the string starts with the given string.
 func (str *String) methodStartsWith(args []Object) (Object, bool) {
 	hasPrefix := strings.HasPrefix(str.Value, args[0].(*String).Value)
@@ -171,19 +171,19 @@ func (str *String) methodStartsWith(args []Object) (Object, bool) {
 	return &Boolean{Value: hasPrefix}, true
 }
 
-// method=toLowerCase args=[] return={string}
+// method=toLowerCase args=[] return={mawu}
 // This method converts the string to lowercase.
 func (str *String) methodToLowerCase(_ []Object) (Object, bool) {
 	return &String{Value: strings.ToLower(str.Value)}, true
 }
 
-// method=toUpperCase args=[] return={string}
+// method=toUpperCase args=[] return={mawu}
 // This method converts the string to uppercase.
 func (str *String) methodToUpperCase(_ []Object) (Object, bool) {
 	return &String{Value: strings.ToUpper(str.Value)}, true
 }
 
-// method=kuMawu args=[] return={string}
+// method=kuMawu args=[] return={mawu}
 // This method converts the string to a string.
 func (str *String) methodToString(_ []Object) (Object, bool) {
 	return str, true
@@ -197,19 +197,19 @@ func (str *String) methodToNumber(_ []Object) (Object, bool) {
 	return &Integer{Value: number}, true
 }
 
-// method=chepetsa args=[] return={string}
+// method=chepetsa args=[] return={mawu}
 // This method removes whitespace from the beginning and end of the string.
 func (str *String) methodTrim(_ []Object) (Object, bool) {
 	return &String{Value: strings.TrimSpace(str.Value)}, true
 }
 
-// method=chepetsaKuMapeto args=[] return={string}
+// method=chepetsaKuMapeto args=[] return={mawu}
 // This method removes whitespace from the end of the string.
 func (str *String) methodTrimEnd(_ []Object) (Object, bool) {
 	return &String{Value: strings.TrimRight(str.Value, "\t\n\v\f\r ")}, true
 }
 
-// method=chepetsaKuchiyamba args=[] return={string}
+// method=chepetsaKuchiyamba args=[] return={mawu}
 // This method removes whitespace from the beginning of the string.
 func (str *String) methodTrimStart(_ []Object) (Object, bool) {
 	return &String{Value: strings.TrimLeft(str.Value, "\t\n\v\f\r ")}, true
