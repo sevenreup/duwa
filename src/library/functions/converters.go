@@ -6,7 +6,9 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func ParseStringToNumber(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
+// type=builtin-func method=kuNambala args=[string{value}] return={integer}
+// The kuNambala function converts a string to a number.
+func BuiltInParseStringToNumber(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) != 1 {
 		// TODO: Return error dont panic
 		panic("parse requires exactly one argument")

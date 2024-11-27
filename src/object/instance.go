@@ -9,7 +9,7 @@ type Instance struct {
 
 func (i *Instance) Type() ObjectType { return INSTANCE_OBJ }
 
-func (i *Instance) Inspect() string {
+func (i *Instance) String() string {
 	return i.Class.Name.String()
 }
 

@@ -8,8 +8,11 @@ import (
 
 const MAP_OBJ = "MAP"
 
+// type=mgwirizano altenatives=map
+// This is a map object that is used to store key-value pairs.
 type Map struct {
 	Pairs map[MapKey]MapPair
+	Object
 }
 
 type MapPair struct {
@@ -19,12 +22,12 @@ type MapPair struct {
 
 func (m *Map) Type() ObjectType { return MAP_OBJ }
 
-func (m *Map) Inspect() string {
+func (m *Map) String() string {
 	var out bytes.Buffer
 	pairs := []string{}
 	for _, pair := range m.Pairs {
 		pairs = append(pairs, fmt.Sprintf("%s: %s",
-			pair.Key.Inspect(), pair.Value.Inspect()))
+			pair.Key.String(), pair.Value.String()))
 	}
 	out.WriteString("{")
 	out.WriteString(strings.Join(pairs, ", "))
@@ -33,6 +36,5 @@ func (m *Map) Inspect() string {
 }
 
 func (m *Map) Method(method string, args []Object) (Object, bool) {
-	//TODO implement me
-	panic("implement me")
+	return nil, false
 }

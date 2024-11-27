@@ -7,6 +7,8 @@ import (
 
 const BOOLEAN_OBJ = "BOOLEAN"
 
+// type=tsimikizi alternative=Boolean
+// The Boolean object represents two values: true and false.
 type Boolean struct {
 	Object
 	Mappable
@@ -15,11 +17,10 @@ type Boolean struct {
 
 func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
 
-func (b *Boolean) Inspect() string { return fmt.Sprintf("%t", b.Value) }
+func (b *Boolean) String() string { return fmt.Sprintf("%t", b.Value) }
 
 func (i *Boolean) Method(method string, args []Object) (Object, bool) {
-	//TODO implement me
-	panic("implement me")
+	return nil, false
 }
 
 func (s *Boolean) MapKey() MapKey {

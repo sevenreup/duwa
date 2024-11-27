@@ -577,19 +577,19 @@ func TestMethodCalls(t *testing.T) {
 		expected interface{}
 	}{
 		{
-			"nambala[] myArray = [1, 2, 3];myArray.length();",
+			"nambala[] myArray = [1, 2, 3];myArray.kutalika();",
 			3,
 		},
 		{
-			"nambala[] myArray = [1, 2, 3];myArray.pop();myArray[1];",
+			"nambala[] myArray = [1, 2, 3];myArray.chotsaKumbuyo();myArray[1];",
 			2,
 		},
 		{
-			"nambala[] myArray = [1, 2, 3];myArray.shift();myArray[0];",
+			"nambala[] myArray = [1, 2, 3];myArray.chotsaKutsogolo();myArray[0];",
 			2,
 		},
 		{
-			"nambala[] myArray = [1, 2, 3];myArray.push(8);myArray[3];",
+			"nambala[] myArray = [1, 2, 3];myArray.Kankha(8);myArray[3];",
 			8,
 		},
 	}

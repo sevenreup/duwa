@@ -2,8 +2,9 @@ package object
 
 import (
 	"bytes"
-	"github.com/sevenreup/duwa/src/ast"
 	"strings"
+
+	"github.com/sevenreup/duwa/src/ast"
 )
 
 const FUNCTION_OBJ = "FUNCTION"
@@ -16,7 +17,7 @@ type Function struct {
 
 func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
 
-func (f *Function) Inspect() string {
+func (f *Function) String() string {
 	var out bytes.Buffer
 	params := []string{}
 	for _, p := range f.Parameters {
@@ -32,6 +33,29 @@ func (f *Function) Inspect() string {
 }
 
 func (i *Function) Method(method string, args []Object) (Object, bool) {
-	//TODO implement me
-	panic("implement me")
+	return nil, false
+}
+
+func (function *Function) Evaluate(args []Object) Object {
+	extendedEnv := extendFunctionEnv(function, args)
+	evaluated := evaluator(function.Body, extendedEnv)
+	return unwrapReturnValue(evaluated)
+}
+
+func extendFunctionEnv(
+	fn *Function,
+	args []Object,
+) *Environment {
+	env := NewEnclosedEnvironment(fn.Env)
+	for paramIdx, param := range fn.Parameters {
+		env.Set(param.Value, args[paramIdx])
+	}
+	return env
+}
+
+func unwrapReturnValue(obj Object) Object {
+	if returnValue, ok := obj.(*ReturnValue); ok {
+		return returnValue.Value
+	}
+	return obj
 }

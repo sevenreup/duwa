@@ -8,9 +8,8 @@ type ReturnValue struct {
 
 func (rv *ReturnValue) Type() ObjectType { return RETURN_VALUE_OBJ }
 
-func (rv *ReturnValue) Inspect() string { return rv.Value.Inspect() }
+func (rv *ReturnValue) String() string { return rv.Value.String() }
 
 func (i *ReturnValue) Method(method string, args []Object) (Object, bool) {
-	//TODO implement me
-	panic("implement me")
+	return nil, false
 }

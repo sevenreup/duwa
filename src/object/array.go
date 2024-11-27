@@ -9,17 +9,20 @@ import (
 
 const ARRAY_OBJ = "ARRAY"
 
+// type=array alternative=Array
+// The Array object represents a list of elements.
 type Array struct {
 	Elements []Object
+	Object
 }
 
 func (ao *Array) Type() ObjectType { return ARRAY_OBJ }
 
-func (ao *Array) Inspect() string {
+func (ao *Array) String() string {
 	var out bytes.Buffer
 	elements := []string{}
 	for _, e := range ao.Elements {
-		elements = append(elements, e.Inspect())
+		elements = append(elements, e.String())
 	}
 	out.WriteString("[")
 	out.WriteString(strings.Join(elements, ", "))
@@ -29,23 +32,27 @@ func (ao *Array) Inspect() string {
 
 func (list *Array) Method(method string, args []Object) (Object, bool) {
 	switch method {
-	case "length":
-		return list.length(args)
-	case "pop":
-		return list.pop(args)
-	case "push":
-		return list.push(args)
-	case "shift":
-		return list.shift(args)
+	case "kutalika":
+		return list.methodLength(args)
+	case "chotsaKumbuyo":
+		return list.methodPop(args)
+	case "Kankha":
+		return list.methodPush(args)
+	case "chotsaKutsogolo":
+		return list.methodShift(args)
 	}
 	return nil, false
 }
 
-func (list *Array) length(args []Object) (Object, bool) {
+// method=kutalika args=[] return={number}
+// Returns the number of elements in an array.
+func (list *Array) methodLength(_ []Object) (Object, bool) {
 	return &Integer{Value: decimal.NewFromInt(int64(len(list.Elements)))}, true
 }
 
-func (list *Array) pop(args []Object) (Object, bool) {
+// method=chotsaKumbuyo args=[] return={any}
+// Removes the last element from an array and returns that element. This method changes the length of the array.
+func (list *Array) methodPop(_ []Object) (Object, bool) {
 	if len(list.Elements) > 0 {
 		pop, elements := list.Elements[len(list.Elements)-1], list.Elements[:len(list.Elements)-1]
 		list.Elements = elements
@@ -55,7 +62,9 @@ func (list *Array) pop(args []Object) (Object, bool) {
 	return &Null{}, true
 }
 
-func (list *Array) shift(args []Object) (Object, bool) {
+// method=chotsaKutsogolo args=[] return={any}
+// Removes the first element from an array and returns that element. This method changes the length of the array.
+func (list *Array) methodShift(_ []Object) (Object, bool) {
 	if len(list.Elements) > 0 {
 		shift, elements := list.Elements[0], list.Elements[1:]
 		list.Elements = elements
@@ -65,7 +74,9 @@ func (list *Array) shift(args []Object) (Object, bool) {
 	return &Null{}, true
 }
 
-func (list *Array) push(args []Object) (Object, bool) {
+// method=Kankha args=[any] return={number}
+// Adds one or more elements to the end of an array and returns the new length of the array.
+func (list *Array) methodPush(args []Object) (Object, bool) {
 	length := len(list.Elements)
 	newLength := length + 1
 

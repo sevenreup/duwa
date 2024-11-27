@@ -1,17 +1,20 @@
 package functions
 
 import (
+	"strings"
+
 	"github.com/sevenreup/duwa/src/object"
 	"github.com/sevenreup/duwa/src/token"
-	"strings"
 )
 
-func Print(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
+// type=builtin-func method=lemba args=[any{valueToPrint}] return={null}
+// The lemba function prints a value to the console.
+func BuiltInPrint(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) > 0 {
 		str := make([]string, 0)
 
 		for _, value := range args {
-			str = append(str, value.Inspect())
+			str = append(str, value.String())
 		}
 		env.Logger.Info(strings.Join(str, " "))
 	}
@@ -19,12 +22,14 @@ func Print(env *object.Environment, tok token.Token, args ...object.Object) obje
 	return nil
 }
 
-func PrintLine(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
+// type=builtin-func method=lembanzr args=[any{valueToPrint}] return={null}
+// The lembanzr function prints a value to the console and adds a newline.
+func BuiltInPrintLine(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) > 0 {
 		str := make([]string, 0)
 
 		for _, value := range args {
-			str = append(str, value.Inspect())
+			str = append(str, value.String())
 		}
 
 		env.Logger.Info(strings.Join(str, " ") + "\n")

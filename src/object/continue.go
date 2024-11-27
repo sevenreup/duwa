@@ -2,7 +2,7 @@ package object
 
 const CONTINUE_OBJ = "CONTINUE"
 
-type Continue struct{
+type Continue struct {
 	Object
 }
 
@@ -10,7 +10,7 @@ func (obj *Continue) Type() ObjectType {
 	return CONTINUE_OBJ
 }
 
-func (obj *Continue) Inspect() string {
+func (obj *Continue) String() string {
 	return CONTINUE_OBJ
 }
 

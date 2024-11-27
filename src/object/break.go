@@ -2,7 +2,7 @@ package object
 
 const BREAK_OBJ = "BREAK"
 
-type Break struct{
+type Break struct {
 	Object
 }
 
@@ -10,7 +10,7 @@ func (obj *Break) Type() ObjectType {
 	return BREAK_OBJ
 }
 
-func (obj *Break) Inspect() string {
+func (obj *Break) String() string {
 	return BREAK_OBJ
 }
 

@@ -25,5 +25,5 @@ func _getString(item object.Object) string {
 	if item.Type() == object.STRING_OBJ {
 		return item.(*object.String).Value
 	}
-	return item.Inspect()
+	return item.String()
 }

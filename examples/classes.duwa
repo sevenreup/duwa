@@ -1,6 +1,6 @@
 kalasi Munthu {
     ndondomeko ndiNdani() {
-        console.lemba("Mariya Malizeni");
+        Khonso.lemba("Mariya Malizeni");
     }
 }
 

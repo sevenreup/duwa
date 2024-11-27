@@ -7,7 +7,7 @@ type LibraryModule struct {
 	Methods map[string]*LibraryFunction
 }
 
-func (libraryModule *LibraryModule) Inspect() string {
+func (libraryModule *LibraryModule) String() string {
 	return libraryModule.Name
 }
 

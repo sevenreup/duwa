@@ -19,7 +19,7 @@ ndondomeko checkWin() {
     [0, 4, 8], [2, 4, 6]
   ];
 
-  za (x = 0; x < winConditions.length(); x++) {
+  za (x = 0; x < winConditions.kutalika(); x++) {
     mawu condition = winConditions[x];
     ngati (board[condition[0]] != "" && board[condition[0]] == board[condition[1]] && board[condition[0]] == board[condition[2]]) {
       bweza zoona;
@@ -46,7 +46,7 @@ ndondomeko playGame() {
     pamene(isRunning) {
         printBoard();
         lembanzr("Player " + currentPlayer + " turn: ");
-        nambala playerMove = kuNambala(console.landira());
+        nambala playerMove = kuNambala(Khonso.landira());
         mawu moved = move(currentPlayer, playerMove - 1);
         ngati(moved == bodza) {
             lembanzr("Invalid move");
@@ -60,7 +60,7 @@ ndondomeko playGame() {
                 lembanzr("Game Over");
                 isRunning = bodza;
             } kapena {
-               console.fufuta();
+               Khonso.fufuta();
             }
         }
     }

@@ -161,8 +161,8 @@ func TestDeclerationAndAssignmentStatements(t *testing.T) {
 		{"nambala y = zoona;", "y", "nambala", true},
 		{"nambala foobar = y;", "foobar", "nambala", "y"},
 		{"foobar[0] = 2;", "foobar", "", "y"},
-		{"nambala result = linearSearch(arr, arr.length(), x);", "result", "", "linearSearch"},
-		{"result = linearSearch(arr, arr.length(), x);", "result", "", "linearSearch"},
+		{"nambala result = linearSearch(arr, arr.kutalika(), x);", "result", "", "linearSearch"},
+		{"result = linearSearch(arr, arr.kutalika(), x);", "result", "", "linearSearch"},
 	}
 	for _, tt := range tests {
 		l := lexer.New([]byte(tt.input))
@@ -785,19 +785,19 @@ func TestCallExpression(t *testing.T) {
 			{value: 2, operator: "*", otherValue: 3},
 			{value: 4, operator: "+", otherValue: 5},
 		}},
-		{input: "palibe(x.length(), y[0]);", identifier: "palibe", expectedParams: []CallValue{
-			{value: "x", operator: "length", otherValue: 0},
+		{input: "palibe(x.kutalika(), y[0]);", identifier: "palibe", expectedParams: []CallValue{
+			{value: "x", operator: "kutalika", otherValue: 0},
 			{value: "y", otherValue: 0},
 		}},
 		{input: "palibe(y[0]);", identifier: "palibe", expectedParams: []CallValue{
 			{value: "y", otherValue: 0},
 		}},
-		{input: "palibe(x.length());", identifier: "palibe", expectedParams: []CallValue{
-			{value: "x", operator: "length", otherValue: 0},
+		{input: "palibe(x.kutalika());", identifier: "palibe", expectedParams: []CallValue{
+			{value: "x", operator: "kutalika", otherValue: 0},
 		}},
-		{input: "palibe(arr, arr.length(), x);", identifier: "palibe", expectedParams: []CallValue{
+		{input: "palibe(arr, arr.kutalika(), x);", identifier: "palibe", expectedParams: []CallValue{
 			{value: "arr"},
-			{value: "arr", operator: "length"},
+			{value: "arr", operator: "kutalika"},
 			{value: "x"},
 		}},
 	}
@@ -901,7 +901,7 @@ func TestMethodCall(t *testing.T) {
 		expectedIdentifier string
 		expectedMethodName string
 	}{
-		{input: "myArray.length();", expectedArguments: []interface{}{}, expectedIdentifier: "myArray", expectedMethodName: "length"},
+		{input: "myArray.kutalika();", expectedArguments: []interface{}{}, expectedIdentifier: "myArray", expectedMethodName: "kutalika"},
 		{input: "myString.substring(0,2);", expectedArguments: []interface{}{0, 2}, expectedIdentifier: "myString", expectedMethodName: "substring"},
 		{input: "myClass.doStuff(\"String\",2);", expectedArguments: []interface{}{"String", 2}, expectedIdentifier: "myClass", expectedMethodName: "doStuff"},
 	}

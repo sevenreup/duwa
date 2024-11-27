@@ -1,6 +1,6 @@
 // Linear Search
 ndondomeko linearSearch(arr, x) {
-    za(nambala i = 0; i < arr.length(); i++) {
+    za(nambala i = 0; i < arr.kutalika(); i++) {
         ngati (arr[i] == x) {
             bweza i;
         }
@@ -26,7 +26,7 @@ doLinearSearch();
 
 ndondomeko binarySearch(arr,x) {
     nambala l = 0;
-    nambala right = arr.length() - 1;
+    nambala right = arr.kutalika() - 1;
     pamene (l <= right) {
         nambala mid = l + (right - l) / 2;
         ngati (arr[mid] == x) {
@@ -58,19 +58,19 @@ doBinarySearch();
 // Jump Search
 
 ndondomeko jumpSearch(arr, x) {
-    nambala n = arr.length();
-    nambala step = math.sqrt(n);
+    nambala n = arr.kutalika();
+    nambala step = Masamu.sqrt(n);
     nambala prev = 0;
-    pamene (arr[math.min(step, n) - 1] < x) {
+    pamene (arr[Masamu.yochepa(step, n) - 1] < x) {
         prev = step;
-        step += math.sqrt(n);
+        step += Masamu.sqrt(n);
         ngati (prev >= n) {
             bweza -1;
         }
     }
     pamene (arr[prev] < x) {
         prev++;
-        ngati (prev == math.min(step, n)) {
+        ngati (prev == Masamu.yochepa(step, n)) {
             bweza -1;
         }
     }
@@ -128,7 +128,7 @@ ndondomeko doInterpolationSearch()
     // Array of items on which search will
     // be conducted.
     nambala[] arr = [10, 12, 13, 16, 18, 19, 20, 21, 22, 23, 24, 33, 35, 42, 47];
-    nambala n = arr.length();
+    nambala n = arr.kutalika();
  
     nambala x = 18; // Element to be searched
     nambala index = interpolationSearch(arr, 0, n - 1, x);
@@ -159,13 +159,13 @@ ndondomeko exponentialSearch(arr, n, x) {
     }
  
     // Call binary search for the found range.
-    bweza binarySearch(arr, i / 2, math.min(i, n), x);
+    bweza binarySearch(arr, i / 2, Masamu.yochepa(i, n), x);
 }
 
 ndondomeko doExponentialSearch() {
     nambala[] arr = [2, 3, 4, 10, 40];
     nambala x = 10;
-    nambala n = arr.length();
+    nambala n = arr.kutalika();
     nambala result = exponentialSearch(arr, n, x);
     ngati (result == -1) {
         lembanzr("Exponential Search: Element is not present in array");
@@ -200,7 +200,7 @@ ndondomeko fibonacciSearch(arr, x, n) {
     // When fibM becomes 1, fibMm2 becomes 0
     pamene (fibM > 1) {
         // Check if fibMm2 is a valid location
-        nambala i = math.min(offset + fibMMm2, n - 1);
+        nambala i = Masamu.yochepa(offset + fibMMm2, n - 1);
  
         // If x is greater than the value at
         // index fibMm2, cut the subarray array
@@ -238,7 +238,7 @@ ndondomeko fibonacciSearch(arr, x, n) {
 ndondomeko doFibonacciSearch() {
     nambala[] arr = [10, 22, 35, 40, 45, 50, 80, 82, 85, 90, 100,235];
     nambala x = 235;
-    nambala n = arr.length();
+    nambala n = arr.kutalika();
     nambala result = fibonacciSearch(arr, x, n);
     ngati (result == -1) {
         lembanzr("Fibonacci Search: Element is not present in array");

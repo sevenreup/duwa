@@ -10,19 +10,30 @@ import (
 	"github.com/sevenreup/duwa/src/values"
 )
 
+// library=Khonso
+// This is the console module
+// It contains functions that interact with the console
+// It is used to read and write to the console
 var ConsoleMethods = map[string]*object.LibraryFunction{}
 
 func init() {
-	RegisterMethod(ConsoleMethods, "lemba", consolePrint)
-	RegisterMethod(ConsoleMethods, "fufuta", consoleClear)
-	RegisterMethod(ConsoleMethods, "landira", consoleRead)
+	RegisterMethod(ConsoleMethods, "lemba", methodConsolePrint)
+	RegisterMethod(ConsoleMethods, "fufuta", methodConsoleClear)
+	RegisterMethod(ConsoleMethods, "landira", methodConsoleRead)
 }
 
-func consolePrint(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
+// method=lemba args=[...] return={null}
+// This method prints the arguments to the console
+//
+// `Example`
+// ```
+// Khonso.lemba("Hello, World!") # prints "Hello, World!"
+// ```
+func methodConsolePrint(env *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	values := make([]string, 0)
 
 	for _, value := range args {
-		values = append(values, value.Inspect())
+		values = append(values, value.String())
 	}
 
 	libPrint(env, values)
@@ -30,7 +41,14 @@ func consolePrint(env *object.Environment, tok token.Token, args ...object.Objec
 	return nil
 }
 
-func consoleRead(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
+// method=landira args=[mawu{zolemba}] return={mawu}
+// This method reads a string from the console
+//
+// `Example`
+// ```
+// Khonso.landira() # returns the string entered by the user
+// ```
+func methodConsoleRead(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	if len(args) == 1 {
 		prompt := args[0].(*object.String).Value
 
@@ -46,7 +64,14 @@ func consoleRead(scope *object.Environment, tok token.Token, args ...object.Obje
 	return &object.String{Value: val}
 }
 
-func consoleClear(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
+// method=fufuta args=[] return={null}
+// This method clears the console
+//
+// `Example`
+// ```
+// Khonso.fufuta() # clears the console
+// ```
+func methodConsoleClear(scope *object.Environment, tok token.Token, args ...object.Object) object.Object {
 	err := scope.Console.Clear()
 	if err != nil {
 		return values.NULL
