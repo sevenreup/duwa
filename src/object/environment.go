@@ -61,3 +61,13 @@ func (e *Environment) Has(name string) bool {
 func (e *Environment) Delete(name string) {
 	delete(e.store, name)
 }
+
+func (environment *Environment) Call(function string, args []Object) Object {
+	if object, ok := environment.Get(function); ok {
+		if function, ok := object.(*Function); ok {
+			return function.Evaluate(args)
+		}
+	}
+
+	return NewError("function not found: %s", function)
+}

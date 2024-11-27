@@ -49,3 +49,7 @@ func (c *Duwa) run(data []byte) object.Object {
 func (c *Duwa) registerEvaluator() {
 	object.RegisterEvaluator(evaluator.Eval)
 }
+
+func (c *Duwa) Call(function string, args []object.Object) object.Object {
+	return c.Environment.Call(function, args)
+}

@@ -26,9 +26,7 @@ func applyFunction(tok token.Token, fn object.Object, args []object.Object, env 
 		}
 		return nil
 	case *object.Function:
-		extendedEnv := extendFunctionEnv(fn, args)
-		evaluated := Eval(fn.Body, extendedEnv)
-		return unwrapReturnValue(evaluated)
+		return fn.Evaluate(args)
 	case *object.Class:
 		if tok.Literal != fn.Name.TokenLiteral() {
 			return newError("class name mismatch: expected %s, got %s", fn.Name.TokenLiteral(), tok.Literal)
