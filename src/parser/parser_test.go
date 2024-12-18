@@ -748,9 +748,9 @@ func TestFunctionParameter(t *testing.T) {
 		input          string
 		expectedParams []string
 	}{
-		{input: "ndondomeko palibe() {};", expectedParams: []string{}},
-		{input: "ndondomeko palibe(x) {};", expectedParams: []string{"x"}},
-		{input: "ndondomeko palibe(x, y, z) {};", expectedParams: []string{"x", "y", "z"}},
+		{input: "ndondomeko palibeKanthu() {};", expectedParams: []string{}},
+		{input: "ndondomeko palibeKanthu(x) {};", expectedParams: []string{"x"}},
+		{input: "ndondomeko palibeKanthu(x, y, z) {};", expectedParams: []string{"x", "y", "z"}},
 	}
 	for _, tt := range tests {
 		l := lexer.New([]byte(tt.input))
@@ -785,17 +785,17 @@ func TestCallExpression(t *testing.T) {
 			{value: 2, operator: "*", otherValue: 3},
 			{value: 4, operator: "+", otherValue: 5},
 		}},
-		{input: "palibe(x.kutalika(), y[0]);", identifier: "palibe", expectedParams: []CallValue{
+		{input: "palibeKanthu(x.kutalika(), y[0]);", identifier: "palibeKanthu", expectedParams: []CallValue{
 			{value: "x", operator: "kutalika", otherValue: 0},
 			{value: "y", otherValue: 0},
 		}},
-		{input: "palibe(y[0]);", identifier: "palibe", expectedParams: []CallValue{
+		{input: "palibeKanthu(y[0]);", identifier: "palibeKanthu", expectedParams: []CallValue{
 			{value: "y", otherValue: 0},
 		}},
-		{input: "palibe(x.kutalika());", identifier: "palibe", expectedParams: []CallValue{
+		{input: "palibeKanthu(x.kutalika());", identifier: "palibeKanthu", expectedParams: []CallValue{
 			{value: "x", operator: "kutalika", otherValue: 0},
 		}},
-		{input: "palibe(arr, arr.kutalika(), x);", identifier: "palibe", expectedParams: []CallValue{
+		{input: "palibeKanthu(arr, arr.kutalika(), x);", identifier: "palibeKanthu", expectedParams: []CallValue{
 			{value: "arr"},
 			{value: "arr", operator: "kutalika"},
 			{value: "x"},

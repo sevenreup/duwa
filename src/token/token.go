@@ -64,6 +64,9 @@ const (
 	WHILE    = "WHILE"
 	MAP      = "MAP"
 	CLASS    = "CLASS"
+	BREAK    = "BREAK"
+	CONTINUE = "CONTINUE"
+	NULL     = "NULL"
 )
 
 type Position struct {
@@ -91,6 +94,9 @@ var keywords = map[string]TokenType{
 	"pamene":     WHILE,
 	"mgwirizano": MAP,
 	"kalasi":     CLASS,
+	"siya":       BREAK,
+	"pitirizani": CONTINUE,
+	"palibe":     NULL,
 }
 
 var variableTypes = map[TokenType]TokenType{
