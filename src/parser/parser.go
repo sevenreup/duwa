@@ -75,6 +75,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.INT, p.parseIntegerLiteral)
 	p.registerPrefix(token.STR, p.parseStringLiteral)
+	p.registerPrefix(token.NULL, p.nullLiteral)
 
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
@@ -86,6 +87,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.WHILE, p.parseWhileExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.CLASS, p.classStatement)
+	p.registerPrefix(token.BREAK, p.breakStatement)
+	p.registerPrefix(token.CONTINUE, p.continueStatement)
 
 	p.registerPrefix(token.OPENING_BRACE, p.mapLiteral)
 	p.registerPrefix(token.OPENING_PAREN, p.parseGroupedExpression)

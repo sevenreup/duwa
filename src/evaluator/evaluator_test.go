@@ -242,6 +242,7 @@ func TestIfElseExpressions(t *testing.T) {
 	}
 }
 
+// TODO: Test null return value
 func TestReturnStatements(t *testing.T) {
 	tests := []struct {
 		input    string

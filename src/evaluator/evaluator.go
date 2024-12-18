@@ -79,6 +79,12 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evaluatePostfix(node, env)
 	case *ast.ClassStatement:
 		return evaluateClass(node, env)
+	case *ast.BreakStatement:
+		return evaluateBreak(node, env)
+	case *ast.ContinueStatement:
+		return evaluateContinue(node, env)
+	case *ast.NullLiteral:
+		return evaluateNull(node, env)
 	}
 	return nil
 }

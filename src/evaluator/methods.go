@@ -19,7 +19,7 @@ func evaluateMethod(node *ast.MethodExpression, env *object.Environment) object.
 		return arguments[0]
 	}
 
-	result, _ := left.Method(node.Method.(*ast.Identifier).Value, arguments)
+	result, found := left.Method(node.Method.(*ast.Identifier).Value, arguments)
 
 	if isError(result) {
 		return result
@@ -43,6 +43,10 @@ func evaluateMethod(node *ast.MethodExpression, env *object.Environment) object.
 		}
 
 		return unwrapReturn(evaluated)
+	default:
+		if !found {
+			return newError("%d:%d:%s: runtime error: undefined method %s for %s", node.Token.Pos.Line, node.Token.Pos.Column, node.Token.File, node.Method.(*ast.Identifier).Value, node.Left.String())
+		}
 	}
 
 	return result
