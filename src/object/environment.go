@@ -65,7 +65,7 @@ func (e *Environment) Delete(name string) {
 func (environment *Environment) Call(function string, args []Object) Object {
 	if object, ok := environment.Get(function); ok {
 		if function, ok := object.(*Function); ok {
-			return function.Evaluate(args)
+			return function.Evaluate(environment, args)
 		}
 	}
 

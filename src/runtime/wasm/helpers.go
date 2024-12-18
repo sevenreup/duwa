@@ -24,9 +24,10 @@ func WrapFunction(fn func(this js.Value, args []js.Value) interface{}) func(this
 
 // wrap safely converts Go values to JavaScript values
 func Wrap(value interface{}) interface{} {
-	switch val := value.(type) {
-	case nil:
+	if value == nil {
 		return js.Null()
+	}
+	switch val := value.(type) {
 	case string:
 		return js.ValueOf(val)
 	case int, int32, int64, float32, float64:
@@ -46,6 +47,7 @@ func Wrap(value interface{}) interface{} {
 		}
 		return obj
 	default:
+		fmt.Println("Unsupported type", val)
 		return js.ValueOf(fmt.Sprint(val))
 	}
 }

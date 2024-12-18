@@ -32,6 +32,8 @@ func evaluateMethod(node *ast.MethodExpression, env *object.Environment) object.
 		if function, ok := receiver.Methods[method.Value]; ok {
 			return applyFunction(node.Token, function, arguments, env)
 		}
+
+		return newError("%d:%d:%s: runtime error: undefined method %s for Library %s", node.Token.Pos.Line, node.Token.Pos.Column, node.Token.File, method.Value, receiver.Name)
 	case *object.Instance:
 		method := node.Method.(*ast.Identifier)
 		evaluated := evaluateInstanceMethod(node, receiver, method.Value, arguments)

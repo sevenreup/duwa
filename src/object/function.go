@@ -36,17 +36,17 @@ func (i *Function) Method(method string, args []Object) (Object, bool) {
 	return nil, false
 }
 
-func (function *Function) Evaluate(args []Object) Object {
-	extendedEnv := extendFunctionEnv(function, args)
+func (function *Function) Evaluate(env *Environment, args []Object) Object {
+	extendedEnv := extendFunctionEnv(env, function, args)
 	evaluated := evaluator(function.Body, extendedEnv)
 	return unwrapReturnValue(evaluated)
 }
 
 func extendFunctionEnv(
+	env *Environment,
 	fn *Function,
 	args []Object,
 ) *Environment {
-	env := NewEnclosedEnvironment(fn.Env)
 	for paramIdx, param := range fn.Parameters {
 		env.Set(param.Value, args[paramIdx])
 	}

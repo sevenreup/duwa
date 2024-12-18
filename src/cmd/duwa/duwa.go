@@ -29,5 +29,10 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	console := native.NewConsole()
 	duwa := duwa.New(object.New(logger, console))
-	duwa.RunFile(file)
+	value := duwa.RunFile(file)
+	if value != nil {
+		if object.IsError(value) {
+			log.Fatal(value.String())
+		}
+	}
 }

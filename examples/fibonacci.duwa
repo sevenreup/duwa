@@ -24,7 +24,7 @@ ndondomeko fibonacciRecursive(n) {
     bweza fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2);
 }
 
-Khonso.lemba("\n");
+Khonso.lemba("\nIterative: \n");
 Khonso.lemba(fibonacci(9));
-Khonso.lemba("\n");
+Khonso.lemba("\nRecursive: \n");
 Khonso.lemba(fibonacciRecursive(9));
