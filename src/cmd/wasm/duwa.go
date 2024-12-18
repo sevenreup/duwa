@@ -45,7 +45,14 @@ func run(this js.Value, inputs []js.Value) interface{} {
 	if result == nil {
 		return wasm.Wrap(nil)
 	}
-	return wasm.Wrap(result.Inspect())
+	if object.IsError(result) {
+		emitConsoleLogEvent(slog.Record{
+			Level:   slog.LevelError,
+			Message: fmt.Sprintf("%v", result),
+		})
+		return wasm.Wrap(result)
+	}
+	return wasm.Wrap(result.String())
 }
 
 func (h *WasmConsoleHandler) Enabled(_ context.Context, level slog.Level) bool {

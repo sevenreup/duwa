@@ -34,3 +34,10 @@ type GoProperty func(env *Environment, tok token.Token) Object
 func RegisterEvaluator(e func(node ast.Node, env *Environment) Object) {
 	evaluator = e
 }
+
+func IsError(obj Object) bool {
+	if obj != nil {
+		return obj.Type() == ERROR_OBJ
+	}
+	return false
+}
