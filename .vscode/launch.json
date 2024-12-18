@@ -13,8 +13,8 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceRoot}",
             "args": [
-                "-f",
-                "${workspaceRoot}\\examples\\games\\tictactoe.duwa"
+                "run",
+                "${workspaceRoot}\\examples\\functions.duwa"
             ]
         },
         {
@@ -26,7 +26,7 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "args": [
-                "-f",
+                "run",
                 "${workspaceRoot}\\examples\\games\\tictactoe.duwa"
             ]
         },
