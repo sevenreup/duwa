@@ -67,10 +67,12 @@ type Parser struct {
 	prefixParseFns   map[token.TokenType]prefixParseFn
 	infixParseFns    map[token.TokenType]infixParseFn
 	postfixParserFns map[token.TokenType]postfixParserFn
+
+	imports []*ast.ImportExpression
 }
 
 func New(l *lexer.Lexer) *Parser {
-	p := &Parser{l: l, errors: []string{}}
+	p := &Parser{l: l, errors: []string{}, imports: []*ast.ImportExpression{}}
 
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.INT, p.parseIntegerLiteral)
@@ -89,6 +91,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.CLASS, p.classStatement)
 	p.registerPrefix(token.BREAK, p.breakStatement)
 	p.registerPrefix(token.CONTINUE, p.continueStatement)
+	p.registerPrefix(token.IMPORT, p.importStatement)
 
 	p.registerPrefix(token.OPENING_BRACE, p.mapLiteral)
 	p.registerPrefix(token.OPENING_PAREN, p.parseGroupedExpression)
