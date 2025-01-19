@@ -98,7 +98,7 @@ var keywords = map[string]TokenType{
 	"siya":       BREAK,
 	"pitirizani": CONTINUE,
 	"palibe":     NULL,
-	"import":     IMPORT,
+	"tenga":      IMPORT,
 }
 
 var variableTypes = map[TokenType]TokenType{

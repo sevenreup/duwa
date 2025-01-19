@@ -1458,3 +1458,15 @@ func TestClassPropertyAccess(t *testing.T) {
 		return
 	}
 }
+
+func TestImport(t *testing.T) {
+	input := `tenga "fmt";`
+	l := lexer.New([]byte(input))
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	stmt := program.Statements[0].(*ast.ImportExpression)
+	if stmt.Path.Value != "fmt" {
+		t.Fatalf("stmt.Path is not 'fmt'. got=%q", stmt.Path)
+	}
+}
